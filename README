@@ -1,0 +1,54 @@
+
+## Project documentation and conventions ##
+
+Directory structure:
+ lib/           Library code. Functions, classes, algorithms, ...
+ templates/     HTML templates and related code
+ styles/        Stylesheets
+ scripts/       Javascript code
+ images/        Image files, if any
+ ./             Main script files
+
+Special files:
+ init.php       The script which pulls in the rest of the code. Typically, include this one first in your code.
+ config.php     Project configuration. Defines all global variables. Is included from init.php
+ index.php      The script which is executed by default if no file is specified in the URL. Points to one of the main pages.
+
+## Code style guide ##
+
+We follow the ZEND code styleguide by default:
+  http://framework.zend.com/manual/1.12/en/coding-standard.coding-style.html
+
+or, more extensively defined, the FIG standard:
+  http://www.php-fig.org/psr/psr-2/
+
+Some additional naming definitions:
+* Variables:
+
+  We use camelCase for variable names:
+   $numberOfResults
+   $nameAndAddress
+
+  Variable names have to have at least 3 characters, with the exception of common counter variables ($i, $j)
+
+  Global variables (and only those) are all uppercase:
+   $DB_HOST
+
+* Functions:
+
+  Start with a lowercase letter:
+   function calculateSomething() {}
+  
+  Templates start with t_
+   function t_startHeader() {}
+
+  Private functions (which should not be used outside the file defining them) start with an underscore
+   function _t_internal_method() {}
+
+* Classes:
+
+  Start with an uppercase letter:
+   class Foo;
+   class SqlResultHandler;
+
+http://www.imaputz.com/cssStuff/bigFourVersion.html

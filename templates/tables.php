@@ -1,0 +1,52 @@
+<?php
+
+/*
+ *
+ *
+ *
+ */
+
+function t_scroll_table($result, $headers, $editId='', $editCallback=null)
+{
+    // Surrounding div's.
+    echo "<div class='fixed-table-container'><div class='header-background'> </div><div class='fixed-table-container-inner'>";
+
+    // Table header.
+    echo "<table cellspacing='0'><thead><tr>\n";
+    foreach($headers as $colname => $title) {
+        echo "<th class='first'><div class='th-inner'>{$title}</div></th>\n";
+    }
+    echo "</tr></thead><tbody>";
+
+    // Table body.
+    while ($row=mysql_fetch_assoc($result)) {
+    	echo "<tr>";
+        foreach($headers as $colname => $title) {
+            echo "<td>{$row[$colname]}</td>";
+        }
+    	echo "</tr>\n";
+
+        if ($editId != '' and $editId == $row['id']) {
+            echo "<tr><td>&nbsp;</td><td colspan='" . (mysql_num_fields($result) - 1) . "'>";
+            $editCallback($row);
+            echo "</td></tr>";
+        }
+
+    }
+
+    // Closing tags.
+    echo "</table>";
+    echo "</div></div>";
+}
+
+// Will probably become obsolete once edit forms are introduced (followup story)
+function t_details_table($data, $headers)
+{
+        echo '<table cellspacing=0 cellpadding=0>';
+        foreach($headers as $key => $title) {
+            echo "<tr><td class='tbl_key'>$title</td><td class='tbl_value'>{$data[$key]}</td></tr>";
+        }
+        echo '</table>';
+}
+
+// EOF //
