@@ -21,8 +21,15 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null)
     // Table body.
     while ($row=mysql_fetch_assoc($result)) {
     	echo "<tr>";
+        $first = true;
         foreach($headers as $colname => $title) {
-            echo "<td>{$row[$colname]}</td>";
+            if ($first) {
+                $query_string = preg_replace('/edit=\d+&?/', '', $_SERVER['QUERY_STRING']); // Hacky solution to prevent double edit while still getting mode argument for hardware page
+                echo "<td><a href='{$_SERVER['SCRIPT_NAME']}?edit={$row['id']}&$query_string'>{$row[$colname]}</a></td>";
+                $first = false;
+            } else {
+                echo "<td>{$row[$colname]}</td>";
+            }
         }
     	echo "</tr>\n";
 
