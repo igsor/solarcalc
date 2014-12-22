@@ -10,8 +10,7 @@ require_once('init.php');
 t_start();
 
 // Database connection.
-$db = mysql_connect($DB_HOST, $DB_USER, $DB_PASS) or die(mysql_error());
-mysql_select_db($DB_NAME, $db) or die(mysql_error());
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
 
 // Table query.
 $query = "SELECT `id`, `name`, `description`, `client_name`, `location` FROM `project`";
@@ -23,10 +22,12 @@ $headers = array(
 );
 
 // Execute query and show table.
-$result = mysql_query($query, $db) or die(mysql_error());
+$result = $db->query($query) or die(mysqli_error($db));
 t_scroll_table($result, $headers, '', null);
+$result->free();
 
 // Layout end.
+$db->close();
 t_end();
 
 ?>

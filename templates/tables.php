@@ -19,7 +19,7 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null)
     echo "</tr></thead><tbody>";
 
     // Table body.
-    while ($row=mysql_fetch_assoc($result)) {
+    while ($row = $result->fetch_assoc()) {
     	echo "<tr>";
         $first = true;
         foreach($headers as $colname => $title) {
@@ -34,7 +34,7 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null)
     	echo "</tr>\n";
 
         if ($editId != '' and $editId == $row['id']) {
-            echo "<tr><td>&nbsp;</td><td colspan='" . (mysql_num_fields($result) - 1) . "'>";
+            echo "<tr><td>&nbsp;</td><td colspan='" . ($result->field_count - 1) . "'>";
             $editCallback($row);
             echo "</td></tr>";
         }

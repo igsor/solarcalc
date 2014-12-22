@@ -17,15 +17,15 @@ if (key_exists('edit', $_GET)) {
 t_start();
 
 // Database connection.
-$db = mysql_connect($DB_HOST, $DB_USER, $DB_PASS) or die(mysql_error());
-mysql_select_db($DB_NAME, $db) or die(mysql_error());
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
 
 //Edit dislpay.
 $editCallback = function($row) use ($db)
 {
     $query = "SELECT * FROM `panel` WHERE `id` = '{$row['id']}'";
-    $result = mysql_query($query, $db) or die(mysql_error());
-    $data = mysql_fetch_assoc($result);
+    $result = $db->query($query) or die(mysqli_error($db));
+    $data = $result->fetch_assoc();
+    $result->free();
     $header = array(
           'id'          => 'id'
         , 'name'        => 'Name'
@@ -52,9 +52,12 @@ $headers = array(
 );
 
 // Execute query and show table.
-$result = mysql_query($query, $db) or die(mysql_error());
+$result = $db->query($query) or die(mysqli_error($db));
 t_scroll_table($result, $headers, $editId, $editCallback);
+$result->free();
+
+// Layout end.
+$db->close();
+t_end();
 
 ?>
-
-<?php t_end(); ?>
