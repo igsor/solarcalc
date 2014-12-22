@@ -34,7 +34,7 @@ foreach($stock as $key => $value) {
 <!---------------------- LOAD TABLE -------------------------->
 
 <table style="display:none">
-  <tr class="tablerow" style="display:none" id="tpl_product">
+  <tr class="tablerow" id="tpl_product">
     <td>
 
       <!------------------------------ PRODUCT SELECTION ------------------------------>
@@ -96,7 +96,7 @@ foreach($stock as $key => $value) {
 
 <!---------------------- MAIN FORM -------------------------->
 
-<form action="test/test.php" method="post" id="loadForm">
+<form action="project_config.php" method="post" id="loadForm">
 
 <h2>General information</h2>
 

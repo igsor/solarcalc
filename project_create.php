@@ -192,7 +192,7 @@ if (isset($_POST['doCreateProject']))
 
     //////////// Panel ////////////
 
-    if (isset($INPUT['battery'])) {
+    if (isset($INPUT['panel']) and count($INPUT['panel']) > 0) {
         // Get ids.
         $panel_data = unique_product($INPUT['panel'], $db);
         $panel_id = array_keys($panel_data);
@@ -242,7 +242,7 @@ if (isset($_POST['doCreateProject']))
 
     //////////// Battery ////////////
 
-    if (isset($INPUT['battery'])) {
+    if (isset($INPUT['battery']) and count($INPUT['battery']) > 0) {
         // Get ids.
         $battery_data = unique_product($INPUT['battery'], $db);
         $battery_id = array_keys($battery_data);
@@ -305,7 +305,7 @@ if (isset($_POST['doCreateProject']))
 
     //////////// Inverter ////////////
 
-    if (isset($INPUT['inverter'])) {
+    if (isset($INPUT['inverter']) and count($INPUT['inverter']) > 0) {
         // Get ids.
         $inverter_data = unique_product($INPUT['inverter'], $db);
         $inverter_id = array_keys($inverter_data);
@@ -352,7 +352,7 @@ if (isset($_POST['doCreateProject']))
 
     //////////// Controller ////////////
 
-    if (isset($INPUT['controller'])) {
+    if (isset($INPUT['controller']) and count($INPUT['controller']) > 0) {
         // Get ids.
         $controller_data = unique_product($INPUT['controller'], $db);
         $controller_id = array_keys($controller_data);
@@ -626,13 +626,13 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <h2>Project Metadata</h2>
 <form action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="POST">
-<input type="hidden" name="battery" value='<?php echo key_exists('battery', $_POST) ? $_POST['battery'] : ''; ?>' />
-<input type="hidden" name="panel" value='<?php echo key_exists('panel', $_POST) ? $_POST['panel'] : ''; ?>' />
-<input type="hidden" name="inverter" value='<?php echo key_exists('inverter', $_POST) ? $_POST['inverter'] : ''; ?>' />
-<input type="hidden" name="controller" value='<?php echo key_exists('controller', $_POST) ? $_POST['controller'] : ''; ?>' />
-<input type="hidden" name="load" value='<?php echo key_exists('load', $_POST) ? $_POST['load'] : ''; ?>' />
-<input type="hidden" name="custom" value='<?php echo key_exists('custom', $_POST) ? $_POST['custom'] : ''; ?>' />
-<input type="hidden" name="sunhours" value='<?php echo key_exists('sunhours', $_POST) ? $_POST['sunhours'] : ''; ?>' />
+<?php echo isset($_POST['battery']) ? "<input type='hidden' name='battery' value='{$_POST['battery']}' />" : ''; ?>
+<?php echo isset($_POST['panel']) ? "<input type='hidden' name='panel' value='{$_POST['panel']}' />" : ''; ?>
+<?php echo isset($_POST['inverter']) ? "<input type='hidden' name='inverter' value='{$_POST['inverter']}' />" : ''; ?>
+<?php echo isset($_POST['controller']) ? "<input type='hidden' name='controller' value='{$_POST['controller']}' />" : ''; ?>
+<?php echo isset($_POST['load']) ? "<input type='hidden' name='load' value='{$_POST['load']}' />" : ''; ?>
+<?php echo isset($_POST['custom']) ? "<input type='hidden' name='custom' value='{$_POST['custom']}' />" : ''; ?>
+<?php echo isset($_POST['sunhours']) ? "<input type='hidden' name='sunhours' value='{$_POST['sunhours']}' />" : ''; ?>
 <table cellspacing=0 cellpadding=0 class="projecttable">
   <tr>
     <td class="tbl_key">Name</td>

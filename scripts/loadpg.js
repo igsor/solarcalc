@@ -31,7 +31,7 @@ function addLoadCustom(idx)
     // Set ids and names.
     custom.id = 'custom-' + idx;
     var inputs = getFormElements(custom);
-    for(var i=0; i<inputs.length; i++) {
+    for(var i=0; i<inputs.length; i++) { // FIXME: Could be replaced by for..each or for..of but need to check which is present
         inputs[i].name = inputs[i].name.replace('%i', idx);
         inputs[i].id   = inputs[i].id.replace('%i', idx);
     }
@@ -87,7 +87,7 @@ function addLoadProduct()
     // Set ids and names.
     row.id = 'product-' + loadMaxString;
     var inputs = getFormElements(row);
-    for(var i=0; i<inputs.length; i++) {
+    for(var i=0; i<inputs.length; i++) { // FIXME: Could be replaced by for..each or for..of but need to check which is present
         inputs[i].name = inputs[i].name.replace('%i', loadMaxString);
         inputs[i].id   = inputs[i].id.replace('%i', loadMaxString);
     }
