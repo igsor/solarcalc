@@ -14,7 +14,8 @@ include_once('common.php');
 
 // Table templates.
 include_once('tables.php');
-
+include_once('loadtable.php');
+// Measurement units.
 include_once('units.php');
 
 // EOF //
