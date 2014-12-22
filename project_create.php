@@ -15,16 +15,34 @@ foreach($serialized_keys as $key) {
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
 $db->autocommit(false);
 
+/**
+ * Traverses $INPUT[{panel, battery, controller, inverter}] and
+ * guarantees that each product appears only once. Amounts are
+ * summed up, if this is not the case.
+ * 
+ * Returns a dictionary id => amount.
+ */
+function unique_product($src, $db) {
+    $trg = array();
+    foreach($src as $key => $data) {
+        $id = $db->escape_string($data['product']);
+        $amount = $db->escape_string($data['amount']);
+        if (key_exists($id, $trg)) {
+            $trg[$id] += $amount;
+        } else {
+            $trg[$id] = $amount;
+        }
+    }
+
+    return $trg;
+}
+
 if (isset($_POST['doCreateProject']))
 {
-    // Form submitted; Write database
-
-    /************** CUSTOM LOADS ***************/
+    /******************************* CUSTOM LOADS *******************************/
 
     foreach($INPUT['custom'] as $key => $values) {
         if (isset($values['save'])) {
-            $stock = isset($values['stock']) ? $INPUT['load'][$key]['amount'] : 0;
-            // TODO: Input checking
             $db->query("
                 INSERT
                 INTO `load` (
@@ -36,12 +54,12 @@ if (isset($_POST['doCreateProject']))
                         , `stock`
                         )
                 VALUES (
-                          '{$values['name']}'
-                        , '{$values['power']}'
-                        , '{$values['type']}'
-                        , '{$values['voltage']}'
-                        , '{$values['price']}'
-                        , '$stock'
+                          '" . $db->escape_string($values['name']) . "'
+                        , '" . $db->escape_string($values['power']) . "'
+                        , '" . $db->escape_string($values['type']) . "'
+                        , '" . $db->escape_string($values['voltage']) . "'
+                        , '" . $db->escape_string($values['price']) . "'
+                        , '" . $db->escape_string($values['stock']) . "'
                        )
             ") or die(mysqli_error($db));
 
@@ -51,7 +69,7 @@ if (isset($_POST['doCreateProject']))
         }
     }
 
-    /************** PROJECT METADATA ****************/
+    /******************************* PROJECT METADATA *******************************/
 
     // Project metadata.
     $db->query("
@@ -69,26 +87,55 @@ if (isset($_POST['doCreateProject']))
             , `sunhours`
             )
         VALUES (
-              '{$_POST['project_name']}'
-            , '{$_POST['description']}'
-            , '{$_POST['client_name']}'
-            , '{$_POST['client_phone']}'
-            , '{$_POST['responsible_name']}'
-            , '{$_POST['responsible_phone']}'
-            , '{$_POST['location']}'
-            , '{$_POST['comment']}'
-            , '{$_POST['delivery']}'
-            , '{$_POST['sunhours']}'
+              '" . $db->escape_string($_POST['project_name']) . "'
+            , '" . $db->escape_string($_POST['description']) . "'
+            , '" . $db->escape_string($_POST['client_name']) . "'
+            , '" . $db->escape_string($_POST['client_phone']) . "'
+            , '" . $db->escape_string($_POST['responsible_name']) . "'
+            , '" . $db->escape_string($_POST['responsible_phone']) . "'
+            , '" . $db->escape_string($_POST['location']) . "'
+            , '" . $db->escape_string($_POST['comment']) . "'
+            , '" . $db->escape_string($_POST['delivery']) . "'
+            , '" . $db->escape_string($_POST['sunhours']) . "'
             )
     ") or die(mysqli_error($db));
 
     $project_id = $db->insert_id;
 
-    /*************** PROJECT DETAILS ****************/
+    /******************************* PROJECT DETAILS *******************************/
 
-    // Load.
+    //////////// Load ////////////
+
     if (isset($INPUT['load'])) {
-        foreach($INPUT['load'] as $idx => $load_cfg) { // FIXME: load_cfg input checking.
+        // Prepare insert/update statements.
+        $upd_stock = $db->prepare("UPDATE `load` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
+        $ins_load = $db->prepare("
+                INSERT
+                INTO `project_load` (
+                      `project`
+                    , `load`
+                    , `name`
+                    , `description`
+                    , `power`
+                    , `type`
+                    , `voltage`
+                    , `price`
+                    , `amount`
+                    , `daytime`
+                    , `nighttime`
+                    , `sold`
+                )
+                VALUES (
+                      '{$project_id}', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                )
+            ") or die(mysqli_error($db));
+
+        foreach($INPUT['load'] as $idx => $load_cfg) {
+            // Input checking.
+            foreach($load_cfg as $key => $value) {
+                $load_cfg[$key] = $db->escape_string($value);
+            }
+
             if ($load_cfg['product'] != 'custom') {
                 // Get load data
                 $result = $db->query("
@@ -107,56 +154,50 @@ if (isset($_POST['doCreateProject']))
                 ") or die(mysqli_error($db));
                 
                 $load_data = $result->fetch_assoc();
+                $result->free();
             } else {
-                $load_data = $INPUT['custom'][$idx]; // FIXME: Input checking.
+                $load_data = $INPUT['custom'][$idx];
+                // Input checking.
+                foreach($load_data as $key => $value) {
+                    $load_data[$key] = $db->escape_string($value);
+                }
                 $load_data['id'] = 'NULL'; // Not available.
                 $load_data['description'] = ''; // Not set in form.
             }
 
             // Insert data.
-            $db->query("
-                INSERT
-                INTO `project_load` (
-                      `project`
-                    , `load`
-                    , `name`
-                    , `description`
-                    , `power`
-                    , `type`
-                    , `voltage`
-                    , `price`
-                    , `amount`
-                    , `daytime`
-                    , `nighttime`
-                    , `sold`
-                )
-                VALUES (
-                      '{$project_id}'
-                    , '{$load_data['id']}'
-                    , '{$load_data['name']}'
-                    , '{$load_data['description']}'
-                    , '{$load_data['power']}'
-                    , '{$load_data['type']}'
-                    , '{$load_data['voltage']}'
-                    , '{$load_data['price']}'
-                    , '{$load_cfg['amount']}'
-                    , '{$load_cfg['dayhours']}'
-                    , '{$load_cfg['nighthours']}'
-                    , " . (isset($load_cfg['sell']) ? 'TRUE' : 'FALSE') . "
-                )
-            ") or die(mysqli_error($db));
+            $sell = (isset($load_cfg['sell']) ? 1 : 0);
+            $ins_load->bind_param('issdsddiddi'
+                , $load_data['id']
+                , $load_data['name']
+                , $load_data['description']
+                , $load_data['power']
+                , $load_data['type']
+                , $load_data['voltage']
+                , $load_data['price']
+                , $load_cfg['amount']
+                , $load_cfg['dayhours']
+                , $load_cfg['nighthours']
+                , $sell
+            ) or die(mysqli_error($db));
+            $ins_load->execute() or die(mysqli_error($db));
+
+            // Update stock.
+            if ($sell and $load_cfg['product'] != 'custom') { // Only if we sell and have the load in the database.
+                $upd_stock->bind_param('ii', $load_cfg['amount'], $load_data['id']) or die(mysqli_error($db));
+                $upd_stock->execute() or die(mysqli_error($db));
+            }
         }
     }
 
-    // Panel.
+    //////////// Panel ////////////
+
     if (isset($INPUT['battery'])) {
         // Get ids.
-        $panel_id = array();
-        foreach($INPUT['panel'] as $data) {
-            array_push($panel_id, $db->escape_string($data['product']));
-        }
-    
-        // FIXME: Probably we're faster to search / insert entries individually (see mysql insert..select man page); But this is a pain in the arse to code.
+        $panel_data = unique_product($INPUT['panel'], $db);
+        $panel_id = array_keys($panel_data);
+
+        // NOTE: Probably we're faster to search / insert entries individually (see mysql insert..select man page); But this is a pain in the arse to code.
         // Copy base data.
         $db->query("
             INSERT
@@ -185,27 +226,27 @@ if (isset($_POST['doCreateProject']))
                 `id` IN (" . join(',', $panel_id) . ")
         ") or die(mysqli_error($db));
     
-        // Update amount.
-        foreach($INPUT['panel'] as $data) {
-            // project_id and panel id should be unique as multiple entries of the same panel just increase the amount
-            $db->query("
-                UPDATE `project_panel`
-                SET
-                    `amount` = " . $db->escape_string($data['amount']) . "
-                WHERE
-                    `panel` = " . $db->escape_string($data['product']) . " AND `project` = $project_id 
-            ") or die(mysqli_error($db));
+        // Update stock and amount.
+        $upd_stock  = $db->prepare("UPDATE `panel` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_panel` SET `amount` = ? WHERE `panel` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        foreach($panel_data as $id => $amount) {
+            // project_id and panel id should be unique as multiple entries of the same panel in the same project just increase the amount (guaranteed by unique_product)
+
+            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_amount->execute() or die(mysqli_error($db));
+
+            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_stock->execute() or die(mysqli_error($db));
         }
     }
 
-    // Battery.
+    //////////// Battery ////////////
+
     if (isset($INPUT['battery'])) {
         // Get ids.
-        $battery_id = array();
-        foreach($INPUT['battery'] as $data) {
-            array_push($battery_id, $db->escape_string($data['product']));
-        }
-    
+        $battery_data = unique_product($INPUT['battery'], $db);
+        $battery_id = array_keys($battery_data);
+
         // Copy base data.
         $db->query("
             INSERT
@@ -250,25 +291,24 @@ if (isset($_POST['doCreateProject']))
                 `id` IN (" . join(',', $battery_id) . ")
         ") or die(mysqli_error($db));
     
-        // Update amount.
-        foreach($INPUT['battery'] as $data) {
-            $db->query("
-                UPDATE `project_battery`
-                SET
-                    `amount` = " . $db->escape_string($data['amount']) . "
-                WHERE
-                    `battery` = " . $db->escape_string($data['product']) . " AND `project` = $project_id 
-            ") or die(mysqli_error($db));
+        // Update stock and amount.
+        $upd_stock  = $db->prepare("UPDATE `battery` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_battery` SET `amount` = ? WHERE `battery` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        foreach($battery_data as $id => $amount) {
+            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_amount->execute() or die(mysqli_error($db));
+
+            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_stock->execute() or die(mysqli_error($db));
         }
     }
 
-    // Inverter.
+    //////////// Inverter ////////////
+
     if (isset($INPUT['inverter'])) {
         // Get ids.
-        $inverter_id = array();
-        foreach($INPUT['inverter'] as $data) {
-            array_push($inverter_id, $db->escape_string($data['product']));
-        }
+        $inverter_data = unique_product($INPUT['inverter'], $db);
+        $inverter_id = array_keys($inverter_data);
 
         // Copy base data.
         $db->query("
@@ -298,25 +338,24 @@ if (isset($_POST['doCreateProject']))
                 `id` IN (" . join(',', $inverter_id) . ")
         ") or die(mysqli_error($db));
 
-        // Update amount.
-        foreach($INPUT['inverter'] as $data) {
-            $db->query("
-                UPDATE `project_inverter`
-                SET
-                    `amount` = " . $db->escape_string($data['amount']) . "
-                WHERE
-                    `inverter` = " . $db->escape_string($data['product']) . " AND `project` = $project_id 
-            ") or die(mysqli_error($db));
+        // Update stock and amount.
+        $upd_stock  = $db->prepare("UPDATE `inverter` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_inverter` SET `amount` = ? WHERE `inverter` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        foreach($inverter_data as $id => $amount) {
+            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_amount->execute() or die(mysqli_error($db));
+
+            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_stock->execute() or die(mysqli_error($db));
         }
     }
 
-    // Controller.
+    //////////// Controller ////////////
+
     if (isset($INPUT['controller'])) {
         // Get ids.
-        $controller_id = array();
-        foreach($INPUT['controller'] as $data) {
-            array_push($controller_id, $db->escape_string($data['product']));
-        }
+        $controller_data = unique_product($INPUT['controller'], $db);
+        $controller_id = array_keys($controller_data);
 
         // Copy base data.
         $db->query("
@@ -346,37 +385,28 @@ if (isset($_POST['doCreateProject']))
                 `id` IN (" . join(',', $controller_id) . ")
         ") or die(mysqli_error($db));
 
-        // Update amount.
-        foreach($INPUT['controller'] as $data) {
-            $db->query("
-                UPDATE `project_controller`
-                SET
-                    `amount` = " . $db->escape_string($data['amount']) . "
-                WHERE
-                    `controller` = " . $db->escape_string($data['product']) . " AND `project` = $project_id 
-            ") or die(mysqli_error($db));
+        // Update stock and amount.
+        $upd_stock  = $db->prepare("UPDATE `controller` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_controller` SET `amount` = ? WHERE `controller` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        foreach($controller_data as $id => $amount) {
+            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_amount->execute() or die(mysqli_error($db));
+
+            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
+            $upd_stock->execute() or die(mysqli_error($db));
         }
     }
 
+    /******************************* WRAP UP *******************************/
+
+    // Commit all the data at once.
     $db->commit() or die("TRANSACTION FAILED");
-
-    // Rewrite POST structure.
-    // Remove custom loads which have been added to the database already.
-    // FIXME: Actually unnecessary since we redirect.
-    if (isset($INPUT['load'])) {
-        foreach($INPUT['load'] as $key => $values) {
-            if ($values['product'] != 'custom' and isset($INPUT['custom'][$key])) {
-                unset($INPUT['custom'][$key]);
-            }
-        }
-    }
-
-    $_POST['custom'] = serialize($INPUT['custom']);
-    $_POST['load']   = serialize($INPUT['load']);
 
     // Redirect
     header("Location: project_overview.php");
 }
+
+/******************************* PAGE OUTPUT *******************************/
 
 // Start the layout.
 t_start();
@@ -387,15 +417,16 @@ $budget = array();
 
 <h2>Project summary</h2>
 
+<!-------------------------- LOAD -------------------------->
+
 <h3>Loads</h3>
 <?php 
-// FIXME: Switch to MYSQLI interface
-$link = mysql_connect($DB_HOST, $DB_USER, $DB_PASS);
-mysql_select_db($DB_NAME, $link);
 if (isset($INPUT['load']) and isset($INPUT['custom'])) {
-    $budget += t_loadtable($INPUT['load'], $INPUT['custom'], $link);
+    $budget += t_loadtable($INPUT['load'], $INPUT['custom'], $db);
 }
 ?>
+
+<!-------------------------- PANELS -------------------------->
 
 <h3>Panels</h3>
 
@@ -439,6 +470,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
     }
  ?>
 </table>
+
+<!-------------------------- BATTERIES -------------------------->
 
 <h3>Batteries</h3>
 
@@ -484,6 +517,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
     }
  ?>
 </table>
+
+<!-------------------------- CONTROLLERS, INVERTERS -------------------------->
 
 <h3>Extra hardware</h3>
 
@@ -553,6 +588,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
  ?>
 </table>
 
+<!-------------------------- BUDGET -------------------------->
+
 <h3>Budget</h3>
 
 <table cellspacing=0 cellpadding=0 class="loadtable">
@@ -565,7 +602,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 <?php
     $total = 0;
     foreach($budget as $data) {
-        $total += $subtotal = $data['price'] * $data['amount'];
+        $subtotal = $data['price'] * $data['amount'];
+        $total += $subtotal;
         ?>
             <tr>
                 <td><?php echo $data['product']; ?></td>
@@ -584,6 +622,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
  </tr>
 </table>
 
+<!-------------------------- PROJECT METADATA -------------------------->
+
 <h2>Project Metadata</h2>
 <form action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="POST">
 <input type="hidden" name="battery" value='<?php echo key_exists('battery', $_POST) ? $_POST['battery'] : ''; ?>' />
@@ -596,39 +636,39 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 <table cellspacing=0 cellpadding=0 class="projecttable">
   <tr>
     <td class="tbl_key">Name</td>
-    <td class="tbl_value"><input type="text" name="project_name" value="<?php echo key_exists('project_name', $_POST) ? $_POST['project_name'] : ''; ?>" required /></td>
+    <td class="tbl_value"><input type="text" name="project_name" value="" required /></td>
   </tr>
   <tr>
     <td class="tbl_key">Description</td>
-    <td class="tbl_value"><textarea cols=60 rows=5 name="description"><?php echo key_exists('description', $_POST) ? $_POST['description'] : ''; ?></textarea></td>
+    <td class="tbl_value"><textarea cols=60 rows=5 name="description"></textarea></td>
   </tr>
   <tr>
     <td class="tbl_key">Location</td>
-    <td class="tbl_value"><input type="text" name="location" value="<?php echo key_exists('location', $_POST) ? $_POST['location'] : ''; ?>" required /></td>
+    <td class="tbl_value"><input type="text" name="location" value="" required /></td>
   </tr>
   <tr>
     <td class="tbl_key">Client name</td>
-    <td class="tbl_value"><input type="text" name="client_name" value="<?php echo key_exists('client_name', $_POST) ? $_POST['client_name'] : ''; ?>" required /></td>
+    <td class="tbl_value"><input type="text" name="client_name" value="" required /></td>
   </tr>
   <tr>
     <td class="tbl_key">Client phone</td>
-    <td class="tbl_value"><input type="phone" name="client_phone" value="<?php echo key_exists('client_phone', $_POST) ? $_POST['client_phone'] : ''; ?>" /></td>
+    <td class="tbl_value"><input type="phone" name="client_phone" value="" /></td>
   </tr>
   <tr>
     <td class="tbl_key">Responsible person</td>
-    <td class="tbl_value"><input type="text" name="responsible_name" value="<?php echo key_exists('responsible_name', $_POST) ? $_POST['responsible_name'] : ''; ?>" required /></td>
+    <td class="tbl_value"><input type="text" name="responsible_name" value="" required /></td>
   </tr>
   <tr>
     <td class="tbl_key">Responsible phone</td>
-    <td class="tbl_value"><input type="phone" name="responsible_phone" value="<?php echo key_exists('responsible_phone', $_POST) ? $_POST['responsible_phone'] : ''; ?>" /></td>
+    <td class="tbl_value"><input type="phone" name="responsible_phone" value="" /></td>
   </tr>
   <tr>
     <td class="tbl_key">Delivery date</td>
-    <td class="tbl_value"><input type="date" name="delivery" value="<?php echo key_exists('delivery', $_POST) ? $_POST['delivery'] : ''; ?>" /></td>
+    <td class="tbl_value"><input type="date" name="delivery" value="" /></td>
   </tr>
   <tr>
     <td class="tbl_key">Comments</td>
-    <td class="tbl_value"><textarea cols=60 rows=5 name="comment"><?php echo key_exists('comment', $_POST) ? $_POST['comment'] : ''; ?></textarea></td>
+    <td class="tbl_value"><textarea cols=60 rows=5 name="comment"></textarea></td>
   </tr>
   <tr class="buttonrow">
     <td colspan=2><input type="submit" name="doCreateProject" value="Create project"></td>
@@ -636,4 +676,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 </table>
 </form>
 
-<?php t_end(); ?>
+<?php
+$db->close();
+t_end();
+?>
