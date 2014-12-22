@@ -11,5 +11,5 @@
 
 // Common symbols.
 include_once('common.php');
-
+include_once('composition.php');
 // EOF //

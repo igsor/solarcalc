@@ -17,7 +17,7 @@ t_start();
 // Create the form.
 ?>
 
-<form action="test.php" method="post" id="loadForm">
+<form action="project_config.php" method="post" id="loadForm">
 
 <h2>General information</h2>
 
@@ -110,7 +110,7 @@ t_start();
   </tr>
 </table>
 
-<input type="submit" class="acceptbutton" name="doSearchConfig" value="Search configurations >>" />
+<input type="submit" class="acceptbutton" value="Search configurations >>" />
 
 </form>
 

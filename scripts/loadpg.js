@@ -28,7 +28,7 @@ function addLoadProduct(obj)
 
     // Set ids, names, values and alike
     row.setAttribute('id', 'product-' + loadMaxString);
-    //var inputs = Array.apply(row.getElementsByTagName('input'), row.getElementsByTagName('select'));
+    //var inputs = Array.concat(row.getElementsByTagName('input').concat(row.getElementsByTagName('select'));
     var inputs = row.getElementsByTagName('input')
     for(var i=0; i<inputs.length; i++) {
         inputs[i].name = inputs[i].name.replace('%i', loadMaxString);
