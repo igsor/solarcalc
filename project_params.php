@@ -3,20 +3,35 @@
 require_once('init.php');
 
 // List of loads.
-$db = mysql_connect($DB_HOST, $DB_USER, $DB_PASS) or die(mysql_error());
-mysql_select_db($DB_NAME, $db) or die(mysql_error());
-$result = mysql_query("SELECT `id`, `name` FROM `load`", $db) or die(mysql_error());
-$loadProducts = '';
-while($row = mysql_fetch_assoc($result)) {
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
+$result = $db->query("SELECT `id`, `name`, `stock` FROM `load`") or die(mysqli_error($db));
+$loadProducts = ''; // SELECT options
+$stock = array(); // Stock information
+while($row = $result->fetch_assoc()) {
     $loadProducts .= "<option value='{$row['id']}'>{$row['name']}</option>\n";
+    $stock[$row['id']] = $row['stock'];
 }
+$result->free();
+$db->close();
 
 // Start the layout.
 t_start();
 
+
 // Create the form.
 ?>
 
+<!-- Insufficient stock warning stuff -->
+<script>
+<?php
+foreach($stock as $key => $value) {
+    echo "loadStock['$key'] = $value;\n";
+}
+?>
+</script>
+<div id="stockWarning" class="alert" style="display: none">Insufficient stock</div>
+
+<!-- Main form -->
 <form action="project_config.php" method="post" id="loadForm">
 
 <h2>General information</h2>
@@ -75,11 +90,11 @@ t_start();
         </tr>
         <tr>
           <td class="tbl_key">Price<?php echo T_Units::CFA; ?></td>
-          <td class="tbl_value"><input type="text" class="textinput resetDefault" name="custom[%i][price]" value="0.0" pattern="[\d.]*" /></td>
+          <td class="tbl_value"><input type="text" class="textinput" name="custom[%i][price]" value="0.0" pattern="[\d.]*" /></td>
         </tr>
         <tr>
           <td class="tbl_key">Stock</td>
-          <td class="tbl_value"><input type="checkbox" name="custom[%i][stock]" /></td>
+          <td class="tbl_value"><input type="number" class="textinput" name="custom[%i][stock]" value="0" pattern="\d+" required onchange="checkLoadStock(this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode)" /></td>
         </tr>
         <tr>
           <td class="tbl_key">Save</td>
@@ -90,10 +105,10 @@ t_start();
 
     <!---------------------- LOAD SELECTION PARAMETERS -------------------------->
 
-    <td><input type="number" class="textinput" name="load[%i][amount]"     value="1" pattern="\d*" min="1" /></td>
+    <td><input type="number" class="textinput" name="load[%i][amount]"     value="1" pattern="\d*" min="1" onchange="checkLoadStock(this.parentNode.parentNode)"/></td>
     <td><input type="number" class="textinput" name="load[%i][dayhours]"   value=""  pattern="\d*" min="0" /></td>
     <td><input type="number" class="textinput" name="load[%i][nighthours]" value=""  pattern="\d*" min="0" /></td>
-    <td><input type="checkbox" name="load[%i][sell]" /></td>
+    <td><input type="checkbox" name="load[%i][sell]" onchange="checkLoadStock(this.parentNode.parentNode)" /></td>
   </tr>
 
   <!---------------------- ADD LOAD SELECTBOX -------------------------->
