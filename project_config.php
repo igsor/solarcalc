@@ -2,7 +2,7 @@
 
 require_once("init.php");
 
-//require("templates/tmp.php");
+//require("test/template_tmp.php");
 
 // POST cleanup
 if (isset($_POST['load']['%i'])) {
