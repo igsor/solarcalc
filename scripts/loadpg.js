@@ -1,122 +1,150 @@
 
-/* GLOBALS */
+/************************** GLOBALS **************************/
 
 // Counter of how many rows generated (in total)
-var loadMaxCnt = 0;
+var loadMaxCounter = 0;
 var loadStock = new Object();
 
-// onchange event handler for products
-function changeLoadProduct(obj, row)
-{
-    if (obj.options[obj.selectedIndex].value == "remove") {
-        delLoadProduct(row);
-    } else if (obj.options[obj.selectedIndex].value == "custom") {
-        addLoadCustom(row);
-    } else {
-        delLoadCustom(row);
-    }
+/************************** HELPERS **************************/
+
+// Helper function to get all form elements of a node
+function getFormElements(parent) {
+    return [].slice.call(parent.getElementsByTagName('input'))
+           .concat([].slice.call(parent.getElementsByTagName('select')))
+           .concat([].slice.call(parent.getElementsByTagName('textarea')))
+           ;
 }
 
-// Add a row for a new product
-function addLoadProduct(obj)
+// Remove a product row.
+function delLoadProduct(idx)
 {
-    // Guard against invalid selection
-    if (obj.selectedIndex == 0) {
-        return;
-    }
-
-    // Create the new element
-    var tbody = document.getElementById('products').children[0];
-    var row = document.getElementById('tpl_product').cloneNode(true);
-    var loadMaxString = loadMaxCnt.toString();
-
-    // Set ids, names, values and alike
-    row.setAttribute('id', 'product-' + loadMaxString);
-    //var inputs = Array.concat(row.getElementsByTagName('input').concat(row.getElementsByTagName('select'));
-    var inputs = row.getElementsByTagName('input')
-    for(var i=0; i<inputs.length; i++) {
-        inputs[i].name = inputs[i].name.replace('%i', loadMaxString);
-        if (inputs[i].type != 'checkbox') { // Require only if visible
-            inputs[i].required = true;
-        }
-    }
-
-    // FIXME: I can't believe there's no way to do this...
-    var selects = row.getElementsByTagName('select');
-    for(var i=0; i<selects.length; i++) {
-        selects[i].name = selects[i].name.replace('%i', loadMaxString);
-    }
-
-    // Set select correctly
-    var rsel = row.getElementsByTagName('select')[0] // FIXME: Also very ugly
-    rsel.selectedIndex = obj.selectedIndex;
-    obj.selectedIndex = 0;
-
-    // Show the new row
-    tbody.insertBefore(row, tbody.children[tbody.children.length - 1]);
-    row.style.display = 'table-row';
-
-    // Add the custom form, if selected
-    if (rsel.options[rsel.selectedIndex].value == 'custom') {
-        addLoadCustom(row);
-    }
-
-    loadMaxCnt++; // Increment GLOBAL counter
-}
-
-// Remove a product row
-function delLoadProduct(obj)
-{
-    obj.parentNode.removeChild(obj);
+    var row = document.getElementById('product-' + idx);
+    row.parentNode.removeChild(row);
 }
 
 // Show the custom load table for a row
-function addLoadCustom(row)
+function addLoadCustom(idx)
 {
-    var tbl = row.getElementsByTagName('table')[0];
-    tbl.rows[0].cells[1].children[0].value = ''; // FIXME: Dep. on HTML
-    tbl.style.display = 'table-row';
+    // Create the node.
+    var custom = document.getElementById('tpl_custom').cloneNode(true);
+
+    // Set ids and names.
+    custom.id = 'custom-' + idx;
+    var inputs = getFormElements(custom);
+    for(var i=0; i<inputs.length; i++) {
+        inputs[i].name = inputs[i].name.replace('%i', idx);
+        inputs[i].id   = inputs[i].id.replace('%i', idx);
+    }
+
+    // Show the table.
+    document.getElementById('product-' + idx).cells[0].appendChild(custom);
+    custom.style.display = 'table-row';
 }
 
 // Hide the custom load table for a row
-function delLoadCustom(row)
+function delLoadCustom(idx)
 {
-    var tbl = row.getElementsByTagName('table')[0];
-    var name = tbl.rows[0].cells[1].children[0]; // FIXME: Dep. on HTML
-    if (name.value == '') { // Set the name to a non-empty value to match required attribute
-        name.value = ' ';
+    var custom = document.getElementById('custom-' + idx);
+    if (custom != null) {
+        custom.parentNode.removeChild(custom);
     }
-    tbl.style.display = 'none';
+}
+
+/************************** EVENT HANDLERS **************************/
+
+// Entrypoint for products' onChange event.
+function changeLoadProduct(evt)
+{
+    // Retrieve the globally unique row index from the id.
+    var idx = this.id.match(/\d+/)[0];
+    //var idx = evt.target.id.match(/\d+/)[0]; // Alternatively, grab it from the event.
+
+    // Decide on and execute the action.
+    if (this.options[this.selectedIndex].value == "remove") {
+        delLoadProduct(idx);
+    } else if (this.options[this.selectedIndex].value == "custom") {
+        addLoadCustom(idx);
+    } else {
+        delLoadCustom(idx);
+    }
+}
+
+// Add a row for a new product. Called upon the adder's onChange event.
+function addLoadProduct()
+{
+    // Get the select node.
+    var addSelect = document.getElementById('pselector');
+
+    // Guard against invalid selection.
+    if (addSelect.selectedIndex == 0) {
+        return;
+    }
+
+    // Create the new node. 
+    var row = document.getElementById('tpl_product').cloneNode(true);
+    var loadMaxString = loadMaxCounter.toString();
+
+    // Set ids and names.
+    row.id = 'product-' + loadMaxString;
+    var inputs = getFormElements(row);
+    for(var i=0; i<inputs.length; i++) {
+        inputs[i].name = inputs[i].name.replace('%i', loadMaxString);
+        inputs[i].id   = inputs[i].id.replace('%i', loadMaxString);
+    }
+
+    // Show the new row.
+    var tbody = document.getElementById('products').children[0];
+    tbody.insertBefore(row, tbody.children[tbody.children.length - 1]);
+    row.style.display = 'table-row';
+
+    // Set correct select options.
+    var productSelect = document.getElementById('pselect-' + loadMaxString);
+    productSelect.selectedIndex = addSelect.selectedIndex;
+    addSelect.selectedIndex = 0;
+    productSelect.addEventListener('change', changeLoadProduct, true);
+
+    // Add the custom form, if requested.
+    if (productSelect.options[productSelect.selectedIndex].value == 'custom') {
+        addLoadCustom(loadMaxString);
+    }
+
+    // Increment global counter.
+    loadMaxCounter++; 
 }
 
 // Check if the stock covers the requested number of pieces
-function checkLoadStock(row)
+function checkLoadStock(obj)
 {
-    // FIXME: Traversing object tree still seems very ugly to me.
-    var selector = row.children[0].children[0];
-    var sold   = row.children[4].children[0].checked;
-    var amount = parseInt(row.children[1].children[0].value);
+    // Get the globally unique row index from the object's id.
+    var idx = obj.id.match(/\d+/)[0];
+
+    // Get some objects.
+    var selector = document.getElementById('pselect-' + idx);
+    var sold   = document.getElementById('sell-' + idx);
+    var amount = parseInt(document.getElementById('amount-' + idx).value);
+
+    // Get the stock.
     var stock = 0;
-    
     if (selector.value == 'custom') {
-        stock = parseInt(row.children[0].children[1].children[0].children[5].children[1].children[0].value); // Yayyyyy, too much fun here :)
+        stock = parseInt(document.getElementById('cstock-' + idx).value);
     } else {
         stock = parseInt(loadStock[selector.value]);
     }
 
-    var wpar = row.children[4];
-    if (sold && stock < amount) {
-        // Show warning unless present
-        if (wpar.children.length == 1) {
+    // Check stock.
+    if (sold.checked && stock < amount) {
+        // Show warning unless present.
+        if (document.getElementById('stockWarning-' + idx) == null) {
             var warn = document.getElementById('stockWarning').cloneNode(true);
-            warn.removeAttribute('id');
-            wpar.appendChild(warn);
+            warn.id = 'stockWarning-' + idx;
+            sold.parentNode.appendChild(warn);
             warn.style.display='inline';
         }
     } else {
-        // Remove warning if present
-        if (wpar.children.length > 1) {
-            wpar.removeChild(wpar.children[1]); // FIXME: Ugly but works
+        // Remove warning if present.
+        var warn = document.getElementById('stockWarning-' + idx);
+        if (warn != null) {
+            warn.parentNode.removeChild(warn);
         }
     }
 }
