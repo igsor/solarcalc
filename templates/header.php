@@ -5,4 +5,6 @@
   <link rel="stylesheet" type="text/css" href="styles/tables.css" />
 
   <script src="scripts/loadpg.js"></script>
+  <script src="scripts/toggleTable.js"></script>
+
 </head>

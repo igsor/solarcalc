@@ -1,7 +1,7 @@
 <?php
 
 
-function t_loadTable($load, $custom, $db) {
+function t_loadTable($load, $custom, $database) {
 
     $price = array();
 
@@ -18,24 +18,22 @@ function t_loadTable($load, $custom, $db) {
     foreach ($load as $key => $element) {
         echo "<tr class='tablerow'>";
         if ($element["product"] != "custom") {
-            $query     = "SELECT  `name`, `power`, `price` FROM `load` WHERE `id` = '{$element['product']}'";
-            $result    = mysql_query($query, $db) or die(mysql_error());
-            $name      = mysql_fetch_assoc($result);
-            $loadname  = $name["name"];
-            $loadpower = $name["power"];
-            $loadprice = $name["price"];
+            $query     = "SELECT  `name`, `power`, `price` FROM `load` WHERE `id` = ". $database->escape_string($element['product']);
+            $result    = $database->query($query) or die(mysqli_error($database));
+            $data      = $result->fetch_assoc();
+            $result->free();
            
-            echo "<td>$loadname</td>";
+            echo "<td>{$data['name']}</td>";
             echo "<td>{$element['amount']}</td>";
             echo "<td>{$element['dayhours']}</td>";
             echo "<td>{$element['nighthours']}</td>";
-            echo "<td>$loadpower</td>";
+            echo "<td>{$data['power']}</td>";
 
-            if (key_exists("sell",$element)) {
+            if (isset($element['sell'])) {
                 array_push($price, array (
-                    "product" => $loadname,
+                    "product" => $data['name'],
                     "amount"  => $element["amount"],
-                    "price"   => $loadprice,
+                    "price"   => $data['price'],
                     ) );
             }
     
@@ -47,7 +45,7 @@ function t_loadTable($load, $custom, $db) {
             echo "<td>{$element['nighthours']}</td>";
             echo "<td>{$custom[$key]['power']}</td>";
 
-            if (key_exists("sell",$element)) {
+            if (isset($element['sell'])) {
                 array_push($price, array (
                     "product" => $custom[$key]["name"],
                     "amount"  => $element["amount"],
@@ -65,6 +63,28 @@ function t_loadTable($load, $custom, $db) {
     return $price;
 };
 
+function t_createOverview($variable, $string, $database) {
+    $Overview = array();
+    foreach ($variable[$string] as $value) {
+        $query = "SELECT `name` FROM `$string` WHERE `id` = ". $database->escape_string($value['product']);
+        $result = $database->query($query) or die(mysqli_error($database));
+        $name = $result->fetch_assoc();
+        $result->free();
+        array_push($Overview, "<div class='amount'>{$value['amount']}x</div> {$name['name']}");
+    };
+    echo join('<br/>', $Overview);
+};
 
+
+function t_priceDetail($variable, $string, $database ) {
+    foreach ($variable[$string] as $value) {
+        $query = "SELECT `name`,`price` FROM `$string` WHERE `id` = " . $database->escape_string($value['product']);
+        $result = $database->query($query) or die(mysqli_error($database));
+        $name = $result->fetch_assoc();
+        $result->free();
+
+        echo "<tr><td>{$value['amount']}x{$name['name']}:</td><td style='text-align:right'>" . number_format($name['price'], "0", ".", "'") . "</td></tr>";
+    };
+};
 
 ?>

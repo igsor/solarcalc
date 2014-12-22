@@ -25,9 +25,12 @@ class T_Units
     // Other SI units
     const Kg    = ' <div class="unit" title="Kilogramm">[Kg]</div>';
     const M     = ' <div class="unit" title="Meter">[M]</div>';
-    const H     = ' <div class="unit" title="Hour">[H]</div>';
     const DEG   = ' <div class="unit" title="Celsius">[&#176;C]</div>';
 
+    // Time units
+    const Y     = ' <div class="unit" title="Year">[Y]</div>';
+    const H     = ' <div class="unit" title="Hour">[H]</div>';
+ 
     // Currencies
     const CFA   = ' <div class="unit" title="Central African Franc">[CFA]</div>';
     const DOL   = ' <div class="unit" title="Dollar">[$]</div>';

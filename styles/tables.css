@@ -67,3 +67,7 @@ table {
   padding-left: 6px;
 }
 
+.configurationSelected {
+  background-color:  #cccccc;
+  border: 10px solid black;
+}
