@@ -19,3 +19,12 @@ function tableToggler(tableHead, table1, table2) {
         tableHead.classList.remove('configurationSelected');
     }
 }
+
+function toggleAdd() {
+    var obj = document.getElementById('addTable');
+    if (obj.style.display == '' || obj.style.display == 'none') {
+        obj.style.display = 'inline';
+    } else {
+        obj.style.display = 'none';
+    }
+}

@@ -88,3 +88,6 @@ a.contactlink:hover {
     padding: 0px;
 }
 
+#addTable {
+    display: none;
+}

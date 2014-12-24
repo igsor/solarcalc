@@ -6,7 +6,7 @@
  *
  */
 
-function t_scroll_table($result, $headers, $editId='', $editCallback=null)
+function t_scroll_table($result, $headers, $editId='', $editCallback=null, $addCallback=null)
 {
     // Surrounding div's.
     echo "<div class='fixed-table-container'><div class='header-background'> </div><div class='fixed-table-container-inner'>";
@@ -20,16 +20,16 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null)
 
     // Table body.
     while ($row = $result->fetch_assoc()) {
-    	echo "<tr>";
+    	echo "<tr id='edit-{$row['id']}'>";
         $first = true;
         foreach($headers as $colname => $title) {
             if ($first) {
                 $first = false;
+                $query_string = preg_replace('/edit=\d+&?/', '', $_SERVER['QUERY_STRING']); // Hacky solution to prevent double edit while still getting mode argument for hardware page
                 if ($editId == $row['id']) {
-                    echo "<td><a href='{$_SERVER['SCRIPT_NAME']}'>{$row[$colname]}</a></td>";
+                    echo "<td><a href='{$_SERVER['SCRIPT_NAME']}?$query_string'>{$row[$colname]}</a></td>";
                 } else {
-                    $query_string = preg_replace('/edit=\d+&?/', '', $_SERVER['QUERY_STRING']); // Hacky solution to prevent double edit while still getting mode argument for hardware page
-                    echo "<td><a href='{$_SERVER['SCRIPT_NAME']}?edit={$row['id']}&$query_string'>{$row[$colname]}</a></td>";
+                    echo "<td><a href='{$_SERVER['SCRIPT_NAME']}?edit={$row['id']}&$query_string#edit-{$row['id']}'>{$row[$colname]}</a></td>";
                 }
             } else {
                 echo "<td>{$row[$colname]}</td>";
@@ -45,8 +45,17 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null)
 
     }
 
+    // Add table extra row.
+    if ($addCallback) {
+        echo "<tr id='add'><td><a onclick='toggleAdd()'>Add</a></td><td colspan='" . ($result->field_count - 1) . "'>";
+        $addCallback();
+        echo "</td></tr>";
+    }
+
+
     // Closing tags.
     echo "</table>";
+
     echo "</div></div>";
 }
 
