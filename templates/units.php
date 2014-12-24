@@ -25,7 +25,6 @@ class T_Units
     // Other SI units
     const Kg    = ' <div class="unit" title="Kilogramm">[Kg]</div>';
     const M     = ' <div class="unit" title="Meter">[M]</div>';
-    const DEG   = ' <div class="unit" title="Celsius">[&#176;C]</div>';
 
     // Time units
     const Y     = ' <div class="unit" title="Year">[Y]</div>';
@@ -38,6 +37,18 @@ class T_Units
     // Others
     const Percent = ' <div class="unit" title="Percent">[%]</div>';
     const Cycles  = ' <div class="unit" title="Cycles">[Cycles]</div>';
+    const DEG   = ' <div class="unit" title="Celsius">[&#176;C]</div>';
+
+    // SI: Meter, Kilogramm, Second, Ampere, Kelvin, Mol, Candela
+    // Joule: 1J = 1 kg * m**2 / s**2 = 1 Ws = 1 Nm
+    // Volt: 1V = 1 W/A = 1 J/C = 1 N*m / (A*s) = 1 kg * m**2 / (A * s**3)
+    // Watt = m**2 * kg / s**3
+    // Coulomb = A*s
+    // Newton = kg * m / s**2
+    // Ohm = m**2 * kg / (s**3 * A**2)
+    // Siemens = 1 / Ohm
+    // Tesla = kg / (s**2 * A)
+    // rad = 1
 
 };
 
