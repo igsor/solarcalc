@@ -77,6 +77,21 @@ if (isset($_POST['doEdit']) or isset($_POST['doAdd'])) {
         // Go to edit mode.
         $editId = $db->insert_id;
     }
+} else if (isset($_POST['doDelete'])) {
+    if ($editId == '') {
+        die('Argument error');
+    }
+
+    $db->query("
+        DELETE FROM
+            `load`
+        WHERE
+            `id` = '" . $db->escape_string($editId) . "'
+    ") or die(mysqli_error($db));
+
+    // FIXME: Action?
+    $editId = '';
+
 }
 
 

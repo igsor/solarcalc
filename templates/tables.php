@@ -38,9 +38,9 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null, $addC
     	echo "</tr>\n";
 
         if ($editId != '' and $editId == $row['id']) {
-            echo "<tr><td>&nbsp;</td><td colspan='" . ($result->field_count - 1) . "'>";
+            echo "<tr><td>&nbsp;</td><td colspan='" . ($result->field_count - 3) . "'>";
             $editCallback($row);
-            echo "</td></tr>";
+            echo "</td><td><form action='' method='POST'><input type='submit' name='doDelete' value='DEL'></form></td></tr>";
         }
 
     }
