@@ -28,3 +28,10 @@ function toggleAdd() {
         obj.style.display = 'none';
     }
 }
+
+function confirmDelete() {
+    if (window.confirm('Please confirm that you absolutely want to delete this item.')) {
+        document.getElementById('deleteForm').submit();
+    } else {
+    }
+}
