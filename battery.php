@@ -16,7 +16,7 @@ $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_conne
 // Handle actions.
 $fields = array('name', 'description', 'voltage', 'dod', 'loss', 'discharge', 'lifespan', 'capacity', 'max_const_current', 'max_peak_current', 'avg_const_current', 'max_humidity', 'max_temperature', 'price', 'stock');
 $optionals = array('description');
-$editId = handleModuleAction('panel', $fields, $optionals, $db, $editId, $_POST);
+$editId = handleModuleAction('battery', $fields, $optionals, $db, $editId, $_POST);
 
 /** PAGE CONTENT **/
 
