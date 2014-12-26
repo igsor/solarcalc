@@ -25,6 +25,11 @@ $db->autocommit(false);
 function unique_product($src, $db) {
     $trg = array();
     foreach($src as $key => $data) {
+        if (!isset($data['product']) or !isset($data['amount'])) {
+            t_argumentError(); // Fatal, so we stop here.
+            continue; // Obsolete but still here as a guard if t_argumentError isn't fatal.
+        }
+
         $id = $db->escape_string($data['product']);
         $amount = $db->escape_string($data['amount']);
         if (key_exists($id, $trg)) {
@@ -61,7 +66,7 @@ if (isset($_POST['doCreateProject']))
                         , '" . $db->escape_string($values['price']) . "'
                         , '" . $db->escape_string($values['stock']) . "'
                        )
-            ") or die(mysqli_error($db));
+            ") or die(mysqli_error($db)); // FIXME: Harden against missing input.
 
             // Rewrite load structure.
             $custom_id = $db->insert_id;
@@ -98,7 +103,7 @@ if (isset($_POST['doCreateProject']))
             , '" . $db->escape_string($_POST['delivery']) . "'
             , '" . $db->escape_string($_POST['sunhours']) . "'
             )
-    ") or die(mysqli_error($db));
+    ") or die(mysqli_error($db)); // FIXME: Harden against missing input.
 
     $project_id = $db->insert_id;
 
@@ -159,7 +164,7 @@ if (isset($_POST['doCreateProject']))
                 $load_data = $INPUT['custom'][$idx];
                 // Input checking.
                 foreach($load_data as $key => $value) {
-                    $load_data[$key] = $db->escape_string($value);
+                    $load_data[$key] = $db->escape_string($value); // FIXME: Harden against missing input.
                 }
                 $load_data['id'] = 'NULL'; // Not available.
                 $load_data['description'] = ''; // Not set in form.

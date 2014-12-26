@@ -15,19 +15,19 @@ $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_conne
 
 if (isset($_POST['doEdit']) or isset($_POST['doAdd'])) {
     // Handle form data.
-    $data['name']           = isset($_POST['name'])         ? $db->escape_string($_POST['name'])        : die('Not enough arguments');
+    $data['name']           = isset($_POST['name'])         ? $db->escape_string($_POST['name'])        : t_argumentError();
     $data['description']    = isset($_POST['description'])  ? $db->escape_string($_POST['description']) : ''; // Optional argument
-    $data['power']          = isset($_POST['power'])        ? $db->escape_string($_POST['power'])       : die('Not enough arguments');
-    $data['type']           = isset($_POST['type'])         ? $db->escape_string($_POST['type'])        : die('Not enough arguments');
-    $data['voltage']        = isset($_POST['voltage'])      ? $db->escape_string($_POST['voltage'])     : die('Not enough arguments');
-    $data['price']          = isset($_POST['price'])        ? $db->escape_string($_POST['price'])       : die('Not enough arguments');
-    $data['stock']          = isset($_POST['stock'])        ? $db->escape_string($_POST['stock'])       : die('Not enough arguments');
+    $data['power']          = isset($_POST['power'])        ? $db->escape_string($_POST['power'])       : t_argumentError();
+    $data['type']           = isset($_POST['type'])         ? $db->escape_string($_POST['type'])        : t_argumentError();
+    $data['voltage']        = isset($_POST['voltage'])      ? $db->escape_string($_POST['voltage'])     : t_argumentError();
+    $data['price']          = isset($_POST['price'])        ? $db->escape_string($_POST['price'])       : t_argumentError();
+    $data['stock']          = isset($_POST['stock'])        ? $db->escape_string($_POST['stock'])       : t_argumentError();
 
     // Edit response.
     if (isset($_POST['doEdit'])) {
         // Check if id present
         if ($editId == '') {
-            die('Argument error');
+            t_argumentError();
         }
 
         // Update the database.
@@ -79,7 +79,7 @@ if (isset($_POST['doEdit']) or isset($_POST['doAdd'])) {
     }
 } else if (isset($_POST['doDelete'])) {
     if ($editId == '') {
-        die('Argument error');
+        t_argumentError();
     }
 
     $db->query("

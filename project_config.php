@@ -2,6 +2,11 @@
 
 require_once("init.php");
 
+// Argument checking
+if (!isset($_POST['load']) or !isset($_POST['sunhours'])) {
+    t_argumentError();
+}
+
 // POST cleanup
 if (!isset($_POST['custom'])) {
     $_POST['custom'] = array();
