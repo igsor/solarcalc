@@ -11,5 +11,11 @@
 
 // Common symbols.
 include_once('common.php');
+
+// Common code for modules.
+include_once('modules.php');
+
+// Configuration search algorithms.
 include_once('composition.php');
+
 // EOF //

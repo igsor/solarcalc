@@ -13,87 +13,10 @@ if (key_exists('edit', $_GET)) {
 // Database connection.
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
 
-if (isset($_POST['doEdit']) or isset($_POST['doAdd'])) {
-    // Handle form data.
-    $data['name']           = isset($_POST['name'])         ? $db->escape_string($_POST['name'])        : t_argumentError();
-    $data['description']    = isset($_POST['description'])  ? $db->escape_string($_POST['description']) : ''; // Optional argument
-    $data['power']          = isset($_POST['power'])        ? $db->escape_string($_POST['power'])       : t_argumentError();
-    $data['type']           = isset($_POST['type'])         ? $db->escape_string($_POST['type'])        : t_argumentError();
-    $data['voltage']        = isset($_POST['voltage'])      ? $db->escape_string($_POST['voltage'])     : t_argumentError();
-    $data['price']          = isset($_POST['price'])        ? $db->escape_string($_POST['price'])       : t_argumentError();
-    $data['stock']          = isset($_POST['stock'])        ? $db->escape_string($_POST['stock'])       : t_argumentError();
-
-    // Edit response.
-    if (isset($_POST['doEdit'])) {
-        // Check if id present
-        if ($editId == '') {
-            t_argumentError();
-        }
-
-        // Update the database.
-        $db->query("
-            UPDATE
-                `load`
-            SET
-                  `name`        = '{$data['name']}'
-                , `description` = '{$data['description']}'
-                , `power`       = '{$data['power']}'
-                , `type`        = '{$data['type']}'
-                , `voltage`     = '{$data['voltage']}'
-                , `price`       = '{$data['price']}'
-                , `stock`       = '{$data['stock']}'        
-            WHERE
-                `id` = '" . $db->escape_string($editId) . "'
-        ") or die(mysqli_error($db));
-
-        // FIXME: Action?
-    }
-
-    // Add response.
-    if (isset($_POST['doAdd'])) {
-        // Update the database.
-        $db->query("
-            INSERT
-            INTO `load` (
-                  `name`
-                , `description`
-                , `power`
-                , `type`
-                , `voltage`
-                , `price`
-                , `stock`
-                )
-            VALUES (
-                  '{$data['name']}'
-                , '{$data['description']}'
-                , '{$data['power']}'
-                , '{$data['type']}'
-                , '{$data['voltage']}'
-                , '{$data['price']}'
-                , '{$data['stock']}'
-                )
-        ") or die(mysqli_error($db));
-
-        // Go to edit mode.
-        $editId = $db->insert_id;
-    }
-} else if (isset($_POST['doDelete'])) {
-    if ($editId == '') {
-        t_argumentError();
-    }
-
-    $db->query("
-        DELETE FROM
-            `load`
-        WHERE
-            `id` = '" . $db->escape_string($editId) . "'
-    ") or die(mysqli_error($db));
-
-    // FIXME: Action?
-    $editId = '';
-
-}
-
+// Handle actions.
+$fields = array('name', 'description', 'power', 'type', 'voltage', 'price', 'stock');
+$optionals = array('description');
+$editId = handleModuleAction('load', $fields, $optionals, $db, $editId, $_POST);
 
 /** PAGE CONTENT **/
 
@@ -118,7 +41,7 @@ $addCallback = function()
 function t_editableLoad($data, $submitButtonName, $id)
 {
     ?>
-        <form action="<?php /* FIXME: INSERT URL */ ?>" method="POST">
+        <form action="" method="POST">
         <table cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
             <?php
                 if (key_exists('id', $data)) {
@@ -136,7 +59,7 @@ function t_editableLoad($data, $submitButtonName, $id)
             </tr>
             <tr>
                 <td class="tbl_key">Description</td>
-                <td class="tbl_value"><textarea name="description" class="selectinput"><?php echo isset($data['description']) ? $data['description'] : ''; ?></textarea></td>
+                <td class="tbl_value"><textarea name="description"><?php echo isset($data['description']) ? $data['description'] : ''; ?></textarea></td>
             </tr>
             <tr>
                 <td class="tbl_key">Power<?php echo T_Units::W; ?></td>
@@ -165,7 +88,7 @@ function t_editableLoad($data, $submitButtonName, $id)
             <tr>
                 <td class="tbl_key"></td>
                 <td class="tbl_value">
-                    <input type="button" value="Cancel" />
+                    <input type="reset" value="Cancel" />
                     <input type="submit" name="<?php echo $submitButtonName; ?>" value="OK" />
                 </td>
             </tr>
@@ -175,7 +98,7 @@ function t_editableLoad($data, $submitButtonName, $id)
 }
 
 // Table query.
-$query = "SELECT `id`, `name`, `description`, `power`, `price`, `stock` FROM `load`"; // FIXME: Order
+$query = "SELECT `id`, `name`, `description`, `power`, `price`, `stock` FROM `load` ORDER BY `name`";
 $headers = array(
     'name'        => 'Name'
   , 'description' => 'Description'
