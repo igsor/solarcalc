@@ -193,6 +193,9 @@ if (isset($_POST['doCreateProject']))
                 $upd_stock->execute() or die(mysqli_error($db));
             }
         }
+
+        $ins_load->close();
+        $upd_stock->close();
     }
 
     //////////// Panel ////////////
@@ -243,6 +246,9 @@ if (isset($_POST['doCreateProject']))
             $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
             $upd_stock->execute() or die(mysqli_error($db));
         }
+
+        $upd_stock->close();
+        $upd_amount->close();
     }
 
     //////////// Battery ////////////
@@ -306,6 +312,9 @@ if (isset($_POST['doCreateProject']))
             $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
             $upd_stock->execute() or die(mysqli_error($db));
         }
+
+        $upd_stock->close();
+        $upd_amount->close();
     }
 
     //////////// Inverter ////////////
@@ -353,6 +362,9 @@ if (isset($_POST['doCreateProject']))
             $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
             $upd_stock->execute() or die(mysqli_error($db));
         }
+
+        $upd_stock->close();
+        $upd_amount->close();
     }
 
     //////////// Controller ////////////
@@ -400,6 +412,9 @@ if (isset($_POST['doCreateProject']))
             $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
             $upd_stock->execute() or die(mysqli_error($db));
         }
+
+        $upd_stock->close();
+        $upd_amount->close();
     }
 
     /******************************* WRAP UP *******************************/
