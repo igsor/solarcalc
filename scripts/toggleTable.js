@@ -35,3 +35,18 @@ function confirmDelete() {
     } else {
     }
 }
+
+function toggleDetail(divId) {
+	var divObj = document.getElementById(divId);
+    if (divObj.style.display == "") {
+        // first click
+        divObj.style.display = "inline";
+    }
+	else if (divObj.style.display == "none" ) {
+		divObj.style.display = "inline";	
+	}
+	else {
+		divObj.style.display = "none";	
+	}
+}
+

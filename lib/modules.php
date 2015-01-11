@@ -21,13 +21,23 @@
  * Input is checked for existence and escaped but no type check is executed.
  * 
  */
-function handleModuleAction($moduleName, $fields, $optionals, $db, $editId, $post)
+function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
 {
+    if (isset($post['doEdit']) or isset($post['doDelete'])) {
+        if (!isset($post['id'])) {
+            echo "id";
+            t_argumentError();
+        }
+
+        $editId = $db->escape_string($post['id']);
+    }
+
     if (isset($post['doEdit']) or isset($post['doAdd'])) {
         // Handle form data.
         foreach($fields as $fieldName) {
             if (!isset($post[$fieldName])) {
                 if (!in_array($fieldName, $optionals)) {
+                    echo $fieldName;
                     t_argumentError();
                 } else {
                     $data[$fieldName] = '';
@@ -39,15 +49,10 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $editId, $pos
 
         // Edit response.
         if (isset($post['doEdit'])) {
-            // Check if id present
-            if ($editId == '') {
-                t_argumentError();
-            }
-
             // Build the field-dependent parts of the UPDATE query.
             $update_fields = array();
             foreach($fields as $fieldName) {
-                array_push($update_fields, "`$fieldName` = '{$data[$fieldName]}'");
+                $update_fields[] =  "`$fieldName` = '{$data[$fieldName]}'";
             }
 
             // Update the database.
@@ -57,7 +62,7 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $editId, $pos
                 SET
                     " . join(', ', $update_fields) . "
                 WHERE
-                    `id` = '" . $db->escape_string($editId) . "'
+                    `id` = '{$editId}'
             ") or die(mysqli_error($db));
 
             // FIXME: Action?
@@ -87,16 +92,13 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $editId, $pos
             // Go to edit mode.
             return $db->insert_id;
         }
-    } else if (isset($post['doDelete'])) {
-        if ($editId == '') {
-            t_argumentError();
-        }
 
+    } else if (isset($post['doDelete'])) {
         $db->query("
             DELETE FROM
                 `${moduleName}`
             WHERE
-                `id` = '" . $db->escape_string($editId) . "'
+                `id` = '{$editId}'
         ") or die(mysqli_error($db));
 
         // FIXME: Action?
@@ -104,7 +106,7 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $editId, $pos
 
     }
 
-    return $editId;
+    return -1;
 }
 
 // EOF //

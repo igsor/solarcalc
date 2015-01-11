@@ -4,19 +4,20 @@ require_once('init.php');
 
 /** PARAMETERS **/
 
-// Edit parameter.
-$editId = '';
-if (key_exists('edit', $_GET)) {
-    $editId = $_GET['edit'];
-}
-
 // Database connection.
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
 
 // Handle actions.
 $fields = array('name', 'description', 'power', 'type', 'voltage', 'price', 'stock');
 $optionals = array('description');
-$editId = handleModuleAction('load', $fields, $optionals, $db, $editId, $_POST);
+if (($editId = handleModuleAction('load', $fields, $optionals, $db, $_POST)) < 0) {
+    // Edit parameter.
+    if (key_exists('edit', $_GET)) {
+        $editId = $_GET['edit'];
+    } else {
+        $editId = '';
+    }
+}
 
 /** PAGE CONTENT **/
 
@@ -30,72 +31,14 @@ $editCallback = function($row) use ($db)
     $result = $db->query($query) or die(mysqli_error($db));
     $data = $result->fetch_assoc();
     $result->free();
-    t_editableLoad($data, 'doEdit', 'editTable');
+    t_editableLoad([$data], 'doEdit', 'editTable');
 };
 
 $addCallback = function()
 {
-    t_editableLoad(array(), 'doAdd', 'addTable');
+    $data = array_with_defaults(['name', 'description', 'power', 'type', 'voltage', 'price', 'stock']);
+    t_editableLoad([$data], 'doAdd', 'addTable');
 };
-
-function t_editableLoad($data, $submitButtonName, $id)
-{
-    ?>
-        <form action="" method="POST">
-        <table cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
-            <?php
-                if (key_exists('id', $data)) {
-                    ?>
-                        <tr>
-                            <td class="tbl_key">id</td>
-                            <td class="tbl_value"><?php echo $data['id']; ?></td>
-                        </tr>
-                    <?php
-                }
-            ?>
-            <tr>
-                <td class="tbl_key">Name</td>
-                <td class="tbl_value"><input type="text" name="name" class="textinput" value="<?php echo isset($data['name']) ? $data['name'] : ''; ; ?>" required /></td>
-            </tr>
-            <tr>
-                <td class="tbl_key">Description</td>
-                <td class="tbl_value"><textarea name="description"><?php echo isset($data['description']) ? $data['description'] : ''; ?></textarea></td>
-            </tr>
-            <tr>
-                <td class="tbl_key">Power<?php echo T_Units::W; ?></td>
-                <td class="tbl_value"><input type="text" name="power" class="textinput" value="<?php echo isset($data['power']) ? $data['power'] : ''; ?>" pattern="[\d.]+" required /></td>
-            </tr>
-            <tr>
-                <td class="tbl_key">Type</td>
-                <td class="tbl_value">
-                    <select name="type" class="selectinput" required>
-                        <option value="DC" <?php echo ((!isset($data['type']) or (isset($data['type']) and $data['type'] == "DC")) ? 'selected' : ''); ?>>DC</option>
-                        <option value="AC" <?php echo ((isset($data['type']) and $data['type'] == "AC") ? 'selected' : ''); ?>>AC</option>
-                    </select>
-            </tr>
-            <tr>
-                <td class="tbl_key">Voltage<?php echo T_Units::V; ?></td>
-                <td class="tbl_value"><input type="text" name="voltage" class="textinput" value="<?php echo isset($data['voltage']) ? $data['voltage'] : ''; ?>" pattern="[\d.]+" required /></td>
-            </tr>
-            <tr>
-                <td class="tbl_key">Price<?php echo T_Units::CFA; ?></td>
-                <td class="tbl_value"><input type="text" name="price" class="textinput" value="<?php echo isset($data['price']) ? $data['price'] : ''; ?>" pattern="[\d.]+" required /></td>
-            </tr>
-            <tr>
-                <td class="tbl_key">Stock</td>
-                <td class="tbl_value"><input type="number" name="stock" class="textinput" value="<?php echo isset($data['stock']) ? $data['stock'] : ''; ?>" pattern="[+-]?[\d]+" required /></td>
-            </tr>
-            <tr>
-                <td class="tbl_key"></td>
-                <td class="tbl_value">
-                    <input type="reset" value="Cancel" />
-                    <input type="submit" name="<?php echo $submitButtonName; ?>" value="OK" />
-                </td>
-            </tr>
-        </table>
-        </form>
-    <?php
-}
 
 // Table query.
 $query = "SELECT `id`, `name`, `description`, `power`, `price`, `stock` FROM `load` ORDER BY `name`";
