@@ -39,6 +39,9 @@ function addLoadCustom(idx)
     // Show the table.
     document.getElementById('product-' + idx).cells[0].appendChild(custom);
     custom.style.display = 'table-row';
+
+    // Check stock.
+    checkLoadStock(custom);
 }
 
 // Hide the custom load table for a row
@@ -110,6 +113,9 @@ function addLoadProduct()
 
     // Increment global counter.
     loadMaxCounter++; 
+
+    // Check stock.
+    checkLoadStock(row);
 }
 
 // Check if the stock covers the requested number of pieces

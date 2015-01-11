@@ -48,10 +48,10 @@ foreach($stock as $key => $value) {
 
     <!---------------------- PRODUCT PARAMETERS -------------------------->
 
-    <td><input type="number" class="textinput" id="amount-%i" name="load[%i][amount]"     value="1" pattern="\d*" min="1" onchange="checkLoadStock(this)" required /></td>
-    <td><input type="number" class="textinput" id="dayhr-%i" name="load[%i][dayhours]"   value=""  pattern="\d*" min="0" required /></td>
-    <td><input type="number" class="textinput" id="nighthr-%i" name="load[%i][nighthours]" value=""  pattern="\d*" min="0" required /></td>
-    <td><input type="checkbox" id="sell-%i" name="load[%i][sell]" onchange="checkLoadStock(this)" /></td>
+    <td><input type="number" class="textinput" id="amount-%i" name="load[%i][amount]"     value="1" pattern="\d+" min="1" onchange="checkLoadStock(this)" required /></td>
+    <td><input type="number" class="textinput" id="dayhr-%i" name="load[%i][dayhours]"   value=""  pattern="\d+" min="0" required /></td>
+    <td><input type="number" class="textinput" id="nighthr-%i" name="load[%i][nighthours]" value=""  pattern="\d+" min="0" required /></td>
+    <td><input type="checkbox" checked id="sell-%i" name="load[%i][sell]" onchange="checkLoadStock(this)" /></td>
   </tr>
 </table>
 
@@ -74,19 +74,19 @@ foreach($stock as $key => $value) {
     </tr>
     <tr>
         <td class="tbl_key">Power<?php echo T_Units::W; ?></td>
-        <td class="tbl_value"><input type="text" class="textinput" id="cpower-%i" name="custom[%i][power]" value="0.0" pattern="[\d.]*" required /></td>
+        <td class="tbl_value"><input type="text" class="textinput" id="cpower-%i" name="custom[%i][power]" value="0.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
         <td class="tbl_key">Voltage<?php echo T_Units::V; ?></td>
-        <td class="tbl_value"><input type="text" class="textinput" id="cvoltage-%i" name="custom[%i][voltage]" value="12.0" pattern="[\d.]*" required /></td>
+        <td class="tbl_value"><input type="text" class="textinput" id="cvoltage-%i" name="custom[%i][voltage]" value="12.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
         <td class="tbl_key">Price<?php echo T_Units::CFA; ?></td>
-        <td class="tbl_value"><input type="text" class="textinput" id="cprice-%i" name="custom[%i][price]" value="0.0" pattern="[\d.]*" required /></td>
+        <td class="tbl_value"><input type="text" class="textinput" id="cprice-%i" name="custom[%i][price]" value="0.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
         <td class="tbl_key">Stock</td>
-        <td class="tbl_value"><input type="number" class="textinput" id="cstock-%i" name="custom[%i][stock]" value="0" pattern="\d+" required onchange="checkLoadStock(this)" /></td>
+        <td class="tbl_value"><input type="number" class="textinput" id="cstock-%i" name="custom[%i][stock]" value="1" pattern="\d+" required onchange="checkLoadStock(this)" /></td>
     </tr>
     <tr>
         <td class="tbl_key">Save</td>

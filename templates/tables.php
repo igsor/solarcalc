@@ -40,7 +40,7 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null, $addC
         if ($editId != '' and $editId == $row['id']) {
             echo "<tr><td>&nbsp;</td><td colspan='" . ($result->field_count - 3) . "'>";
             $editCallback($row);
-            echo "</td><td><form action='' method='POST' id='deleteForm'><input type='hidden' name='doDelete' value='on' /><input type='button' value='DEL' onclick='confirmDelete()'></form></td></tr>";
+            echo "</td><td><form action='' method='POST' id='deleteForm'><input type='hidden' name='id' value='{$editId}' /><input type='hidden' name='doDelete' value='on' /><input type='button' value='DEL' onclick='confirmDelete()'></form></td></tr>";
         }
 
     }
