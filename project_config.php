@@ -20,7 +20,7 @@ t_loadTable($_POST['load'], $_POST['custom'], $db);
 // $commonList = mergeLoads($_POST['load'], $_POST['custom']);
 // compute some stuff
 
-$solution = solarcalc($_POST['sunhours'], $_POST['load'], $_POST['custom']);
+$solution = solaradapter($_POST['sunhours'], $_POST['load'], $_POST['custom'], $db);
 ?>
 
 <table cellspacing=0 cellpadding=0 class="configtable">
@@ -62,20 +62,20 @@ foreach ($solution as $idx => $currentsol) {
         <td colspan=4> 
             <table cellpadding=0 cellspacing=0 class='tbl_detail' style='display:table-row' id='shortTable_<?php echo $idx; ?>'>
                 <tr>
-                    <td class='tbl_key'>Input power<? echo T_Units::V; ?></td>
-                    <td class='tbl_value'><?php echo $currentsol['numbers']['inputPower']; ?></td>
                     <td class='tbl_key'>Total price<? echo T_Units::CFA; ?></td>
                     <td class="tbl_value"><?php echo number_format($currentsol['numbers']['totalPrice'], "0", ".", "'"); ?></td>
+                    <td class='tbl_key'>Price per kwh<? echo T_Units::CFA; ?> </td>
+                    <td class='tbl_value'><?php echo number_format($currentsol['numbers']['pricekWh'],2,'.',"'"); ?></td>
                   </tr>
                   <tr>
                     <td class='tbl_key'>Battery capacity<? echo T_Units::Ah; ?></td>
                     <td class='tbl_value'><?php echo $currentsol['numbers']['batteryCapacity']; ?></td> 
-                    <td class='tbl_key'>Price per kwh<? echo T_Units::DOL; ?> </td>
-                    <td class='tbl_value'><?php echo $currentsol['numbers']['pricekWh']; ?></td>
+                    <td class='tbl_key'>Panel power<? echo T_Units::W; ?></td>
+                    <td class='tbl_value'><?php echo $currentsol['numbers']['panelPower']; ?></td> 
                   </tr>
                   <tr>
                     <td class='tbl_key'>Expected lifetime<? echo T_Units::Y; ?></td>
-                    <td class='tbl_value'><?php echo $currentsol['numbers']['lifetime']; ?></td> 
+                    <td class='tbl_value'><?php echo number_format($currentsol['numbers']['lifetime'],1,'.',"'"); ?></td> 
                     <td class='tbl_key'>In stock</td>
                     <td class='tbl_value'><?php echo $currentsol['numbers']['inStock']; ?></td>
                   </tr>
@@ -84,62 +84,92 @@ foreach ($solution as $idx => $currentsol) {
             <!--  Add data to long overview table -->
             <table cellpadding=0 cellspacing=0 class='tbl_detail' style='display:none' id='longTable_<?php echo $idx; ?>'>
                 <tr>
-                    <td class="tbl_key">Input power<? echo T_Units::V; ?></td>
-                    <td class="tbl_value"><?php echo $currentsol['numbers']['inputPower']; ?></td>
-                </tr>
-                <tr>
-                    <td class="tbl_key">Total price<? echo T_Units::CFA; ?></td>
-                    <td class="tbl_value"><?php echo number_format($currentsol['numbers']['totalPrice'], "0", ".", "'"); ?></td>
-                </tr>
-                <tr>
-                    <td class="tbl_key">Battery capacity<? echo T_Units::Ah; ?></td>
-                    <td class="tbl_value"><?php echo $currentsol['numbers']['batteryCapacity']; ?></td>
-                </tr>
-                <tr>
-                    <td class="tbl_key">Price per kwh<? echo T_Units::DOL; ?></td>
-                    <td class="tbl_value"><?php echo $currentsol['numbers']['pricekWh']; ?></td>
-                </tr>
-                <tr>
-                    <td class="tbl_key">Expected lifetime<? echo T_Units::Y; ?></td>
-                    <td class="tbl_value"><?php echo $currentsol['numbers']['lifetime']; ?></td>
-                </tr>
-                <tr>
-                    <td class="tbl_key">In stock</td>
-                    <td class="tbl_value"><?php echo $currentsol['numbers']['inStock']; ?></td>
-                </tr>
-                <tr>
-                    <td class="tbl_key">Battery reserve<? echo T_Units::Ah; ?></td>
-                    <td class="tbl_value"><?php echo $currentsol['numbers']['batteryReserve']; ?></td>
-                </tr>
-                <tr>
-                    <td class="tbl_key">Price detail<? echo T_Units::CFA; ?></td>
-                    <td class="tbl_value">
-                        <table class="tbl_detail">
-
-                            <?php
-                            t_priceDetail($currentsol, 'panel', $db);
-                            t_priceDetail($currentsol, 'battery', $db);
-                            t_priceDetail($currentsol, 'controller', $db);
-                            t_priceDetail($currentsol, 'inverter', $db);
-                            ?>
-
+                    <td>
+                        <table cellpadding=0 cellspacing=0 class='tbl_detail_long' style='display:table-row' id='longTable_<?php echo $idx; ?>'>
+                            <tr>
+                                <td class="tbl_key">In stock</td>
+                                <td class="tbl_value"><?php echo $currentsol['numbers']['inStock']; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Total price<? echo T_Units::CFA; ?></td>
+                                <td class="tbl_value"><?php echo number_format($currentsol['numbers']['totalPrice'], "0", ".", "'"); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Price per kwh<? echo T_Units::CFA; ?></td>
+                                <td class="tbl_value"><?php echo number_format($currentsol['numbers']['pricekWh'],2,'.',"'"); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Price detail<? echo T_Units::CFA; ?></td>
+                                <td class="tbl_value">
+                                    <table class="tbl_detail">
+            
+                                        <?php
+                                        t_priceDetail($currentsol, 'panel', $db);
+                                        t_priceDetail($currentsol, 'battery', $db);
+                                        t_priceDetail($currentsol, 'controller', $db);
+                                        t_priceDetail($currentsol, 'inverter', $db);
+                                        ?>
+            
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>     
+                        <table cellpadding=0 cellspacing=0 class='tbl_detail_long' style='display:table-row' id='longTable_<?php echo $idx; ?>'>
+                            <tr>
+                                <td class="tbl_key">Input voltage<? echo T_Units::V; ?></td>
+                                <td class="tbl_value"><?php echo $currentsol['numbers']['inputVoltage']; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Expected lifetime<? echo T_Units::Y; ?></td>
+                                <td class="tbl_value"><?php echo number_format($currentsol['numbers']['lifetime'],1,'.',"'"); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Total battery capacity<? echo T_Units::Ah; ?></td>
+                                <td class="tbl_value"><?php echo $currentsol['numbers']['batteryCapacity']; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Unused battery capacity<? echo T_Units::Ah; ?></td>
+                                <td class="tbl_value"><?php echo number_format($currentsol['numbers']['batteryReserve'],1,'.',"'"); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Total panel power<? echo T_Units::W; ?></td>
+                                <td class="tbl_value"><?php echo $currentsol['numbers']['panelPower']; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="tbl_key">Unused panel power<? echo T_Units::W; ?></td>
+                                <td class="tbl_value"><?php echo number_format($currentsol['numbers']['panelReserve'],1,'.',"'"); ?></td>
+                            </tr>
+                            <tr class="buttonrow">
+                                <td colspan=1>
+                                    <form action="project_create.php" method="post">
+                                    <input type="submit" name="chosenSolution" value="To infinity and beyond... >>" />
+                                    <input type="hidden" name="load" value='<?php echo serialize($_POST['load']); ?>' />
+                                    <input type="hidden" name="custom" value='<?php echo serialize($_POST['custom']); ?> ' />
+                                    <input type="hidden" name="sunhours" value='<?php echo $_POST['sunhours']; ?>' />
+                                    <input type="hidden" name="panel" value='<?php echo serialize($currentsol['panel']); ?>' />
+                                    <input type="hidden" name="battery" value='<?php echo serialize($currentsol['battery']); ?>' />
+                                    <input type="hidden" name="controller" value='<?php echo serialize($currentsol['controller']); ?>' />
+                                    <input type="hidden" name="inverter" value='<?php echo serialize($currentsol['inverter']); ?>' />
+                                    </form>
+                                </td>
+                                <td colspan=1>
+                                    <form action="project_explanation.php" method="post"i target="_blank">
+                                    <input type="submit" name="explanationDemand" value="Are you talking to me? >>" />
+                                    <input type="hidden" name="load" value='<?php echo serialize($_POST['load']); ?>' />
+                                    <input type="hidden" name="custom" value='<?php echo serialize($_POST['custom']); ?> ' />
+                                    <input type="hidden" name="sunhours" value='<?php echo $_POST['sunhours']; ?>' />
+                                    <input type="hidden" name="panel" value='<?php echo serialize($currentsol['panel']); ?>' />
+                                    <input type="hidden" name="battery" value='<?php echo serialize($currentsol['battery']); ?>' />
+                                    <input type="hidden" name="controller" value='<?php echo serialize($currentsol['controller']); ?>' />
+                                    <input type="hidden" name="inverter" value='<?php echo serialize($currentsol['inverter']); ?>' />
+                                    </form>
+                                </td>
+                            </tr>
                         </table>
                     </td>
                 </tr>
-                <tr class="buttonrow">
-                    <td colspan=2>
-                        <form action="project_create.php" method="post">
-                        <input type="submit" name="chosenSolution" value="To infinity and beyond... >>" />
-                        <input type="hidden" name="load" value='<?php echo serialize($_POST['load']); ?>' />
-                        <input type="hidden" name="custom" value='<?php echo serialize($_POST['custom']); ?> ' />
-                        <input type="hidden" name="sunhours" value='<?php echo $_POST['sunhours']; ?>' />
-                        <input type="hidden" name="panel" value='<?php echo serialize($currentsol['panel']); ?>' />
-                        <input type="hidden" name="battery" value='<?php echo serialize($currentsol['battery']); ?>' />
-                        <input type="hidden" name="controller" value='<?php echo serialize($currentsol['controller']); ?>' />
-                        <input type="hidden" name="inverter" value='<?php echo serialize($currentsol['inverter']); ?>' />
-                        </form>
-                </tr>
-
             </table>
         </td>
     </tr>

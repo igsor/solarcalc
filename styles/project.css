@@ -111,6 +111,16 @@ td {
     font-weight: bold;
 }
 
+.tbl_detail_long {
+    width: 100%;
+}
+
+.tbl_detail_long td {
+    padding: 5px;
+    border: none;
+    font-size: small;
+}
+
 .buttonrow td {
     padding: 15px;
     text-align: right;

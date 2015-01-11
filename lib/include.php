@@ -17,5 +17,8 @@ include_once('modules.php');
 
 // Configuration search algorithms.
 include_once('composition.php');
-
+include_once('SolarList.php');
+include_once('SolarListClasses.php');
+include_once('solarcalc.php');
+include_once('CompositionData.php');
 // EOF //
