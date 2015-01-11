@@ -94,29 +94,29 @@ class CompositionData {
 
     private function setTotalPrice() {
         $this->totalPrice = 0;
-        foreach ($this->panel as $key => $device) {
-            $query = "SELECT `price` FROM `panel` WHERE `id` =  $key";
+        foreach ($this->panel as $id => $amount) {
+            $query = "SELECT `price` FROM `panel` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
-            $this->totalPrice += $device * $name["price"];        
+            $this->totalPrice += $amount * $name["price"];        
         }
-        foreach ($this->battery as $key => $device) {
-            $query = "SELECT `price` FROM `battery` WHERE `id` =  $key";
+        foreach ($this->battery as $id => $amount) {
+            $query = "SELECT `price` FROM `battery` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
-            $this->totalPrice += $device * $name["price"];
+            $this->totalPrice += $amount * $name["price"];
         }
-        foreach($this->controller as $key => $device) {
-            $query = "SELECT `price` FROM `controller` WHERE `id` =  {$device['product']}";
+        foreach($this->controller as $id => $amount) {
+            $query = "SELECT `price` FROM `controller` WHERE `id` =  {$amount['product']}";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
             $this->totalPrice += $name["price"];
         }
-        foreach($this->inverter as $key => $device) {
-            $query = "SELECT `price` FROM `inverter` WHERE `id` =  {$device['product']}";
+        foreach($this->inverter as $id => $amount) {
+            $query = "SELECT `price` FROM `inverter` WHERE `id` =  {$amount['product']}";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
@@ -126,8 +126,8 @@ class CompositionData {
 
     private function setBatteryCapacity() {
         $this->totalCapacity = 0;
-        foreach($this->battery as $key => $device) {
-            $query = "SELECT `capacity`, `dod` FROM `battery` WHERE `id` =  $key";
+        foreach($this->battery as $id => $amount) {
+            $query = "SELECT `capacity`, `dod` FROM `battery` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
@@ -138,8 +138,8 @@ class CompositionData {
     private function setExpectedLifetime() {
         $this->expectedLifetime = 0;
         $allCycles = array();
-        foreach($this->battery as $key => $device) {
-            $query = "SELECT `lifespan` FROM `battery` WHERE `id` =  $key";
+        foreach($this->battery as $id => $amount) {
+            $query = "SELECT `lifespan` FROM `battery` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
@@ -156,16 +156,16 @@ class CompositionData {
     
     private function setPriceperkWh() {
         $priceBat = array();
-        foreach($this->battery as $key => $device) {
-            $query = "SELECT `lifespan`, `price` FROM `battery` WHERE `id` =  $key";
+        foreach($this->battery as $id => $amount) {
+            $query = "SELECT `lifespan`, `price` FROM `battery` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
             array_push($priceBat, (float)($name['price'] / $name['lifespan'] * self::dayperyear ));
         }
         $pricePan = array();
-        foreach($this->panel as $key => $device) {
-            $query = "SELECT `price` FROM `panel` WHERE `id` =  $key";
+        foreach($this->panel as $id => $amount) {
+            $query = "SELECT `price` FROM `panel` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
@@ -173,8 +173,8 @@ class CompositionData {
         }
         $totalPricepYear = array_sum($pricePan) + array_sum($priceBat);
         $panelWatt = array();
-        foreach($this->panel as $key => $device) {
-            $query = "SELECT `power` FROM `panel` WHERE `id` = $key";
+        foreach($this->panel as $id => $amount) {
+            $query = "SELECT `power` FROM `panel` WHERE `id` = $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
@@ -217,12 +217,12 @@ class CompositionData {
         // X all daytime Watt
         // X all nightime Watt
         $this->panelPower = 0;
-        foreach($this->panel as $key => $device) {
-            $query = "SELECT `power` FROM `panel` WHERE `id` = $key";
+        foreach($this->panel as $id => $amount) {
+            $query = "SELECT `power` FROM `panel` WHERE `id` = $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $data = $result->fetch_assoc();
             $result->free();
-            $this->panelPower += $device * $data['power'];
+            $this->panelPower += $amount * $data['power'];
         }
         
         $daytimeWatt = 0;
@@ -245,22 +245,22 @@ class CompositionData {
 
     private function setInStock() {
         $this->inStock = "Yes";
-        foreach ($this->panel as $key => $device) {
-            $query = "SELECT `stock` FROM `panel` WHERE `id` =  $key";
+        foreach ($this->panel as $id => $amount) {
+            $query = "SELECT `stock` FROM `panel` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
-            if ($device['amount'] > $name['stock']) {
+            if ($amount > $name['stock']) {
                 $this->inStock = "No";
             }
         }
         if ($this->inStock == "Yes") {
-            foreach ($this->battery as $key => $device) {
-                $query = "SELECT `stock` FROM `battery` WHERE `id` =  $key";
+            foreach ($this->battery as $id => $amount) {
+                $query = "SELECT `stock` FROM `battery` WHERE `id` =  $id";
                 $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
                 $name = $result->fetch_assoc();
                 $result->free();
-                if ($device['amount'] > $name['stock']) {
+                if ($amount > $name['stock']) {
                     $this->inStock = "No";
                 }
             }
