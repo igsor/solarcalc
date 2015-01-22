@@ -61,7 +61,7 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
                     " . join(', ', $update_fields) . "
                 WHERE
                     `id` = '{$editId}'
-            ") or die(mysqli_error($db));
+            ") or fatal_error(mysqli_error($db));
 
             // FIXME: Action?
             return $editId;
@@ -85,7 +85,7 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
                 ) VALUES (
                     " . join(',', $insert_data). "
                 )
-            ") or die(mysqli_error($db));
+            ") or fatal_error(mysqli_error($db));
 
             // Go to edit mode.
             return $db->insert_id;
@@ -97,7 +97,7 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
                 `${moduleName}`
             WHERE
                 `id` = '{$editId}'
-        ") or die(mysqli_error($db));
+        ") or fatal_error(mysqli_error($db));
 
         // FIXME: Action?
         return '';
