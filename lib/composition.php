@@ -61,7 +61,7 @@ function solaradapter($sunhours, $load, $custom, $database) {
     //                  POSSIBLE BATTERY CONFIGURATIONS
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    $outputLists = new GlobLists();
+    $outputLists = new SearchConfig();
     $outputLists->goalValue =  $totalAh;
     $list        = new listUniqueBattery();
 
@@ -132,7 +132,7 @@ function solaradapter($sunhours, $load, $custom, $database) {
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //                  POSSIBLE PANEL CONFIGURATIONS
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    $outputLists  = new GlobLists();
+    $outputLists  = new SearchConfig();
     $outputLists->goalValue = $totalW;
     $list         = new list12VPanel();
 

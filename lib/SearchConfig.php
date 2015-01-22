@@ -1,5 +1,5 @@
 <?php
-class GlobLists
+class SearchConfig
 {
     public $solutions;
     public $failed;

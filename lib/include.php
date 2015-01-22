@@ -19,6 +19,6 @@ include_once('modules.php');
 include_once('composition.php');
 include_once('SolarList.php');
 include_once('SolarListClasses.php');
-include_once('GlobLists.php');
+include_once('SearchConfig.php');
 include_once('CompositionData.php');
 // EOF //
