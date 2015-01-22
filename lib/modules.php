@@ -25,7 +25,6 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
 {
     if (isset($post['doEdit']) or isset($post['doDelete'])) {
         if (!isset($post['id'])) {
-            echo "id";
             t_argumentError();
         }
 
@@ -37,7 +36,6 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
         foreach($fields as $fieldName) {
             if (!isset($post[$fieldName])) {
                 if (!in_array($fieldName, $optionals)) {
-                    echo $fieldName;
                     t_argumentError();
                 } else {
                     $data[$fieldName] = '';

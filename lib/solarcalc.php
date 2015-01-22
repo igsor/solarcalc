@@ -1,6 +1,7 @@
 <?php
 
-function solarCalc($element, $list, $bin, $data) {
+function solarCalc($element, $list, $bin, $data)
+{
     $list->appendElements($element);
     
     if (($list->elementinList($data->solutions)) || ($list->elementinList($data->failed))) {
@@ -15,16 +16,16 @@ function solarCalc($element, $list, $bin, $data) {
         // add $bin update if needed
         foreach ($bin as $element) {
       	    solarCalc($element, clone $list, $bin, $data);
-       	};
+       	}
     }
 }
 
-class GlobLists{
+class GlobLists
+{
     public $solutions;
     public $failed;
     public $goalValue;
     
-
     public function __construct()
     {
         $this->solutions    = array();

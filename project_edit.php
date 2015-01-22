@@ -94,14 +94,6 @@ project_module('Inverter', function() use ($db, $id) {
 // Layout end.
 $db->close();
 
-
-function confirmDelete() {
-    if (window.confirm('Please confirm that you absolutely want to delete this item.')) {
-        document.getElementById('deleteForm').submit();
-    } else {
-    }
-}
-
 ?>
 
 <form action='' method='POST' id='deleteForm'>

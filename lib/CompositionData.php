@@ -1,4 +1,7 @@
 <?php
+
+// FIXME: Use an external caching function instead of doing it in CompositionData
+// FIXME: Getters for members, such that they can be accessed individually.
 class CompositionData {
     public $battery;//
     public $panel;//
@@ -53,7 +56,7 @@ class CompositionData {
         $this->panelReserve         = 0;
         $this->inStock              = "Yes";
         $this->totalDeviceEnergy    = 0;
-        $this->panelPower            = 0;
+        $this->panelPower           = 0;
     }
 
     public function computation() {
@@ -266,5 +269,6 @@ class CompositionData {
             }
         }
     }
+};
 
-}
+

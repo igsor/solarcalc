@@ -1,6 +1,5 @@
 
 function tableToggler(tableHead, table1, table2) {
-
     var smallTable = document.getElementById(table1);
     var largeTable = document.getElementById(table2);
 
