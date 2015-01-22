@@ -47,7 +47,7 @@ function t_scroll_table($result, $headers, $editId='', $editCallback=null, $addC
 
     // Add table extra row.
     if ($addCallback) {
-        echo "<tr id='add'><td><a onclick='toggleAdd()'>Add</a></td><td colspan='" . ($result->field_count - 1) . "'>";
+        echo "<tr id='add'><td><a onclick=\"toggleVisibility(document.getElementById('addTable'))\">Add</a></td><td colspan='" . ($result->field_count - 1) . "'>";
         $addCallback();
         echo "</td></tr>";
     }

@@ -34,7 +34,7 @@ $solution = solaradapter($_POST['sunhours'], $_POST['load'], $_POST['custom'], $
 foreach ($solution as $idx => $currentsol) {
 
     // CONFIGROW: describes number and type of possible panel/battery/controller/inverter configurations
-    echo "<tr class='configrow' onclick='tableToggler(this, \"shortTable_$idx\", \"longTable_$idx\");'>";
+    echo "<tr class='configrow' onclick='toggleConfigOverview(this, \"shortTable_$idx\", \"longTable_$idx\");'>";
         
     echo "  <td>";
     t_createOverview($currentsol, 'panel', $db);

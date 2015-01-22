@@ -1,30 +1,32 @@
 
-function tableToggler(tableHead, table1, table2) {
-    var smallTable = document.getElementById(table1);
-    var largeTable = document.getElementById(table2);
+function toggleVisibility(obj, visibilityMode, defaultVisible)
+{
+    visibilityMode = visibilityMode || 'inline'; // display style, if visible.
+    defaultVisible = defaultVisible || false;    // first-click behaviour. true iff visible on page load.
 
-
-    if ((largeTable.style.display == 'none' || largeTable.style.display == '') && (smallTable.style.display == 'table-row' || smallTable.style.display == '')) {
-        largeTable.style.display = 'table-row';
-        smallTable.style.display = 'none';
-        tableHead.classList.add('configurationSelected');
-    } else if (largeTable.style.display == 'table-row' && smallTable.style.display == 'none') {
-        largeTable.style.display = 'none';
-        smallTable.style.display = 'table-row';
-        tableHead.classList.remove('configurationSelected');
-    } else {
-        smallTable.style.display = 'table-row';
-        largeTable.style.display = 'none';
-        tableHead.classList.remove('configurationSelected');
-    }
+    if (obj.style.display == "") { // first click
+        if (defaultVisible) {
+            obj.style.display = "none";
+        } else {
+            obj.style.display = visibilityMode;
+        }
+    } else if (obj.style.display == "none" ) {
+		obj.style.display = visibilityMode;
+	} else {
+		obj.style.display = "none";	
+	}
 }
 
-function toggleAdd() {
-    var obj = document.getElementById('addTable');
-    if (obj.style.display == '' || obj.style.display == 'none') {
-        obj.style.display = 'inline';
+function toggleConfigOverview(tableHead, table1, table2) {
+    // Toggle tables.
+    toggleVisibility(document.getElementById(table1), 'table-row', true);
+    toggleVisibility(document.getElementById(table2), 'table-row', false);
+
+    // Toggle header class.
+    if (tableHead.classList.contains('configurationSelected')) {
+        tableHead.classList.remove('configurationSelected');
     } else {
-        obj.style.display = 'none';
+        tableHead.classList.add('configurationSelected');
     }
 }
 
@@ -35,17 +37,4 @@ function confirmDelete() {
     }
 }
 
-function toggleDetail(divId) {
-	var divObj = document.getElementById(divId);
-    if (divObj.style.display == "") {
-        // first click
-        divObj.style.display = "inline";
-    }
-	else if (divObj.style.display == "none" ) {
-		divObj.style.display = "inline";	
-	}
-	else {
-		divObj.style.display = "none";	
-	}
-}
 
