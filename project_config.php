@@ -15,7 +15,7 @@ if (!isset($_POST['custom'])) {
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
 
 t_start();
-t_loadTable($_POST['load'], $_POST['custom'], $db);
+t_project_loadSummary($_POST['load'], $_POST['custom'], $db);
 
 // $commonList = mergeLoads($_POST['load'], $_POST['custom']);
 // compute some stuff
@@ -37,19 +37,19 @@ foreach ($solution as $idx => $currentsol) {
     echo "<tr class='configrow' onclick='toggleConfigOverview(this, \"shortTable_$idx\", \"longTable_$idx\");'>";
         
     echo "  <td>";
-    t_createOverview($currentsol, 'panel', $db);
+    t_project_moduleSummary($currentsol, 'panel', $db);
     echo "  </td>";
     
     echo "  <td>";
-    t_createOverview($currentsol, 'battery', $db);
+    t_project_moduleSummary($currentsol, 'battery', $db);
     echo "  </td>";
     
     echo "  <td>";
-    t_createOverview($currentsol, 'controller', $db);
+    t_project_moduleSummary($currentsol, 'controller', $db);
     echo "  </td>";
     
     echo "  <td>";
-    t_createOverview($currentsol, 'inverter', $db);
+    t_project_moduleSummary($currentsol, 'inverter', $db);
     echo "  </td>";
 
     echo "  </td>";
@@ -104,10 +104,10 @@ foreach ($solution as $idx => $currentsol) {
                                     <table class="tbl_detail">
             
                                         <?php
-                                        t_priceDetail($currentsol, 'panel', $db);
-                                        t_priceDetail($currentsol, 'battery', $db);
-                                        t_priceDetail($currentsol, 'controller', $db);
-                                        t_priceDetail($currentsol, 'inverter', $db);
+                                        t_project_modulePrice($currentsol, 'panel', $db);
+                                        t_project_modulePrice($currentsol, 'battery', $db);
+                                        t_project_modulePrice($currentsol, 'controller', $db);
+                                        t_project_modulePrice($currentsol, 'inverter', $db);
                                         ?>
             
                                     </table>

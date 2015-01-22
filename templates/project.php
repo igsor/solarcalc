@@ -1,6 +1,6 @@
 <?php
 
-function project_module($name, $table_fu)
+function t_project_editableModule($name, $table_fu)
 {
     ?>
         <div class="detailButton"> 
@@ -13,8 +13,7 @@ function project_module($name, $table_fu)
     <?php
 }
 
-function t_loadTable($load, $custom, $database) {
-
+function t_project_loadSummary($load, $custom, $database) {
     $price = array();
 
     echo '
@@ -75,7 +74,7 @@ function t_loadTable($load, $custom, $database) {
     return $price;
 };
 
-function t_createOverview($variable, $string, $database) {
+function t_project_moduleSummary($variable, $string, $database) {
     $Overview = array();
     foreach ($variable[$string] as $value) {
         $query = "SELECT `name` FROM `$string` WHERE `id` = ". $database->escape_string($value['product']);
@@ -87,7 +86,7 @@ function t_createOverview($variable, $string, $database) {
     echo join('<br/>', $Overview);
 };
 
-function t_priceDetail($variable, $string, $database ) {
+function t_project_modulePrice($variable, $string, $database ) {
     foreach ($variable[$string] as $value) {
         $query = "SELECT `name`,`price` FROM `$string` WHERE `id` = " . $database->escape_string($value['product']);
         $result = $database->query($query) or die(mysqli_error($database));

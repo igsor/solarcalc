@@ -66,27 +66,27 @@ function getData($db, $query)
     return $data;
 };
 
-project_module('Panel', function() use ($db, $id) {
+t_project_editableModule('Panel', function() use ($db, $id) {
     $data = getData($db, "SELECT * FROM `project_panel` WHERE `project` = '{$id}'");
     t_module_editablePanel($data, 'editPanel', 'editPanelTable');
 });
 
-project_module('Battery', function() use ($db, $id) {
+t_project_editableModule('Battery', function() use ($db, $id) {
     $data = getData($db, "SELECT * FROM `project_battery` WHERE `project` = '{$id}'");
     t_module_editableBattery($data, 'editBattery', 'editBatteryTable');
 });
 
-project_module('Load', function() use ($db, $id) {
+t_project_editableModule('Load', function() use ($db, $id) {
     $data = getData($db, "SELECT * FROM `project_load` WHERE `project` = '{$id}'");
     t_module_editableLoad($data, 'editLoad', 'editLoadTable');
 });
 
-project_module('Controller', function() use ($db, $id) {
+t_project_editableModule('Controller', function() use ($db, $id) {
     $data = getData($db, "SELECT * FROM `project_controller` WHERE `project` = '{$id}'");
     t_module_editableHardware($data, 'editController', 'editControllerTable');
 });
 
-project_module('Inverter', function() use ($db, $id) {
+t_project_editableModule('Inverter', function() use ($db, $id) {
     $data = getData($db, "SELECT * FROM `project_inverter` WHERE `project` = '{$id}'");
     t_module_editableHardware($data, 'editInverter', 'editInverterTable');
 });

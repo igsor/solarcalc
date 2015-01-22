@@ -442,7 +442,7 @@ $budget = array();
 <h3>Loads</h3>
 <?php 
 if (isset($INPUT['load']) and isset($INPUT['custom'])) {
-    $budget += t_loadtable($INPUT['load'], $INPUT['custom'], $db);
+    $budget += t_project_loadSummary($INPUT['load'], $INPUT['custom'], $db);
 }
 ?>
 
