@@ -17,6 +17,8 @@ $db->close();
 // Start the layout.
 t_start();
 
+// Some extra javascript
+echo '<script src="scripts/project_params.js"></script>';
 
 // Create the form.
 ?>
