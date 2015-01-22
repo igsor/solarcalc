@@ -37,7 +37,7 @@ $headers = array(
 
 // Execute query and show table.
 $result = $db->query($query) or die(mysqli_error($db));
-t_scroll_table($result, $headers, '', null, $addCallback);
+t_module_list($result, $headers, '', null, $addCallback);
 $result->free();
 
 // Layout end.

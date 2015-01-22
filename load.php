@@ -32,13 +32,13 @@ $editCallback = function($row) use ($db)
     $result = $db->query($query) or die(mysqli_error($db));
     $data = $result->fetch_assoc();
     $result->free();
-    t_editableLoad([$data], 'doEdit', 'editTable');
+    t_module_editableLoad([$data], 'doEdit', 'editTable');
 };
 
 $addCallback = function()
 {
     $data = array_with_defaults(['name', 'description', 'power', 'type', 'voltage', 'price', 'stock']);
-    t_editableLoad([$data], 'doAdd', 'addTable');
+    t_module_editableLoad([$data], 'doAdd', 'addTable');
 };
 
 // Table query.
@@ -53,7 +53,7 @@ $headers = array(
 
 // Execute query and show table.
 $result = $db->query($query) or die(mysqli_error($db));
-t_scroll_table($result, $headers, $editId, $editCallback, $addCallback);
+t_module_list($result, $headers, $editId, $editCallback, $addCallback);
 $result->free();
 
 // Layout end.

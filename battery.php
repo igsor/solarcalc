@@ -32,13 +32,13 @@ $editCallback = function($row) use ($db)
     $result = $db->query($query) or die(mysqli_error($db));
     $data = $result->fetch_assoc();
     $result->free();
-    t_editableBattery([$data], 'doEdit', 'editTable');
+    t_module_editableBattery([$data], 'doEdit', 'editTable');
 };
 
 $addCallback = function()
 {
     $data = array_with_defaults(['name', 'description', 'dod', 'voltage', 'loss', 'discharge', 'lifespan', 'capacity', 'max_const_current', 'max_peak_current', 'avg_const_current', 'max_humidity', 'max_temperature', 'price', 'stock']);
-    t_editableBattery([$data], 'doAdd', 'addTable');
+    t_module_editableBattery([$data], 'doAdd', 'addTable');
 };
 
 // Table query.
@@ -54,7 +54,7 @@ $headers = array(
 
 // Execute query and show table.
 $result = $db->query($query) or die(mysqli_error($db));
-t_scroll_table($result, $headers, $editId, $editCallback, $addCallback);
+t_module_list($result, $headers, $editId, $editCallback, $addCallback);
 $result->free();
 
 // Layout end.
