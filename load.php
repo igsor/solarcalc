@@ -4,6 +4,12 @@ require_once('init.php');
 
 /** PARAMETERS **/
 
+// Edit parameter.
+$editId = '';
+if (key_exists('edit', $_GET)) {
+    $editId = $_GET['edit'];
+}
+
 // Database connection.
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
 
