@@ -1,6 +1,6 @@
 <?php
 
-function detailNumbers($panel, $battery, $controller, $inverter, $load, $custom, $database, $sunhours) {
+function _ConfigCharacteristics($panel, $battery, $controller, $inverter, $load, $custom, $database, $sunhours) {
     $newComposition = new ConfigurationData($database, $battery, $panel, $load, $controller, $inverter, $custom, (float)($sunhours));
     $newComposition->computation();
     $numbers= array (
@@ -20,16 +20,7 @@ function detailNumbers($panel, $battery, $controller, $inverter, $load, $custom,
         $numbers['inputVoltage'] = 'Not standard Value';
     }
     return $numbers;
-};
-
-
-function makeDevice($numInd) {
-    $device = array ();
-    for ($i = 1; $i <= $numInd; $i++) {
-        array_push($device, array("product" => $i, "amount" => 1));
-    };
-    return $device;
-};
+}
 
 function solaradapter($sunhours, $load, $custom, $database) {
     // clean up data> if dayhours > sunhours -> nighthours += dayhours - sunhours, dayhours = sunhours
@@ -173,8 +164,8 @@ function solaradapter($sunhours, $load, $custom, $database) {
             foreach ($optBattery as $keyP => $valueP) {
                 array_push($refBat, array ('product' => $keyP, 'amount' => $valueP));
             };
-            $optController = makeDevice(1);
-            $optNumbers    = detailNumbers($optPanel, $optBattery, $optController, $optInverter, $load, $custom, $database, $sunhours);
+            $optController = [["product" => 1, "amount" => 1]];
+            $optNumbers    = _ConfigCharacteristics($optPanel, $optBattery, $optController, $optInverter, $load, $custom, $database, $sunhours);
             $allDevices    = array (
                 "panel"     => $refPanel,
                 "battery"   => $refBat,
