@@ -65,7 +65,6 @@ function solaradapter($sunhours, $load, $custom, $database) {
     $outputLists->goalValue =  $totalAh;
     $list        = new listUniqueBattery();
 
-    $elem0       = array ("type" => 0, "value" => 0);
     $bin         = array ();
     $query       = "SELECT  `id` AS `type`, `dod`, `loss`, `capacity` FROM `battery`";
     $result      = $database->query($query) or die(mysqli_error($database));
@@ -76,8 +75,7 @@ function solaradapter($sunhours, $load, $custom, $database) {
     };
     $result->free();
 
-    solarCalc($elem0, $list, $bin, $outputLists);
-    $outputLists->cleanUp();
+    $outputLists->calculation($list, $bin);
 
 
     $battery = array();
@@ -138,7 +136,6 @@ function solaradapter($sunhours, $load, $custom, $database) {
     $outputLists->goalValue = $totalW;
     $list         = new list12VPanel();
 
-    $elem0        = array ("type" => 0, "value" => 0);
     $bin          = array ();
     $query     = "SELECT  `id` AS `type`, `power` AS `value` FROM `panel`";
     $result    = $database->query($query) or die(mysqli_error($database));
@@ -148,8 +145,7 @@ function solaradapter($sunhours, $load, $custom, $database) {
     };
     $result->free();
 
-    solarCalc($elem0, $list, $bin, $outputLists);
-    $outputLists->cleanUp();
+    $outputLists->calculation($list, $bin);
 
 
     $panel = array();

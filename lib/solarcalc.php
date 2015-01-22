@@ -1,25 +1,4 @@
 <?php
-
-function solarCalc($element, $list, $bin, $data)
-{
-    $list->appendElements($element);
-    
-    if (($list->elementinList($data->solutions)) || ($list->elementinList($data->failed))) {
-        return;
-    } elseif (!$list->validElements()) {
-    	array_push($data->failed, $list->elements);
-        return;
-    } elseif ($list->success($data->goalValue)) {
-        array_push($data->solutions, $list->elements);
-        return;
-    } else {
-        // add $bin update if needed
-        foreach ($bin as $element) {
-      	    solarCalc($element, clone $list, $bin, $data);
-       	}
-    }
-}
-
 class GlobLists
 {
     public $solutions;
@@ -46,5 +25,33 @@ class GlobLists
                 }
         }
     }
+
+    protected function solarCalc($element, $list, $bin) 
+    {
+        $list->appendElements($element);
+    
+        if (($list->elementinList($this->solutions)) || ($list->elementinList($this->failed))) {
+            return;
+        } elseif (!$list->validElements()) {
+    	    array_push($this->failed, $list->elements);
+            return;
+        } elseif ($list->success($this->goalValue)) {
+            array_push($this->solutions, $list->elements);
+            return;
+        } else {
+            // add $bin update if needed
+            foreach ($bin as $element) {
+      	        $this->solarCalc($element, clone $list, $bin);
+       	    }
+        }   
+
+    }
+    
+    public function calculation($list, $bin) {
+        $elem0        = array ("type" => 0, "value" => 0);
+        $this->solarCalc($elem0, $list, $bin);
+        $this->cleanUp();
+    }
+
 };  
 
