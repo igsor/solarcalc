@@ -5,12 +5,12 @@ require_once('init.php');
 /** PARAMETERS **/
 
 // Database connection.
-$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
 
 if (isset($_POST['doDelete'])) {
     // delete project
     $id = $db->escape_string($_POST['id']);
-    $db->query("DELETE FROM `project` WHERE `id` = '{$id}'") or die(mysqli_error($db));
+    $db->query("DELETE FROM `project` WHERE `id` = '{$id}'") or fatal_error(mysqli_error($db));
     header("Location: project_overview.php");
 }
 

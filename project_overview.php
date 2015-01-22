@@ -18,7 +18,7 @@ if (key_exists('edit', $_GET)) {
 t_start();
 
 // Database connection.
-$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
 
 $addCallback = function()
 {
@@ -36,7 +36,7 @@ $headers = array(
 );
 
 // Execute query and show table.
-$result = $db->query($query) or die(mysqli_error($db));
+$result = $db->query($query) or fatal_error(mysqli_error($db));
 t_module_list($result, $headers, '', null, $addCallback);
 $result->free();
 

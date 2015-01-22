@@ -17,7 +17,7 @@ if (key_exists('edit', $_GET)) {
 }
 
 // Database connection.
-$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
 
 // Handle actions.
 $fields = array('name', 'description', 'voltage', 'loss', 'max_current', 'price', 'stock');
@@ -41,14 +41,11 @@ Select display: <select name='mode' onchange='this.parentNode.submit()'>
 </form>
 ";
 
-// Database connection.
-$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
-
 // Edit display.
 $editCallback = function($row) use ($db, $mode)
 {
     $query = "SELECT * FROM `$mode` WHERE `id` = '{$row['id']}'";
-    $result = $db->query($query) or die(mysqli_error($db));
+    $result = $db->query($query) or fatal_error(mysqli_error($db));
     $data = $result->fetch_assoc();
     $result->free();
     t_module_editableHardware([$data], 'doEdit', 'editTable');
@@ -70,7 +67,7 @@ $headers = array(
 );
 
 // Execute query and show table.
-$result = $db->query($query) or die(mysqli_error($db));
+$result = $db->query($query) or fatal_error(mysqli_error($db));
 t_module_list($result, $headers, $editId, $editCallback, $addCallback);
 $result->free();
 

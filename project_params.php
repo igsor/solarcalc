@@ -3,8 +3,8 @@
 require_once('init.php');
 
 // List of loads.
-$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
-$result = $db->query("SELECT `id`, `name`, `stock` FROM `load`") or die(mysqli_error($db));
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
+$result = $db->query("SELECT `id`, `name`, `stock` FROM `load`") or fatal_error(mysqli_error($db));
 $loadProducts = ''; // SELECT options
 $stock = array(); // Stock information
 while($row = $result->fetch_assoc()) {

@@ -12,7 +12,7 @@ foreach($serialized_keys as $key) {
 }
 
 // Database connection.
-$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_connect_error());
+$db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
 $db->autocommit(false);
 
 /**
@@ -66,7 +66,7 @@ if (isset($_POST['doCreateProject']))
                         , '" . $db->escape_string($values['price']) . "'
                         , '" . $db->escape_string($values['stock']) . "'
                        )
-            ") or die(mysqli_error($db)); // FIXME: Harden against missing input.
+            ") or fatal_error(mysqli_error($db)); // FIXME: Harden against missing input.
 
             // Rewrite load structure.
             $custom_id = $db->insert_id;
@@ -103,7 +103,7 @@ if (isset($_POST['doCreateProject']))
             , '" . $db->escape_string($_POST['delivery']) . "'
             , '" . $db->escape_string($_POST['sunhours']) . "'
             )
-    ") or die(mysqli_error($db)); // FIXME: Harden against missing input.
+    ") or fatal_error(mysqli_error($db)); // FIXME: Harden against missing input.
 
     $project_id = $db->insert_id;
 
@@ -113,7 +113,7 @@ if (isset($_POST['doCreateProject']))
 
     if (isset($INPUT['load'])) {
         // Prepare insert/update statements.
-        $upd_stock = $db->prepare("UPDATE `load` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
+        $upd_stock = $db->prepare("UPDATE `load` SET `stock` = `stock` - ? WHERE `id` = ?") or fatal_error(mysqli_error($db));
         $ins_load = $db->prepare("
                 INSERT
                 INTO `project_load` (
@@ -133,7 +133,7 @@ if (isset($_POST['doCreateProject']))
                 VALUES (
                       '{$project_id}', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                 )
-            ") or die(mysqli_error($db));
+            ") or fatal_error(mysqli_error($db));
 
         foreach($INPUT['load'] as $idx => $load_cfg) {
             // Input checking.
@@ -156,7 +156,7 @@ if (isset($_POST['doCreateProject']))
                         `load`
                     WHERE
                         `id` = '" . $db->escape_string($load_cfg['product']) . "'
-                ") or die(mysqli_error($db));
+                ") or fatal_error(mysqli_error($db));
                 
                 $load_data = $result->fetch_assoc();
                 $result->free();
@@ -184,13 +184,13 @@ if (isset($_POST['doCreateProject']))
                 , $load_cfg['dayhours']
                 , $load_cfg['nighthours']
                 , $sell
-            ) or die(mysqli_error($db));
-            $ins_load->execute() or die(mysqli_error($db));
+            ) or fatal_error(mysqli_error($db));
+            $ins_load->execute() or fatal_error(mysqli_error($db));
 
             // Update stock.
             if ($sell and $load_cfg['product'] != 'custom') { // Only if we sell and have the load in the database.
-                $upd_stock->bind_param('ii', $load_cfg['amount'], $load_data['id']) or die(mysqli_error($db));
-                $upd_stock->execute() or die(mysqli_error($db));
+                $upd_stock->bind_param('ii', $load_cfg['amount'], $load_data['id']) or fatal_error(mysqli_error($db));
+                $upd_stock->execute() or fatal_error(mysqli_error($db));
             }
         }
 
@@ -232,19 +232,19 @@ if (isset($_POST['doCreateProject']))
                 `panel`
             WHERE
                 `id` IN (" . join(',', $panel_id) . ")
-        ") or die(mysqli_error($db));
+        ") or fatal_error(mysqli_error($db));
     
         // Update stock and amount.
-        $upd_stock  = $db->prepare("UPDATE `panel` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
-        $upd_amount = $db->prepare("UPDATE `project_panel` SET `amount` = ? WHERE `panel` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        $upd_stock  = $db->prepare("UPDATE `panel` SET `stock` = `stock` - ? WHERE `id` = ?") or fatal_error(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_panel` SET `amount` = ? WHERE `panel` = ? AND `project` = $project_id") or fatal_error(mysqli_error($db));
         foreach($panel_data as $id => $amount) {
             // project_id and panel id should be unique as multiple entries of the same panel in the same project just increase the amount (guaranteed by unique_product)
 
-            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_amount->execute() or die(mysqli_error($db));
+            $upd_amount->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_amount->execute() or fatal_error(mysqli_error($db));
 
-            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_stock->execute() or die(mysqli_error($db));
+            $upd_stock->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_stock->execute() or fatal_error(mysqli_error($db));
         }
 
         $upd_stock->close();
@@ -300,17 +300,17 @@ if (isset($_POST['doCreateProject']))
                 `battery`
             WHERE
                 `id` IN (" . join(',', $battery_id) . ")
-        ") or die(mysqli_error($db));
+        ") or fatal_error(mysqli_error($db));
     
         // Update stock and amount.
-        $upd_stock  = $db->prepare("UPDATE `battery` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
-        $upd_amount = $db->prepare("UPDATE `project_battery` SET `amount` = ? WHERE `battery` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        $upd_stock  = $db->prepare("UPDATE `battery` SET `stock` = `stock` - ? WHERE `id` = ?") or fatal_error(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_battery` SET `amount` = ? WHERE `battery` = ? AND `project` = $project_id") or fatal_error(mysqli_error($db));
         foreach($battery_data as $id => $amount) {
-            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_amount->execute() or die(mysqli_error($db));
+            $upd_amount->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_amount->execute() or fatal_error(mysqli_error($db));
 
-            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_stock->execute() or die(mysqli_error($db));
+            $upd_stock->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_stock->execute() or fatal_error(mysqli_error($db));
         }
 
         $upd_stock->close();
@@ -350,17 +350,17 @@ if (isset($_POST['doCreateProject']))
                 `inverter`
             WHERE
                 `id` IN (" . join(',', $inverter_id) . ")
-        ") or die(mysqli_error($db));
+        ") or fatal_error(mysqli_error($db));
 
         // Update stock and amount.
-        $upd_stock  = $db->prepare("UPDATE `inverter` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
-        $upd_amount = $db->prepare("UPDATE `project_inverter` SET `amount` = ? WHERE `inverter` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        $upd_stock  = $db->prepare("UPDATE `inverter` SET `stock` = `stock` - ? WHERE `id` = ?") or fatal_error(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_inverter` SET `amount` = ? WHERE `inverter` = ? AND `project` = $project_id") or fatal_error(mysqli_error($db));
         foreach($inverter_data as $id => $amount) {
-            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_amount->execute() or die(mysqli_error($db));
+            $upd_amount->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_amount->execute() or fatal_error(mysqli_error($db));
 
-            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_stock->execute() or die(mysqli_error($db));
+            $upd_stock->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_stock->execute() or fatal_error(mysqli_error($db));
         }
 
         $upd_stock->close();
@@ -400,17 +400,17 @@ if (isset($_POST['doCreateProject']))
                 `controller`
             WHERE
                 `id` IN (" . join(',', $controller_id) . ")
-        ") or die(mysqli_error($db));
+        ") or fatal_error(mysqli_error($db));
 
         // Update stock and amount.
-        $upd_stock  = $db->prepare("UPDATE `controller` SET `stock` = `stock` - ? WHERE `id` = ?") or die(mysqli_error($db));
-        $upd_amount = $db->prepare("UPDATE `project_controller` SET `amount` = ? WHERE `controller` = ? AND `project` = $project_id") or die(mysqli_error($db));
+        $upd_stock  = $db->prepare("UPDATE `controller` SET `stock` = `stock` - ? WHERE `id` = ?") or fatal_error(mysqli_error($db));
+        $upd_amount = $db->prepare("UPDATE `project_controller` SET `amount` = ? WHERE `controller` = ? AND `project` = $project_id") or fatal_error(mysqli_error($db));
         foreach($controller_data as $id => $amount) {
-            $upd_amount->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_amount->execute() or die(mysqli_error($db));
+            $upd_amount->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_amount->execute() or fatal_error(mysqli_error($db));
 
-            $upd_stock->bind_param('ii', $amount, $id) or die(mysqli_error($db));
-            $upd_stock->execute() or die(mysqli_error($db));
+            $upd_stock->bind_param('ii', $amount, $id) or fatal_error(mysqli_error($db));
+            $upd_stock->execute() or fatal_error(mysqli_error($db));
         }
 
         $upd_stock->close();
@@ -420,7 +420,7 @@ if (isset($_POST['doCreateProject']))
     /******************************* WRAP UP *******************************/
 
     // Commit all the data at once.
-    $db->commit() or die("TRANSACTION FAILED");
+    $db->commit() or fatal_error("TRANSACTION FAILED");
 
     // Redirect
     header("Location: project_overview.php");
@@ -463,7 +463,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Read database.
             $id = $data['product'];
-            $result = $db->query("SELECT `name`, `voltage`, `power`, `price` FROM `panel` WHERE id = '" . $db->escape_string($id) . "'") or die(mysqli_error($db));
+            $result = $db->query("SELECT `name`, `voltage`, `power`, `price` FROM `panel` WHERE id = '" . $db->escape_string($id) . "'") or fatal_error(mysqli_error($db));
             if ($result->num_rows != 1) { // ID must exist
                 continue;
             }
@@ -509,7 +509,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Read database.
             $id = $data['product'];
-            $result = $db->query("SELECT `name`, `voltage`, `capacity`, `dod` * `capacity` AS `ucapacity`, `price` FROM `battery` WHERE id = '" . $db->escape_string($id) . "'") or die(mysqli_error($db));
+            $result = $db->query("SELECT `name`, `voltage`, `capacity`, `dod` * `capacity` AS `ucapacity`, `price` FROM `battery` WHERE id = '" . $db->escape_string($id) . "'") or fatal_error(mysqli_error($db));
             if ($result->num_rows != 1) { // ID must exist
                 continue;
             }
@@ -553,7 +553,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Read database.
             $id = $data['product'];
-            $result = $db->query("SELECT `name`, `price` FROM `inverter` WHERE id = '" . $db->escape_string($id) . "'") or die(mysqli_error($db));
+            $result = $db->query("SELECT `name`, `price` FROM `inverter` WHERE id = '" . $db->escape_string($id) . "'") or fatal_error(mysqli_error($db));
             if ($result->num_rows != 1) { // ID must exist
                 continue;
             }
@@ -582,7 +582,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Read database.
             $id = $data['product'];
-            $result = $db->query("SELECT `name`, `price` FROM `controller` WHERE id = '" . $db->escape_string($id) . "'") or die(mysqli_error($db));
+            $result = $db->query("SELECT `name`, `price` FROM `controller` WHERE id = '" . $db->escape_string($id) . "'") or fatal_error(mysqli_error($db));
             if ($result->num_rows != 1) { // ID must exist
                 continue;
             }
