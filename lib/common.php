@@ -1,8 +1,12 @@
 <?php
 
 function fatal_error($msg) {
+    // FIXME: DEBUG ONLY!
+    // FIXME: Production: die silently
+    echo '<pre>';
     echo "\n\n--------- FATAL ERROR ----------\n";
     debug_print_backtrace(); // FIXME: Debug
+    echo '</pre>';
     die($msg);
 }
 
