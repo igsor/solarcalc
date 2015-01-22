@@ -20,5 +20,5 @@ include_once('composition.php');
 include_once('SolarList.php');
 include_once('SolarListClasses.php');
 include_once('SearchConfig.php');
-include_once('CompositionData.php');
+include_once('ConfigurationData.php');
 // EOF //

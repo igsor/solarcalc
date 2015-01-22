@@ -2,7 +2,7 @@
 
 // FIXME: Use an external caching function instead of doing it in CompositionData
 // FIXME: Getters for members, such that they can be accessed individually.
-class CompositionData {
+class ConfigurationData {
     public $battery;//
     public $panel;//
     public $load;//

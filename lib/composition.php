@@ -1,7 +1,7 @@
 <?php
 
 function detailNumbers($panel, $battery, $controller, $inverter, $load, $custom, $database, $sunhours) {
-    $newComposition = new CompositionData($database, $battery, $panel, $load, $controller, $inverter, $custom, (float)($sunhours));
+    $newComposition = new ConfigurationData($database, $battery, $panel, $load, $controller, $inverter, $custom, (float)($sunhours));
     $newComposition->computation();
     $numbers= array (
          "inStock"         => $newComposition->inStock,
