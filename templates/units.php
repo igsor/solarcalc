@@ -32,7 +32,7 @@ class T_Units
  
     // Currencies
     const CFA   = ' <div class="unit" title="Central African Franc">[CFA]</div>';
-    const DOL   = ' <div class="unit" title="Dollar">[$]</div>'; // FIXME: Comment out
+    //const DOL   = ' <div class="unit" title="Dollar">[$]</div>';
 
     // Others
     const Percent = ' <div class="unit" title="Percent">[%]</div>';
