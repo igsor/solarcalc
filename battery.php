@@ -16,13 +16,8 @@ $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or die(mysqli_conne
 // Handle actions.
 $fields = array('name', 'description', 'voltage', 'dod', 'loss', 'discharge', 'lifespan', 'capacity', 'max_const_current', 'max_peak_current', 'avg_const_current', 'max_humidity', 'max_temperature', 'price', 'stock');
 $optionals = array('description');
-if (($editId = handleModuleAction('battery', $fields, $optionals, $db, $_POST)) < 0) {
-    // Edit parameter.
-    if (key_exists('edit', $_GET)) {
-        $editId = $_GET['edit'];
-    } else {
-        $editId = '';
-    }
+if (($newId = handleModuleAction('battery', $fields, $optionals, $db, $_POST)) != -1) {
+    $editId = $newId;
 }
 
 /** PAGE CONTENT **/
