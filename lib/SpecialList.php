@@ -1,6 +1,6 @@
 <?php
 
-abstract class SolarList {
+abstract class SpecialList {
     public $elements;
 
     public function __construct()

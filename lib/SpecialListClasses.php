@@ -1,6 +1,6 @@
 <?php
 
-class listUniqueBattery extends SolarList {
+class listUniqueBattery extends SpecialList {
     public function success($goalValue) {
         if ($this->totalValue() >= $goalValue) {
             return true;
@@ -28,7 +28,7 @@ class listUniqueBattery extends SolarList {
 };
 
 
-class list12VPanel extends SolarList {
+class list12VPanel extends SpecialList {
     public function success($goalValue) {
         if ($this->totalValue() >= $goalValue) {
             return true;
@@ -43,7 +43,7 @@ class list12VPanel extends SolarList {
     }
 };
 
-class listPanel extends SolarList {
+class listPanel extends SpecialList {
     public function success($goalValue) {
         if ($this->totalValue() >= $goalValue) {
             return true;
