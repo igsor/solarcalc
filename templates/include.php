@@ -10,11 +10,10 @@
  */
 
 // Layout start / end.
-include_once('common.php');
+include_once('page.php');
 
 // Table templates.
 include_once('tables.php');
-include_once('loadtable.php');
 include_once('module_forms.php');
 include_once('project.php');
 
