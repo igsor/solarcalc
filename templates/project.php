@@ -30,7 +30,7 @@ function t_project_loadSummary($load, $custom, $database) {
         echo "<tr class='tablerow'>";
         if ($element["product"] != "custom") {
             $query     = "SELECT  `name`, `power`, `price` FROM `load` WHERE `id` = ". $database->escape_string($element['product']);
-            $result    = $database->query($query) or die(mysqli_error($database));
+            $result    = $database->query($query) or fatal_error(mysqli_error($database));
             $data      = $result->fetch_assoc();
             $result->free();
            
@@ -78,7 +78,7 @@ function t_project_moduleSummary($variable, $string, $database) {
     $Overview = array();
     foreach ($variable[$string] as $value) {
         $query = "SELECT `name` FROM `$string` WHERE `id` = ". $database->escape_string($value['product']);
-        $result = $database->query($query) or die(mysqli_error($database));
+        $result = $database->query($query) or fatal_error(mysqli_error($database));
         $name = $result->fetch_assoc();
         $result->free();
         array_push($Overview, "<div class='amount'>{$value['amount']}x</div> {$name['name']}");
@@ -89,7 +89,7 @@ function t_project_moduleSummary($variable, $string, $database) {
 function t_project_modulePrice($variable, $string, $database ) {
     foreach ($variable[$string] as $value) {
         $query = "SELECT `name`,`price` FROM `$string` WHERE `id` = " . $database->escape_string($value['product']);
-        $result = $database->query($query) or die(mysqli_error($database));
+        $result = $database->query($query) or fatal_error(mysqli_error($database));
         $name = $result->fetch_assoc();
         $result->free();
 
