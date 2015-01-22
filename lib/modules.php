@@ -63,7 +63,6 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
                     `id` = '{$editId}'
             ") or fatal_error(mysqli_error($db));
 
-            // FIXME: Action?
             return $editId;
         }
 
@@ -99,7 +98,6 @@ function handleModuleAction($moduleName, $fields, $optionals, $db, $post)
                 `id` = '{$editId}'
         ") or fatal_error(mysqli_error($db));
 
-        // FIXME: Action?
         return '';
 
     }
