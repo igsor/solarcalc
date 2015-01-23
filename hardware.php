@@ -39,6 +39,7 @@ Select display: <select name='mode' onchange='this.parentNode.submit()'>
 </select>
 <button type=submit>Go</button>
 </form>
+<br/>
 ";
 
 // Edit display.
