@@ -23,10 +23,10 @@ function toggleConfigOverview(tableHead, table1, table2) {
     toggleVisibility(document.getElementById(table2), 'table-row', false);
 
     // Toggle header class.
-    if (tableHead.classList.contains('configurationSelected')) {
-        tableHead.classList.remove('configurationSelected');
+    if (tableHead.classList.contains('project-config-selected')) {
+        tableHead.classList.remove('project-config-selected');
     } else {
-        tableHead.classList.add('configurationSelected');
+        tableHead.classList.add('project-config-selected');
     }
 }
 

@@ -1,0 +1,36 @@
+
+/********************* MODULE LIST ************************************/
+
+.module-list TD {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.module-list-head TD {
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: solid black 2px;
+}
+
+.module-list-headspace {
+  height: 10px;
+}
+
+.module-list-item TD {
+  text-align: left;
+  padding-top: 2.5px;
+  vertical-align: top;
+}
+
+.module-list-edit-title TD, .module-list-edit {
+  background-color: #CCFFFF;
+}
+
+.module-list-edit {
+  padding-top: 10px;
+  padding-bottom: 20px;
+  vertical-align: top;
+}
+
+/* EOF */

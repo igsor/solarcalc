@@ -1,0 +1,165 @@
+
+
+/********************* GLOBAL DEFINITIONS *****************************/
+
+BODY {
+  font-family: Helvetica, Arial;
+  padding: 0px;
+  margin: 0px;
+}
+
+A {
+  font-weight: bold;
+  color:#3366CC;
+  text-decoration: none;
+}
+
+H2 {
+  padding: 0px;
+  margin-left: -40px;
+  margin-top: 30px;
+  margin-bottom: 2px;
+}
+
+H3 {
+  padding: 0px;
+  margin-left: -20px;
+  margin-top: 30px;
+  margin-bottom: 2px;
+}
+
+/********************* FORM ELEMENTS **********************************/
+
+BUTTON, INPUT, TEXTAREA, SELECT {
+  border: solid black 1px;
+  font-family: Courier;
+  font-size: larger;
+}
+
+INPUT, TEXTAREA, SELECT {
+  width: 300px;
+}
+
+TEXTAREA {
+  height: 100px;
+}
+
+/********************* PAGE SETUP *************************************/
+
+#header {
+  text-align: center;
+}
+
+#footer {
+  text-align: center;
+}
+
+#pagetitle {
+  color: solid black;
+  font-family: Courier;
+}
+
+a.menulink, a.menulink:link, a.menulink:visited {
+  border:4px solid #3366CC;
+
+  padding-left:8px;
+  padding-right: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  margin-left:10px;
+  margin-right: 10px;
+  margin-bottom: 0px;
+
+  color:#CCFFFF;
+  background-color:#3366CC;
+
+  /* text-decoration:none; (Inherited) */
+  /* font-weight: bold; (Inherited) */
+  font-family:courier;
+}
+
+a.menulink:hover, a.menulink:active {
+  color:#3366CC;
+  background-color:#CCFFFF;
+  text-decoration:underline;
+}
+
+.menuline {
+  margin-top: 2px;
+  margin-bottom: 0px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: solid #3366CC 2px;
+}
+
+#content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+/********************* GENERIC PAGE ELEMENTS **************************/
+
+.unit {
+  display: inline;
+  font-weight: bold;
+  color: gray;
+  font-size: smaller;
+}
+
+.number {
+  text-align: right !important;
+}
+
+.calculation-result {
+  border-bottom: double 3px;
+}
+
+.alert {
+  color: red;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.amount {
+  display: inline;
+  color: gray;
+  font-size: smaller;
+  white-space: nowrap;
+}
+
+/********************* LISTS AND TABLES *******************************/
+
+.form-table {
+  margin-left: 10px;
+}
+
+.form-table TD {
+  padding-bottom: 5px;
+  vertical-align: top;
+}
+
+.table-key, .form-table-key {
+  font-weight: bold;
+  text-align: left;
+  padding-right: 10px;
+}
+
+.table-value, .form-table-value {
+  text-align: left;
+  padding-right: 10px;
+}
+
+.form-table-action {
+  text-align: right;
+}
+
+.list-even {
+  background-color: lightgray;
+}
+
+.list-odd {
+}
+
+/* EOF */

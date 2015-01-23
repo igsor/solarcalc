@@ -18,7 +18,7 @@ function t_start($title='')
 
     _t_navigation();
 
-    echo "<div class='content'>\n";
+    echo "<div id='content'>\n";
 }
 
 function t_end()

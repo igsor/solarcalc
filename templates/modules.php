@@ -2,21 +2,36 @@
 
 function t_module_list($result, $headers, $editId='', $editCallback=null, $addCallback=null)
 {
-    // Surrounding div's.
-    echo "<div class='fixed-table-container'><div class='header-background'> </div><div class='fixed-table-container-inner'>";
-
     // Table header.
-    echo "<table cellspacing='0'><thead><tr>\n";
+    echo "<table cellspacing='0' cellpadding='0' class='module-list'><tr class='module-list-head'>\n";
     foreach($headers as $colname => $title) {
-        echo "<th class='first'><div class='th-inner'>{$title}</div></th>\n";
+        echo "<td>{$title}</th>\n";
     }
-    echo "</tr></thead><tbody>";
+    echo "</tr>";
+    echo "<tr><td colspan='" . count($headers) . "' class='module-list-headspace'></td></tr>";
 
     // Table body.
+    $cnt = 1; // Start with even.
     while ($row = $result->fetch_assoc()) {
-    	echo "<tr id='edit-{$row['id']}'>";
+
+        // CSS Class
+        $class = 'module-list-item';
+
+        if (($cnt++) % 2) {
+            $class .= ' list-even';
+        } else {
+            $class .= ' list-odd';
+        }
+
+        if ($editId != '' and $editId == $row['id']) {
+            $class .= ' module-list-edit-title';
+        }
+
+        echo "<tr class='$class' id='edit-{$row['id']}'>";
         $first = true;
         foreach($headers as $colname => $title) {
+
+            // First row.
             if ($first) {
                 $first = false;
                 $query_string = preg_replace('/edit=\d+&?/', '', $_SERVER['QUERY_STRING']); // Hacky solution to prevent double edit while still getting mode argument for hardware page
@@ -25,32 +40,42 @@ function t_module_list($result, $headers, $editId='', $editCallback=null, $addCa
                 } else {
                     echo "<td><a href='{$_SERVER['SCRIPT_NAME']}?edit={$row['id']}&$query_string#edit-{$row['id']}'>{$row[$colname]}</a></td>";
                 }
-            } else {
-                echo "<td>{$row[$colname]}</td>";
+            } else { // Other rows.
+                echo "<td" . (is_numeric($row[$colname])?" class='number'":'') . ">{$row[$colname]}</td>";
             }
         }
     	echo "</tr>\n";
 
+        // Display edit form.
         if ($editId != '' and $editId == $row['id']) {
-            echo "<tr><td>&nbsp;</td><td colspan='" . ($result->field_count - 3) . "'>";
+            echo "<tr class='module-list-item'><td>&nbsp;</td><td class='module-list-edit' colspan='" . ($result->field_count - 3) . "'>";
             $editCallback($row);
-            echo "</td><td><form action='' method='POST' id='deleteForm'><input type='hidden' name='id' value='{$editId}' /><input type='hidden' name='doDelete' value='on' /><input type='button' value='DEL' onclick='confirmDelete()'></form></td></tr>";
+            echo "</td><td class='module-list-edit'><form action='' method='POST' id='deleteForm'><input type='hidden' name='id' value='{$editId}' /><input type='hidden' name='doDelete' value='on' /><button type='button' value='DEL' onclick='confirmDelete()'>Delete</button></form></td></tr>";
         }
 
     }
 
     // Add table extra row.
     if ($addCallback) {
-        echo "<tr id='add'><td><a onclick=\"toggleVisibility(document.getElementById('addTable'))\">Add</a></td><td colspan='" . ($result->field_count - 1) . "'>";
-        $addCallback();
-        echo "</td></tr>";
+        ?>
+            <tr class='module-list-item'>
+                <td>
+                    <a onclick="toggleVisibility(document.getElementById('addTable'), 'table-row')">Add</a>
+                </td>
+                <td colspan='<?php echo ($result->field_count - 2); ?>'>&nbsp;</td>
+            </tr>
+            <tr class='module-list-item' id='addTable' style='display: none'>
+                <td>&nbsp;</td>
+                <td colspan='<?php echo ($result->field_count - 2); ?>'>
+                    <?php $addCallback(); ?>
+                </td>
+            </tr>
+        <?php
     }
 
 
     // Closing tags.
     echo "</table>";
-
-    echo "</div></div>";
 }
 
 function t_module_editableLoad($data, $submitButtonName, $id)
@@ -59,9 +84,9 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         $data[$i]['formid'] = "form_{$id}_{$i}";
     }
 
-    $columns = function ($content) use ($data) {
+    $columns = function ($content, $class='form-table-value') use ($data) {
         foreach($data as $item) {
-            echo '<td class="tbl_value">' . $content($item) . '</td>';
+            echo "<td class='$class'>" . $content($item) . '</td>';
         }
     };
 
@@ -70,50 +95,50 @@ function t_module_editableLoad($data, $submitButtonName, $id)
     }
 
     ?>
-        <table cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
+        <table class='form-table' cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
         <?php
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="tbl_key">id</td>
+                    <td class="form-table-key">id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
-                        });
+                        }, 'form-table-value number');
                     ?>
                 </tr>
             <?php
         }
         ?>
         <tr>
-            <td class="tbl_key">Name</td>
+            <td class="form-table-key">Name</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='name' class='textinput' value='{$item['name']}' form='{$item['formid']}' required />";
+                    return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Description</td>
+            <td class="form-table-key">Description</td>
             <?php
                 $columns(function ($item) {
-                    return "<textarea name='description' form='{$item['formid']}' class='something'>{$item['description']}</textarea>";
+                    return "<textarea name='description' form='{$item['formid']}'>{$item['description']}</textarea>";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Power<?php echo T_Units::W; ?></td>
+            <td class="form-table-key">Power<?php echo T_Units::W; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='power' class='textinput' value='{$item['power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='power' class='number' value='{$item['power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Type</td>
+            <td class="form-table-key">Type</td>
             <?php
                 $columns(function ($item) {
-                    return   "<select name='type' class='selectinput' form='{$item['formid']}' required>"
+                    return   "<select name='type' form='{$item['formid']}' required>"
                            . "<option value='DC'" . ($item['type'] == 'DC'?' selected':'') . ">DC</option>"
                            . "<option value='AC'" . ($item['type'] == 'AC'?' selected':'') . ">AC</option>"
                            . "</select>\n";
@@ -121,78 +146,78 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Voltage<?php echo T_Units::V; ?></td>
+            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='voltage' class='textinput' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='price' class='textinput' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="tbl_key">Stock</td>
+            <td class="form-table-key">Stock</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='stock' class='textinput' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
+                    return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="tbl_key">Amount</td>
+            <td class="form-table-key">Amount</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='amount' class='textinput' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
+                    return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['nighttime']); })) { ?>
         <tr>
-            <td class="tbl_key">Night time</td>
+            <td class="form-table-key">Night time</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='nighttime' class='textinput' value='{$item['nighttime']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
+                    return "<input type='number' name='nighttime' class='number' value='{$item['nighttime']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['daytime']); })) { ?>
         <tr>
-            <td class="tbl_key">Day time</td>
+            <td class="form-table-key">Day time</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='daytime' class='textinput' value='{$item['daytime']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
+                    return "<input type='number' name='daytime' class='number' value='{$item['daytime']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['sold']); })) { ?>
         <tr>
-            <td class="tbl_key">Sold</td>
+            <td class="form-table-key">Sold</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='checkbox' name='sold' class='textinput' form='{$item['formid']}' />";
-                });
+                    return "<input type='checkbox' name='sold' form='{$item['formid']}' />";
+                }, 'form-table-value number');
             ?>
         </tr>
         <?php } ?>
         <tr>
-            <td class="tbl_key"></td>
+            <td class="form-table-key"></td>
             <?php
                 $columns(function ($item) use ($submitButtonName) {
-                    return   "<input type='reset' form='{$item['formid']}' value='Cancel' />\n"
-                           . "<input type='submit' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'/>";
-                });
+                    return "<button type='reset' class='button' form='{$item['formid']}' value='Cancel'>Cancel</button>
+                            <button type='submit' class='button' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'>OK</button>";
+                }, 'form-table-value form-table-action');
             ?>
         </tr>
         </table>
@@ -205,9 +230,9 @@ function t_module_editableHardware($data, $submitButtonName, $id)
         $data[$i]['formid'] = "form_{$id}_{$i}";
     }
 
-    $columns = function ($content) use ($data) {
+    $columns = function ($content, $class='form-table-value') use ($data) {
         foreach($data as $item) {
-            echo '<td class="tbl_value">' . $content($item) . '</td>';
+            echo "<td class='$class'>" . $content($item) . '</td>';
         }
     };
 
@@ -216,88 +241,88 @@ function t_module_editableHardware($data, $submitButtonName, $id)
     }
 
     ?>
-        <table cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
+        <table class='form-table'cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
         <?php
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="tbl_key">id</td>
+                    <td class="form-table-key">id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
-                        });
+                        }, 'form-table-value number');
                     ?>
                 </tr>
             <?php
         }
         ?>
         <tr>
-            <td class="tbl_key">Name</td>
+            <td class="form-table-key">Name</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='name' class='textinput' value='{$item['name']}' form='{$item['formid']}' required />";
+                    return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Description</td>
+            <td class="form-table-key">Description</td>
             <?php
                 $columns(function ($item) {
-                    return "<textarea name='description' form='{$item['formid']}' class='something'>{$item['description']}</textarea>";
+                    return "<textarea name='description' form='{$item['formid']}' >{$item['description']}</textarea>";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Loss</td>
+            <td class="form-table-key">Loss</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='loss' class='textinput' value='{$item['loss']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required /></td>";
+                    return "<input type='text' name='loss' class='number' value='{$item['loss']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required /></td>";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Max. current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key">Max. current<?php echo T_Units::A; ?></td>
             <?php
                 $columns(function ($item) {
-                        return "<input type='text' name='max_current' class='textinput' value='{$item['max_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                        return "<input type='text' name='max_current' class='number' value='{$item['max_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='price' class='textinput' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="tbl_key">Stock</td>
+            <td class="form-table-key">Stock</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='stock' class='textinput' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
+                    return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="tbl_key">Amount</td>
+            <td class="form-table-key">Amount</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='amount' class='textinput' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
+                    return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <tr>
-            <td class="tbl_key"></td>
+            <td class="form-table-key"></td>
             <?php
                 $columns(function ($item) use ($submitButtonName) {
-                    return   "<input type='reset' form='{$item['formid']}' value='Cancel' />\n"
-                           . "<input type='submit' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'/>";
-                });
+                    return "<button type='reset' class='button' form='{$item['formid']}' value='Cancel'>Cancel</button>
+                            <button type='submit' class='button' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'>OK</button>";
+                }, 'form-table-value form-table-action');
             ?>
         </tr>
         </table>
@@ -310,9 +335,9 @@ function t_module_editablePanel($data, $submitButtonName, $id)
         $data[$i]['formid'] = "form_{$id}_{$i}";
     }
 
-    $columns = function ($content) use ($data) {
+    $columns = function ($content, $class='form-table-value') use ($data) {
         foreach($data as $item) {
-            echo '<td class="tbl_value">' . $content($item) . '</td>';
+            echo "<td class='$class'>" . $content($item) . '</td>';
         }
     };
 
@@ -321,96 +346,96 @@ function t_module_editablePanel($data, $submitButtonName, $id)
     }
 
     ?>
-        <table cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
+        <table class='form-table'cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
         <?php
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="tbl_key">id</td>
+                    <td class="form-table-key">id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
-                        });
+                        }, 'form-table-value number');
                     ?>
                 </tr>
             <?php
         }
         ?>
         <tr>
-            <td class="tbl_key">Name</td>
+            <td class="form-table-key">Name</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='name' class='textinput' value='{$item['name']}' form='{$item['formid']}' required />";
+                    return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Description</td>
+            <td class="form-table-key">Description</td>
             <?php
                 $columns(function ($item) {
-                    return "<textarea name='description' form='{$item['formid']}' class='something'>{$item['description']}</textarea>";
+                    return "<textarea name='description' form='{$item['formid']}'>{$item['description']}</textarea>";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='price' class='textinput' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Voltage<?php echo T_Units::V; ?></td>
+            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='voltage' class='textinput' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Power<?php echo T_Units::W; ?></td>
+            <td class="form-table-key">Power<?php echo T_Units::W; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='power' class='textinput' value='{$item['power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='power' class='number' value='{$item['power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Peak Power<?php echo T_Units::W; ?></td>
+            <td class="form-table-key">Peak Power<?php echo T_Units::W; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='peak_power' class='textinput' value='{$item['peak_power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='peak_power' class='number' value='{$item['peak_power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="tbl_key">Stock</td>
+            <td class="form-table-key">Stock</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='stock' class='textinput' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
+                    return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="tbl_key">Amount</td>
+            <td class="form-table-key">Amount</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='amount' class='textinput' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
+                    return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <tr>
-            <td class="tbl_key"></td>
+            <td class="form-table-key"></td>
             <?php
                 $columns(function ($item) use ($submitButtonName) {
-                    return   "<input type='reset' form='{$item['formid']}' value='Cancel' />\n"
-                           . "<input type='submit' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'/>";
-                });
+                    return "<button type='reset' class='button' form='{$item['formid']}' value='Cancel'>Cancel</button>
+                            <button type='submit' class='button' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'>OK</button>";
+                }, 'form-table-value form-table-action');
             ?>
         </tr>
         </table>
@@ -423,9 +448,9 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         $data[$i]['formid'] = "form_{$id}_{$i}";
     }
 
-    $columns = function ($content) use ($data) {
+    $columns = function ($content, $class='form-table-value') use ($data) {
         foreach($data as $item) {
-            echo '<td class="tbl_value">' . $content($item) . '</td>';
+            echo "<td class='$class'>" . $content($item) . '</td>';
         }
     };
 
@@ -434,160 +459,160 @@ function t_module_editableBattery($data, $submitButtonName, $id)
     }
 
     ?>
-        <table cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
+        <table class='form-table'cellspacing=0 cellpadding=0 id="<?php echo $id; ?>">
         <?php
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="tbl_key">id</td>
+                    <td class="form-table-key">id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
-                        });
+                        }, 'form-table-value number');
                     ?>
                 </tr>
             <?php
         }
         ?>
         <tr>
-            <td class="tbl_key">Name</td>
+            <td class="form-table-key">Name</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='name' class='textinput' value='{$item['name']}' form='{$item['formid']}' required />";
+                    return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Description</td>
+            <td class="form-table-key">Description</td>
             <?php
                 $columns(function ($item) {
-                    return "<textarea name='description' form='{$item['formid']}' class='something'>{$item['description']}</textarea>";
+                    return "<textarea name='description' form='{$item['formid']}'>{$item['description']}</textarea>";
                 });
             ?>
         </tr>
         <tr>
-            <td class="tbl_key">Voltage<?php echo T_Units::V; ?></td>
+            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='voltage' class='textinput' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Depth of depletion<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key">Depth of depletion<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='dod' class='textinput' value='{$item['dod']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='dod' class='number' value='{$item['dod']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Loss<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key">Loss<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='loss' class='textinput' value='{$item['loss']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='loss' class='number' value='{$item['loss']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Discharge</td>
+            <td class="form-table-key">Discharge</td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='discharge' class='textinput' value='{$item['discharge']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='discharge' class='number' value='{$item['discharge']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Lifespan<?php echo T_Units::Cycles; ?></td>
+            <td class="form-table-key">Lifespan<?php echo T_Units::Cycles; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='number' name='lifespan' class='textinput' value='{$item['lifespan']}' pattern='\d+' form='{$item['formid']}' required />";
+                return "<input type='number' name='lifespan' class='number' value='{$item['lifespan']}' pattern='\d+' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Capacity<?php echo T_Units::Ah; ?></td>
+            <td class="form-table-key">Capacity<?php echo T_Units::Ah; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='number' name='capacity' class='textinput' value='{$item['capacity']}' pattern='\d+' form='{$item['formid']}' required />";
+                return "<input type='number' name='capacity' class='number' value='{$item['capacity']}' pattern='\d+' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Max. constant current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key">Max. constant current<?php echo T_Units::A; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='max_const_current' class='textinput' value='{$item['max_const_current']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required />";
+                return "<input type='text' name='max_const_current' class='number' value='{$item['max_const_current']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">max. peak current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key">Max. peak current<?php echo T_Units::A; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='max_peak_current' class='textinput' value='{$item['max_peak_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='max_peak_current' class='number' value='{$item['max_peak_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Avg. constant current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key">Avg. constant current<?php echo T_Units::A; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='avg_const_current' class='textinput' value='{$item['avg_const_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='avg_const_current' class='number' value='{$item['avg_const_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Max. humidity<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key">Max. humidity<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='max_humidity' class='textinput' value='{$item['max_humidity']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='max_humidity' class='number' value='{$item['max_humidity']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Max. temperature<?php echo T_Units::DEG; ?></td>
+            <td class="form-table-key">Max. temperature<?php echo T_Units::DEG; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='max_temperature' class='textinput' value='{$item['max_temperature']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='max_temperature' class='number' value='{$item['max_temperature']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
         <tr>
-            <td class="tbl_key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='price' class='textinput' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                    return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
                 });
             ?>
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="tbl_key">Stock</td>
+            <td class="form-table-key">Stock</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='stock' class='textinput' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
+                    return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="tbl_key">Amount</td>
+            <td class="form-table-key">Amount</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='number' name='amount' class='textinput' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
+                    return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
                 });
             ?>
         </tr>
         <?php } ?>
         <tr>
-            <td class="tbl_key"></td>
+            <td class="form-table-key"></td>
             <?php
                 $columns(function ($item) use ($submitButtonName) {
-                    return   "<input type='reset' form='{$item['formid']}' value='Cancel' />\n"
-                           . "<input type='submit' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'/>";
-                });
+                    return "<button type='reset' class='button' form='{$item['formid']}' value='Cancel'>Cancel</button>
+                            <button type='submit' class='button' name='{$submitButtonName}' value='OK' form='{$item['formid']}' formaction='' formmethod='post'>OK</button>";
+                }, 'form-table-value form-table-action');
             ?>
         </tr>
         </table>

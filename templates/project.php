@@ -3,10 +3,10 @@
 function t_project_editableModule($name, $table_fu)
 {
     ?>
-        <div class="detailButton"> 
-        <a class="unitbutton" onclick="toggleVisibility(document.getElementById('detail<?php echo $name; ?>'))"><?php echo $name; ?></a>
-        </div>
-        <div class="detail" id="detail<?php echo $name; ?>">
+        
+        <a  onclick="toggleVisibility(document.getElementById('detail<?php echo $name; ?>'), 'table')"><h3 class="project-module-title"><?php echo $name; ?></h3></a>
+
+        <div class="project-module-detail" id="detail<?php echo $name; ?>" style="display: none">
         <?php $table_fu(); ?>
         </div>
         <br/>
@@ -17,17 +17,17 @@ function t_project_loadSummary($load, $custom, $database) {
     $price = array();
 
     echo '
-    <table cellspacing=0 cellpadding=0 class="loadtable">
-        <tr class="tablehead">
+    <table cellspacing=0 cellpadding=0 class="project-module-summary">
+        <tr class="project-module-head">
             <td>Product</td>
             <td>Amount</td>
-            <td>Day time <div class="unit" title="Hour">[H]</div></td>
-            <td>Night time <div class="unit" title="Hour">[H]</div></td>
-            <td>Power <div class="unit" title="Watt">[W]</div><td>
+            <td>Day time ' . T_Units::H . '</td>
+            <td>Night time ' . T_Units::H . '</td>
+            <td>Power ' . T_Units::W . '</td>
         </tr>';
     
     foreach ($load as $key => $element) {
-        echo "<tr class='tablerow'>";
+        echo '<tr class="project-module-item">';
         if ($element["product"] != "custom") {
             $query     = "SELECT  `name`, `power`, `price` FROM `load` WHERE `id` = ". $database->escape_string($element['product']);
             $result    = $database->query($query) or fatal_error(mysqli_error($database));
@@ -35,10 +35,10 @@ function t_project_loadSummary($load, $custom, $database) {
             $result->free();
            
             echo "<td>{$data['name']}</td>";
-            echo "<td>{$element['amount']}</td>";
-            echo "<td>{$element['dayhours']}</td>";
-            echo "<td>{$element['nighthours']}</td>";
-            echo "<td>{$data['power']}</td>";
+            echo "<td class='number'>{$element['amount']}</td>";
+            echo "<td class='number'>{$element['dayhours']}</td>";
+            echo "<td class='number'>{$element['nighthours']}</td>";
+            echo "<td class='number'>{$data['power']}</td>";
 
             if (isset($element['sell'])) {
                 array_push($price, array (
@@ -51,10 +51,10 @@ function t_project_loadSummary($load, $custom, $database) {
         } else {
     
             echo "<td>{$custom[$key]['name']}</td>";
-            echo "<td>{$element['amount']}</td>";
-            echo "<td>{$element['dayhours']}</td>";
-            echo "<td>{$element['nighthours']}</td>";
-            echo "<td>{$custom[$key]['power']}</td>";
+            echo "<td class='number'>{$element['amount']}</td>";
+            echo "<td class='number'>{$element['dayhours']}</td>";
+            echo "<td class='number'>{$element['nighthours']}</td>";
+            echo "<td class='number'>{$custom[$key]['power']}</td>";
 
             if (isset($element['sell'])) {
                 array_push($price, array (
@@ -66,13 +66,13 @@ function t_project_loadSummary($load, $custom, $database) {
 
             
         }
-        echo "</tr>";
+        echo '</tr>';
     }
 
     echo '</table>';
 
     return $price;
-};
+}
 
 function t_project_moduleSummary($variable, $string, $database) {
     $Overview = array();
@@ -84,7 +84,7 @@ function t_project_moduleSummary($variable, $string, $database) {
         array_push($Overview, "<div class='amount'>{$value['amount']}x</div> {$name['name']}");
     };
     echo join('<br/>', $Overview);
-};
+}
 
 function t_project_modulePrice($variable, $string, $database ) {
     foreach ($variable[$string] as $value) {
@@ -93,7 +93,7 @@ function t_project_modulePrice($variable, $string, $database ) {
         $name = $result->fetch_assoc();
         $result->free();
 
-        echo "<tr><td>{$value['amount']}x{$name['name']}:</td><td style='text-align:right'>" . number_format($name['price'], "0", ".", "'") . "</td></tr>";
+        echo "<tr class='project-budget-module-item'><td><div class='amount'>{$value['amount']}x</div>{$name['name']}:</td><td style='text-align:right'>" . number_format($name['price'], "0", ".", "'") . "</td></tr>";
     };
-};
+}
 

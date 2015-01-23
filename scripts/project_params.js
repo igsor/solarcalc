@@ -97,7 +97,7 @@ function addLoadProduct()
 
     // Show the new row.
     var tbody = document.getElementById('products').children[0];
-    tbody.insertBefore(row, tbody.children[tbody.children.length - 1]);
+    tbody.insertBefore(row, tbody.children[tbody.children.length - 2]);
     row.style.display = 'table-row';
 
     // Set correct select options.
@@ -143,7 +143,7 @@ function checkLoadStock(obj)
         if (document.getElementById('stockWarning-' + idx) == null) {
             var warn = document.getElementById('stockWarning').cloneNode(true);
             warn.id = 'stockWarning-' + idx;
-            sold.parentNode.appendChild(warn);
+            sold.parentNode.nextElementSibling.appendChild(warn);
             warn.style.display='inline';
         }
     } else {

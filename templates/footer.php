@@ -1,7 +1,6 @@
 <div id="footer">
 
   <hr class="menuline">
-    
-  <a class="contactlink" href="contact.php">CONTACT</a>
+  <a class="menulink" href="contact.php">CONTACT</a>
 
 </div>

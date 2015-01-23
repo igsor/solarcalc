@@ -37,7 +37,7 @@ Select display: <select name='mode' onchange='this.parentNode.submit()'>
 <option value='controller'" . ($mode == 'controller'?' selected':'') . ">Controller</option>
 <option value='inverter'" . ($mode == 'inverter'?' selected':'') . ">Inverter</option>
 </select>
-<input type=submit value='Go'>
+<button type=submit>Go</button>
 </form>
 ";
 
@@ -48,13 +48,13 @@ $editCallback = function($row) use ($db, $mode)
     $result = $db->query($query) or fatal_error(mysqli_error($db));
     $data = $result->fetch_assoc();
     $result->free();
-    t_module_editableHardware([$data], 'doEdit', 'editTable');
+    t_module_editableHardware([$data], 'doEdit', 'moduleListEditTable');
 };
 
 $addCallback = function()
 {
     $data = array_with_defaults(['name', 'description', 'loss', 'voltage', 'max_current', 'price', 'stock']);
-    t_module_editableHardware([$data], 'doAdd', 'addTable');
+    t_module_editableHardware([$data], 'doAdd', 'moduleListAddTable');
 };
 
 // Table query.

@@ -1,0 +1,152 @@
+
+/********************* SEARCH FORM ************************************/
+
+.project-load {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.project-load TD {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+}
+
+.project-load-item TD {
+  text-align: left;
+  vertical-align: top;
+  padding-right: 10px;
+}
+
+.project-load-item INPUT {
+  width: 100px;
+}
+
+.project-load-custom {
+  margin-bottom: 50px;
+}
+
+.project-load-custom INPUT, .project-load-custom SELECT {
+  width: 150px;
+}
+
+/********************* SEARCH RESULT **********************************/
+
+.project-config {
+}
+
+.project-config TD {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.project-config-item TD {
+  background-color: lightgray;
+  white-space: nowrap;
+  vertical-align: top;
+  border: solid black 1px;
+}
+
+.project-config-values {
+  border: solid black 1px;
+  border-top: none;
+}
+
+.project-config-values TD {
+  vertical-align: top;
+}
+
+.project-config-values .table-value {
+  text-align: right;
+}
+
+.project-config-values .table-key {
+  text-align: left;
+}
+
+.project-config-spacer TD {
+  height: 10px;
+}
+
+.project-config-selected TD {
+  background-color: purple;
+}
+
+.project-config-values .form-table-action TD {
+    padding: 10px;
+}
+
+.project-budget-module {
+  margin: 0px;
+  padding: 0px;
+}
+
+.project-budget-module TD {
+  padding: 0px;
+}
+
+.project-budget-module TD:first-child {
+  padding-right: 10px;
+}
+
+.project-budget-module-item {
+  text-align: left;
+  padding-top: 2.5px;
+  vertical-align: top;
+}
+
+/********************* PROJECT SUMMARY ********************************/
+
+.project-module-summary TD {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+ .project-config-head TD
+,.project-load-head TD
+,.project-budget-head TD
+,.project-module-head TD
+ {
+  font-weight: bold;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: solid black 2px;
+}
+
+.project-config-head TD {
+  text-align: center;
+}
+
+.project-budget-item TD, .project-module-item TD {
+  text-align: left;
+  padding-top: 2.5px;
+  vertical-align: top;
+  border-bottom: dotted black 1px;
+}
+
+.project-budget-total {
+  font-weight: bold;
+}
+
+/********************* PROJECT SUMMARY ********************************/
+
+.project-module-title {
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-left: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+  border-top: solid black 2px;
+  border-left: solid black 2px;
+}
+
+.project-module-detail {
+  border-left: solid black 2px;
+  margin-left: -20px; /* Use same value as H3.margin-left! */
+  padding-left: 20px; /* Absolute value of margin-left. */
+}
+
+
+
+/* EOF */

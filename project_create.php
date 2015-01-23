@@ -450,8 +450,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <h3>Panels</h3>
 
-<table cellspacing=0 cellpadding=0 class="loadtable">
- <tr class="tablehead">
+<table cellspacing=0 cellpadding=0 class="project-module-summary">
+ <tr class="project-module-head">
   <td>Product</td>
   <td>Amount</td>
   <td>Voltage<?php echo T_Units::V; ?></td>
@@ -472,11 +472,11 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Table output.
             ?>
-                <tr>
+                <tr class='project-module-item'>
                     <td><?php echo $data['name']; ?></td>
-                    <td><?php echo $data['amount']; ?></td>
-                    <td><?php echo $data['voltage']; ?></td>
-                    <td><?php echo $data['power']; ?></td>
+                    <td class='number'><?php echo $data['amount']; ?></td>
+                    <td class='number'><?php echo $data['voltage']; ?></td>
+                    <td class='number'><?php echo $data['power']; ?></td>
                 </tr>
             <?php
 
@@ -495,8 +495,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <h3>Batteries</h3>
 
-<table cellspacing=0 cellpadding=0 class="loadtable">
- <tr class="tablehead">
+<table cellspacing=0 cellpadding=0 class="project-module-summary">
+ <tr class="project-module-head">
   <td>Product</td>
   <td>Amount</td>
   <td>Voltage<?php echo T_Units::V; ?></td>
@@ -518,12 +518,12 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
             
             // Table output.
             ?>
-                <tr>
+                <tr class='project-module-item'>
                     <td><?php echo $data['name']; ?></td>
-                    <td><?php echo $data['amount']; ?></td>
-                    <td><?php echo $data['voltage']; ?></td>
-                    <td><?php echo $data['capacity']; ?></td>
-                    <td><?php echo $data['ucapacity']; ?></td>
+                    <td class='number'><?php echo $data['amount']; ?></td>
+                    <td class='number'><?php echo $data['voltage']; ?></td>
+                    <td class='number'><?php echo $data['capacity']; ?></td>
+                    <td class='number'><?php echo $data['ucapacity']; ?></td>
                 </tr>
             <?php
 
@@ -542,8 +542,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <h3>Extra hardware</h3>
 
-<table cellspacing=0 cellpadding=0 class="loadtable">
- <tr class="tablehead">
+<table cellspacing=0 cellpadding=0 class="project-module-summary">
+ <tr class="project-module-head">
   <td>Product</td>
   <td>Amount</td>
  </tr>
@@ -562,9 +562,9 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Table output.
             ?>
-                <tr>
+                <tr class='project-module-item'>
                     <td><?php echo $data['name']; ?></td>
-                    <td><?php echo $data['amount']; ?></td>
+                    <td class='number'><?php echo $data['amount']; ?></td>
                 </tr>
             <?php
 
@@ -591,9 +591,9 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Table output.
             ?>
-                <tr>
+                <tr class='project-module-item'>
                     <td><?php echo $data['name']; ?></td>
-                    <td><?php echo $data['amount']; ?></td>
+                    <td class='number'><?php echo $data['amount']; ?></td>
                 </tr>
             <?php
 
@@ -612,8 +612,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <h3>Budget</h3>
 
-<table cellspacing=0 cellpadding=0 class="loadtable">
- <tr class="tablehead">
+<table cellspacing=0 cellpadding=0 class="project-module-summary">
+ <tr class='project-budget-head'>
   <td>Product</td>
   <td>Amount</td>
   <td>Price per Unit<?php echo T_Units::CFA; ?></td>
@@ -625,20 +625,20 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
         $subtotal = $data['price'] * $data['amount'];
         $total += $subtotal;
         ?>
-            <tr>
+            <tr class='project-budget-item'>
                 <td><?php echo $data['product']; ?></td>
-                <td><?php echo $data['amount']; ?></td>
-                <td><?php echo $data['price']; ?></td>
-                <td><?php echo $subtotal; ?></td>
+                <td class='number'><?php echo $data['amount']; ?></td>
+                <td class='number'><?php echo $data['price']; ?></td>
+                <td class='number'><?php echo $subtotal; ?></td>
             </tr>
         <?php
     }
 ?>
- <tr class="tablerow calcresult">
+ <tr class='project-budget-total'>
   <td>Total</td>
   <td></td>
   <td></td>
-  <td><?php echo $total; ?></td>
+  <td class='number calculation-result'><?php echo $total; ?></td>
  </tr>
 </table>
 
@@ -653,45 +653,46 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 <?php echo isset($_POST['load']) ? "<input type='hidden' name='load' value='{$_POST['load']}' />" : ''; ?>
 <?php echo isset($_POST['custom']) ? "<input type='hidden' name='custom' value='{$_POST['custom']}' />" : ''; ?>
 <?php echo isset($_POST['sunhours']) ? "<input type='hidden' name='sunhours' value='{$_POST['sunhours']}' />" : ''; ?>
-<table cellspacing=0 cellpadding=0 class="projecttable">
+
+<table cellspacing=0 cellpadding=0 class="form-table">
   <tr>
-    <td class="tbl_key">Name</td>
-    <td class="tbl_value"><input type="text" name="project_name" value="" required /></td>
+    <td class="form-table-key">Name</td>
+    <td class="form-table-value"><input type="text" name="project_name" value="" required /></td>
   </tr>
   <tr>
-    <td class="tbl_key">Description</td>
-    <td class="tbl_value"><textarea cols=60 rows=5 name="description"></textarea></td>
+    <td class="form-table-key">Description</td>
+    <td class="form-table-value"><textarea cols=60 rows=5 name="description"></textarea></td>
   </tr>
   <tr>
-    <td class="tbl_key">Location</td>
-    <td class="tbl_value"><input type="text" name="location" value="" required /></td>
+    <td class="form-table-key">Location</td>
+    <td class="form-table-value"><input type="text" name="location" value="" required /></td>
   </tr>
   <tr>
-    <td class="tbl_key">Client name</td>
-    <td class="tbl_value"><input type="text" name="client_name" value="" required /></td>
+    <td class="form-table-key">Client name</td>
+    <td class="form-table-value"><input type="text" name="client_name" value="" required /></td>
   </tr>
   <tr>
-    <td class="tbl_key">Client phone</td>
-    <td class="tbl_value"><input type="phone" name="client_phone" value="" /></td>
+    <td class="form-table-key">Client phone</td>
+    <td class="form-table-value"><input type="phone" name="client_phone" value="" /></td>
   </tr>
   <tr>
-    <td class="tbl_key">Responsible person</td>
-    <td class="tbl_value"><input type="text" name="responsible_name" value="" required /></td>
+    <td class="form-table-key">Responsible person</td>
+    <td class="form-table-value"><input type="text" name="responsible_name" value="" required /></td>
   </tr>
   <tr>
-    <td class="tbl_key">Responsible phone</td>
-    <td class="tbl_value"><input type="phone" name="responsible_phone" value="" /></td>
+    <td class="form-table-key">Responsible phone</td>
+    <td class="form-table-value"><input type="phone" name="responsible_phone" value="" /></td>
   </tr>
   <tr>
-    <td class="tbl_key">Delivery date</td>
-    <td class="tbl_value"><input type="date" name="delivery" value="" /></td>
+    <td class="form-table-key">Delivery date</td>
+    <td class="form-table-value"><input type="date" name="delivery" value="" /></td>
   </tr>
   <tr>
-    <td class="tbl_key">Comments</td>
-    <td class="tbl_value"><textarea cols=60 rows=5 name="comment"></textarea></td>
+    <td class="form-table-key">Comments</td>
+    <td class="form-table-value"><textarea cols=60 rows=5 name="comment"></textarea></td>
   </tr>
-  <tr class="buttonrow">
-    <td colspan=2><input type="submit" name="doCreateProject" value="Create project"></td>
+  <tr>
+    <td class="form-table-action" colspan=2><button type="submit" name="doCreateProject" value="Create project">Create project</button></td>
   </tr>
 </table>
 </form>
