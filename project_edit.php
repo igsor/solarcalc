@@ -136,19 +136,19 @@ t_project_editableModule('Inverter', function() use ($db, $id) {
     t_module_editableHardware($data, 'editInverter', 'editInverterTable');
 });
 
+// Delete button.
+t_project_editableModule('Delete project', function() use ($id) {
+    ?>
+        <form action='' method='POST' id='deleteForm'>
+            <input type='hidden' name='id' value='<?php echo $id; ?>' />
+            <input type='hidden' name='doDelete' value='on' />
+            <button type='button' onclick='confirmDelete()'>Delete</button>
+        </form>
+    <?php
+});
+
 // Layout end.
 $db->close();
-
-?>
-
-<h3>Delete project</h3>
-<form action='' method='POST' id='deleteForm'>
-<input type='hidden' name='id' value='<?php echo $id; ?>' />
-<input type='hidden' name='doDelete' value='on' />
-<button type='button' onclick='confirmDelete()'>Delete</button>
-</form>
-
-<?php
 
 t_end();
 
