@@ -90,7 +90,7 @@ CREATE TABLE `project` (
  `responsible_phone` VARCHAR(100),
  `location` VARCHAR(100),
  `comments` TEXT,
- `delivery_date` INT,
+ `delivery_date` VARCHAR(100),
  `sunhours` INT NOT NULL default 5,
 PRIMARY KEY (`id`)
 );
