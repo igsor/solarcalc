@@ -2,22 +2,42 @@
 
 require_once('init.php');
 
-/** PARAMETERS **/
-
 // Database connection.
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
+
+/** PARAMETERS **/
+
+if (!isset($_GET['id'])) {
+    t_argumentError();
+}
+$id = $db->escape_string($_GET['id']);
+
+/** PROJECT EDIT **/
 
 if (isset($_POST['doDelete'])) {
     // delete project
     $id = $db->escape_string($_POST['id']);
     $db->query("DELETE FROM `project` WHERE `id` = '{$id}'") or fatal_error(mysqli_error($db));
     header("Location: project_overview.php");
+} else if (isset($_POST['doProjectEdit'])) {
+    $db->query("
+        UPDATE `project`
+        SET
+              `name`                = '" . $db->escape_string($_POST['name']) . "'
+            , `description`         = '" . $db->escape_string($_POST['description']) . "'
+            , `client_name`         = '" . $db->escape_string($_POST['client_name']) . "'
+            , `client_phone`        = '" . $db->escape_string($_POST['client_phone']) . "'
+            , `responsible_name`    = '" . $db->escape_string($_POST['responsible_name']) . "'
+            , `responsible_phone`   = '" . $db->escape_string($_POST['responsible_phone']) . "'
+            , `location`            = '" . $db->escape_string($_POST['location']) . "'
+            , `comments`            = '" . $db->escape_string($_POST['comments']) . "'
+            , `delivery_date`       = '" . $db->escape_string($_POST['delivery_date']) . "'
+        WHERE
+            `id`                    = '{$id}'
+    ") or fatal_error(mysqli_error($db)); // FIXME: Harden against missing input.
 }
 
-/** PAGE CONTENT **/
-
-// Layout start.
-t_start();
+/** MODULE ACTION **/
 
 if (isset($_POST['editPanel'])) {
     $fields = array('name', 'description', 'voltage', 'power', 'peak_power', 'price', 'amount');
@@ -55,7 +75,32 @@ $fields = array('name', 'description', 'voltage', 'loss', 'max_current', 'price'
     handleModuleAction('project_controller', $fields, $optionals, $db, $_POST);
 }
 
-$id = $db->escape_string($_GET['id']);
+/** PAGE CONTENT **/
+
+// Layout start.
+t_start();
+
+
+?>
+
+<h3>Project metadata</h3>
+
+<form action='' method='POST'>
+<?php
+$result = $db->query("SELECT * FROM `project` WHERE `id` = '{$id}'") or fatal_error(mysqli_error($db));
+t_project_edit('doProjectEdit', 'Save changes', $result->fetch_assoc());
+$result->free();
+?>
+</form>
+
+
+<h3>Budget</h3>
+<?php t_project_budget(project_budget($db, $id)); ?>
+
+<br/>
+
+<?php
+
 function getData($db, $query)
 {
     $result = $db->query($query);
@@ -96,10 +141,11 @@ $db->close();
 
 ?>
 
+<h3>Delete project</h3>
 <form action='' method='POST' id='deleteForm'>
 <input type='hidden' name='id' value='<?php echo $id; ?>' />
 <input type='hidden' name='doDelete' value='on' />
-<input type='button' value='DEL' onclick='confirmDelete()'>
+<button type='button' onclick='confirmDelete()'>Delete</button>
 </form>
 
 <?php

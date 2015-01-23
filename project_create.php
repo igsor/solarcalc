@@ -92,15 +92,15 @@ if (isset($_POST['doCreateProject']))
             , `sunhours`
             )
         VALUES (
-              '" . $db->escape_string($_POST['project_name']) . "'
+              '" . $db->escape_string($_POST['name']) . "'
             , '" . $db->escape_string($_POST['description']) . "'
             , '" . $db->escape_string($_POST['client_name']) . "'
             , '" . $db->escape_string($_POST['client_phone']) . "'
             , '" . $db->escape_string($_POST['responsible_name']) . "'
             , '" . $db->escape_string($_POST['responsible_phone']) . "'
             , '" . $db->escape_string($_POST['location']) . "'
-            , '" . $db->escape_string($_POST['comment']) . "'
-            , '" . $db->escape_string($_POST['delivery']) . "'
+            , '" . $db->escape_string($_POST['comments']) . "'
+            , '" . $db->escape_string($_POST['delivery_date']) . "'
             , '" . $db->escape_string($_POST['sunhours']) . "'
             )
     ") or fatal_error(mysqli_error($db)); // FIXME: Harden against missing input.
@@ -611,36 +611,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 <!-------------------------- BUDGET -------------------------->
 
 <h3>Budget</h3>
-
-<table cellspacing=0 cellpadding=0 class="project-module-summary">
- <tr class='project-budget-head'>
-  <td>Product</td>
-  <td>Amount</td>
-  <td>Price per Unit<?php echo T_Units::CFA; ?></td>
-  <td>Price<?php echo T_Units::CFA; ?></td>
- </tr>
-<?php
-    $total = 0;
-    foreach($budget as $data) {
-        $subtotal = $data['price'] * $data['amount'];
-        $total += $subtotal;
-        ?>
-            <tr class='project-budget-item'>
-                <td><?php echo $data['product']; ?></td>
-                <td class='number'><?php echo $data['amount']; ?></td>
-                <td class='number'><?php echo $data['price']; ?></td>
-                <td class='number'><?php echo $subtotal; ?></td>
-            </tr>
-        <?php
-    }
-?>
- <tr class='project-budget-total'>
-  <td>Total</td>
-  <td></td>
-  <td></td>
-  <td class='number calculation-result'><?php echo $total; ?></td>
- </tr>
-</table>
+<?php t_project_budget($budget); ?>
 
 <!-------------------------- PROJECT METADATA -------------------------->
 
@@ -653,48 +624,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 <?php echo isset($_POST['load']) ? "<input type='hidden' name='load' value='{$_POST['load']}' />" : ''; ?>
 <?php echo isset($_POST['custom']) ? "<input type='hidden' name='custom' value='{$_POST['custom']}' />" : ''; ?>
 <?php echo isset($_POST['sunhours']) ? "<input type='hidden' name='sunhours' value='{$_POST['sunhours']}' />" : ''; ?>
-
-<table cellspacing=0 cellpadding=0 class="form-table">
-  <tr>
-    <td class="form-table-key">Name</td>
-    <td class="form-table-value"><input type="text" name="project_name" value="" required /></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Description</td>
-    <td class="form-table-value"><textarea cols=60 rows=5 name="description"></textarea></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Location</td>
-    <td class="form-table-value"><input type="text" name="location" value="" required /></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Client name</td>
-    <td class="form-table-value"><input type="text" name="client_name" value="" required /></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Client phone</td>
-    <td class="form-table-value"><input type="phone" name="client_phone" value="" /></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Responsible person</td>
-    <td class="form-table-value"><input type="text" name="responsible_name" value="" required /></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Responsible phone</td>
-    <td class="form-table-value"><input type="phone" name="responsible_phone" value="" /></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Delivery date</td>
-    <td class="form-table-value"><input type="date" name="delivery" value="" /></td>
-  </tr>
-  <tr>
-    <td class="form-table-key">Comments</td>
-    <td class="form-table-value"><textarea cols=60 rows=5 name="comment"></textarea></td>
-  </tr>
-  <tr>
-    <td class="form-table-action" colspan=2><button type="submit" name="doCreateProject" value="Create project">Create project</button></td>
-  </tr>
-</table>
+<?php t_project_edit('doCreateProject', 'Create project'); ?>
 </form>
 
 <?php

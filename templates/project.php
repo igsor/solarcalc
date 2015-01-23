@@ -97,3 +97,89 @@ function t_project_modulePrice($variable, $string, $database ) {
     };
 }
 
+function t_project_edit($submitButtonName, $submitButtonValue, $data=null) {
+    if ($data === null) {
+        $data = array_with_defaults(['name', 'description', 'location', 'client_name', 'client_phone', 'responsible_name', 'responsible_phone', 'delivery_date', 'comments']);
+    }
+    ?>
+        <table cellspacing=0 cellpadding=0 class="form-table">
+          <tr>
+            <td class="form-table-key">Name</td>
+            <td class="form-table-value"><input type="text" name="name" value="<?php echo $data['name']; ?>" required /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Description</td>
+            <td class="form-table-value"><textarea cols=60 rows=5 name="description"><?php echo $data['description']; ?></textarea></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Location</td>
+            <td class="form-table-value"><input type="text" name="location" value="<?php echo $data['location']; ?>" required /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Client name</td>
+            <td class="form-table-value"><input type="text" name="client_name" value="<?php echo $data['client_name']; ?>" required /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Client phone</td>
+            <td class="form-table-value"><input type="phone" name="client_phone" value="<?php echo $data['client_phone']; ?>" /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Responsible person</td>
+            <td class="form-table-value"><input type="text" name="responsible_name" value="<?php echo $data['responsible_name']; ?>" required /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Responsible phone</td>
+            <td class="form-table-value"><input type="phone" name="responsible_phone" value="<?php echo $data['responsible_phone']; ?>" /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Delivery date</td>
+            <td class="form-table-value"><input type="date" name="delivery_date" value="<?php echo $data['delivery_date']; ?>" /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Comments</td>
+            <td class="form-table-value"><textarea cols=60 rows=5 name="comments"><?php echo $data['comments']; ?></textarea></td>
+          </tr>
+          <tr>
+            <td class="form-table-action" colspan=2><button type="submit" name="<?php echo $submitButtonName; ?>" value="on"><?php echo $submitButtonValue; ?></button></td>
+          </tr>
+        </table>
+    <?php
+}
+
+// Print a budget from data in $budget - an array of an associative array with keys product, amount, price.
+function t_project_budget($budget)
+{
+    ?>
+        <table cellspacing=0 cellpadding=0 class="project-module-summary">
+         <tr class='project-budget-head'>
+          <td>Product</td>
+          <td>Amount</td>
+          <td>Price per Unit<?php echo T_Units::CFA; ?></td>
+          <td>Price<?php echo T_Units::CFA; ?></td>
+         </tr>
+        <?php
+            $total = 0;
+            foreach($budget as $data) {
+                $subtotal = $data['price'] * $data['amount'];
+                $total += $subtotal;
+                ?>
+                    <tr class='project-budget-item'>
+                        <td><?php echo $data['product']; ?></td>
+                        <td class='number'><?php echo $data['amount']; ?></td>
+                        <td class='number'><?php echo $data['price']; ?></td>
+                        <td class='number'><?php echo $subtotal; ?></td>
+                    </tr>
+                <?php
+            }
+        ?>
+         <tr class='project-budget-total'>
+          <td>Total</td>
+          <td></td>
+          <td></td>
+          <td class='number calculation-result'><?php echo $total; ?></td>
+         </tr>
+        </table>
+    <?php
+}
+
+// EOF //
