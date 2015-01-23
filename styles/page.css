@@ -1,25 +1,17 @@
 
-/*
-    558C89  COL-DOM
-    74AFAD  COL-SUB
-    ECECEA  COL-BG
-    D9853B  COL-FG
-
- */
-
 /********************* GLOBAL DEFINITIONS *****************************/
 
 BODY {
   font-family: Helvetica, Arial;
   padding: 0px;
   margin: 0px;
-  /* COL-BG */ background-color: #74AFAD;
-  /* COL-DOM */ color: black;
+  /* COL-BG */ background-color: #ECECEA;
+  /* COL-DOM */ color: #0F413E;
 }
 
 A {
   font-weight: bold;
-  /* COL-DOM */ color:#3366CC;
+  /* COL-DOM */ color: #0F413E;
   text-decoration: none;
 }
 
@@ -41,7 +33,7 @@ H3 {
 
 BUTTON, INPUT, TEXTAREA, SELECT {
   border: solid 1px;
-  /* COL-DOM */ border-color: black;
+  /* COL-DOM */ border-color: #0F413E;
   font-family: Courier;
   font-size: larger;
 }
@@ -55,11 +47,12 @@ TEXTAREA {
 }
 
 SELECT {
-  /* COL-SUB */ background-color: white;
+  /* COL-SUB */ background-color: #74AFAD;
 }
 
 BUTTON {
-  /* COL-SUB */ background-color: white;
+  /* COL-SUB */ background-color: #74AFAD;
+  /* COL-DOM */ color: #0F413E;
 }
 
 /********************* PAGE SETUP *************************************/
@@ -73,13 +66,13 @@ BUTTON {
 }
 
 #pagetitle {
-  /* COL-DOM */ color: black;
+  /* COL-DOM */ color: #0F413E;
   font-family: Courier;
 }
 
 a.menulink, a.menulink:link, a.menulink:visited {
   border:4px solid;
-  /* COL-DOM */ border-color: #3366CC;
+  /* COL-DOM */ border-color: #0F413E;
 
   padding-left:8px;
   padding-right: 8px;
@@ -89,8 +82,8 @@ a.menulink, a.menulink:link, a.menulink:visited {
   margin-right: 10px;
   margin-bottom: 0px;
 
-  color:#CCFFFF;
-  /* COL-DOM */ background-color: #3366CC;
+  /* COL-SUB */ color: #74AFAD;
+  /* COL-DOM */ background-color: #0F413E;
 
   /* text-decoration:none; (Inherited) */
   /* font-weight: bold; (Inherited) */
@@ -98,8 +91,8 @@ a.menulink, a.menulink:link, a.menulink:visited {
 }
 
 a.menulink:hover, a.menulink:active {
-  /* COL-DOM */ color: #3366CC;
-  /* COL-SUB */ background-color: #CCFFFF;
+  /* COL-DOM */ color: #0F413E;
+  /* COL-SUB */ background-color: #74AFAD;
   text-decoration:underline;
 }
 
@@ -109,7 +102,7 @@ a.menulink:hover, a.menulink:active {
   margin-left: 10px;
   margin-right: 10px;
   border: solid 2px;
-  /* COL-DOM */ border-color: #3366CC;
+  /* COL-DOM */ border-color: #0F413E;
 }
 
 #content {
@@ -124,7 +117,7 @@ a.menulink:hover, a.menulink:active {
 .unit {
   display: inline;
   font-weight: bold;
-  /* COL-DOM */ color: gray;
+  /* COL-DOM */ color: #0F413E;
   font-size: smaller;
 }
 
@@ -137,14 +130,14 @@ a.menulink:hover, a.menulink:active {
 }
 
 .alert {
-  /* COL-HI */ color: red;
+  /* COL-HI */ color: #D9A270;
   font-weight: bold;
   white-space: nowrap;
 }
 
 .amount {
   display: inline;
-  /* COL-DOM */ color: gray;
+  /* COL-DOM */ color: #0F413E;
   font-size: smaller;
   white-space: nowrap;
 }
@@ -176,7 +169,7 @@ a.menulink:hover, a.menulink:active {
 }
 
 .list-even {
-  /* COL-SUB */ background-color: #ECECEA;
+  /* COL-SUB */ background-color: #74AFAD;
 }
 
 .list-odd {
