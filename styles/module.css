@@ -10,7 +10,8 @@
   font-weight: bold;
   text-align: center;
   white-space: nowrap;
-  border-bottom: solid black 2px;
+  border-bottom: solid 2px;
+  /* COL-DOM */ border-color: black
 }
 
 .module-list-headspace {
@@ -24,7 +25,7 @@
 }
 
 .module-list-edit-title TD, .module-list-edit {
-  background-color: #CCFFFF;
+  /* COL-HI */ background-color: #CCFFFF;
 }
 
 .module-list-edit {
