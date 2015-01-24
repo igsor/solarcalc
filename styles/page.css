@@ -96,7 +96,7 @@ a.menulink, a.menulink:link, a.menulink:visited {
   font-family:courier;
 }
 
-a.menulink:hover, a.menulink:active {
+a.menulink.selected, a.menulink:hover, a.menulink:active {
   /* COL-DOM */ color: #1933B8;
   /* COL-SUB */ background-color: #6D9EE0;
   text-decoration:underline;
