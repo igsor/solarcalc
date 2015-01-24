@@ -41,17 +41,18 @@
 }
 
 .project-config-item TD {
-  /* COL-SUB */ background-color: #74AFAD;
+  /* COL-SUB */ background-color: #6D9EE0;
   white-space: nowrap;
   vertical-align: top;
   border: solid 1px;
-  /* COL-DOM */ border-color: #0F413E;
+  /* COL-TXT */ border-color: #170741;
 }
 
 .project-config-values {
   border: solid 1px;
-  /* COL-DOM */ border-color: #0F413E;
+  /* COL-TXT */ border-color: #170741;
   border-top: none;
+  /* COL-FBG */ background-color: #E3DAD5;
 }
 
 .project-config-values TD {
@@ -59,7 +60,7 @@
 }
 
 .project-config-values.selected {
-  /* COL-SUB */ background-color: #74AFAD;
+  /* COL-FBG */ background-color: #E3DAD5;
 }
 
 .project-config-values .table-value {
@@ -75,7 +76,7 @@
 }
 
 .project-config-item.selected TD {
-  /* COL-HI */ background-color: #D9A270;
+  /* COL-HI */ background-color:  #E3A45F;
 }
 
 .project-config-values .form-table-action TD {
@@ -117,7 +118,7 @@
   text-align: left;
   white-space: nowrap;
   border-bottom: solid 2px;
-  /* COL-DOM */ border-color: #0F413E;
+  /* COL-TXT */ border-color: #170741;
 }
 
 .project-config-head TD {
@@ -129,7 +130,7 @@
   padding-top: 2.5px;
   vertical-align: top;
   border-bottom: dotted 1px;
-  /* COL-DOM */ border-color: #0F413E;
+  /* COL-TXT */ border-color: #170741;
 }
 
 .project-budget-total {
@@ -147,12 +148,12 @@
 
   border-top: solid 2px;
   border-left: solid 2px;
-  /* COL-DOM */ border-color: #0F413E;
+  /* COL-TXT */ border-color: #170741;
 }
 
 .project-module-detail {
   border-left: solid 2px;
-  /* COL-DOM */ border-color: #0F413E;
+  /* COL-TXT */ border-color: #170741;
   margin-left: -20px; /* Use same value as H3.margin-left! */
   padding-left: 20px; /* Absolute value of margin-left. */
 }
