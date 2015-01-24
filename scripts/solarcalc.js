@@ -17,16 +17,22 @@ function toggleVisibility(obj, visibilityMode, defaultVisible)
 	}
 }
 
-function toggleConfigOverview(tableHead, table1, table2) {
+function toggleConfigOverview(tableHead, tblShortId, tblLongId) {
+    var tblShort = document.getElementById(tblShortId);
+    var tblLong = document.getElementById(tblLongId);
+
     // Toggle tables.
-    toggleVisibility(document.getElementById(table1), 'table-row', true);
-    toggleVisibility(document.getElementById(table2), 'table-row', false);
+    toggleVisibility(tblShort, 'table-row', true);
+    toggleVisibility(tblLong, 'table-row', false);
 
     // Toggle header class.
-    if (tableHead.classList.contains('project-config-selected')) {
-        tableHead.classList.remove('project-config-selected');
+    if (tableHead.classList.contains('selected')) {
+        tableHead.classList.remove('selected');
+        tblShort.parentNode.classList.remove('selected')
+
     } else {
-        tableHead.classList.add('project-config-selected');
+        tableHead.classList.add('selected');
+        tblShort.parentNode.classList.add('selected')
     }
 }
 

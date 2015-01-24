@@ -1,17 +1,22 @@
 
-
 /********************* GLOBAL DEFINITIONS *****************************/
 
 BODY {
   font-family: Helvetica, Arial;
   padding: 0px;
   margin: 0px;
+  /* COL-BG */ background-color:  #FFFEF2;
+  /* COL-TXT */ color: #170741;
 }
 
 A {
   font-weight: bold;
-  color:#3366CC;
+  /* COL-DOM */ color: #1933B8;
   text-decoration: none;
+}
+
+A:HOVER {
+  /* COL-WRN */ color: #E00606;
 }
 
 H2 {
@@ -31,9 +36,12 @@ H3 {
 /********************* FORM ELEMENTS **********************************/
 
 BUTTON, INPUT, TEXTAREA, SELECT {
-  border: solid black 1px;
+  border: solid 1px;
+  /* COL-TXT */ border-color: #170741;
   font-family: Courier;
   font-size: larger;
+  /* COL-TXT */ color: #170741;
+  /* COL-FBG */ background-color: #E3DAD5;
 }
 
 INPUT, TEXTAREA, SELECT {
@@ -42,6 +50,15 @@ INPUT, TEXTAREA, SELECT {
 
 TEXTAREA {
   height: 100px;
+}
+
+SELECT {
+  /* COL-FBG */ background-color: #E3DAD5;
+}
+
+BUTTON {
+  /* COL-FBG */ background-color: #E3DAD5;
+  /* COL-DOM */ color: #1933B8;
 }
 
 /********************* PAGE SETUP *************************************/
@@ -55,12 +72,13 @@ TEXTAREA {
 }
 
 #pagetitle {
-  color: black;
+  /* COL-TXT */ color: #170741;
   font-family: Courier;
 }
 
 a.menulink, a.menulink:link, a.menulink:visited {
-  border:4px solid #3366CC;
+  border:4px solid;
+  /* COL-DOM */ border-color: #1933B8;
 
   padding-left:8px;
   padding-right: 8px;
@@ -70,17 +88,17 @@ a.menulink, a.menulink:link, a.menulink:visited {
   margin-right: 10px;
   margin-bottom: 0px;
 
-  color:#CCFFFF;
-  background-color:#3366CC;
+  /* COL-SUB */ color: #6D9EE0;
+  /* COL-DOM */ background-color: #1933B8;
 
   /* text-decoration:none; (Inherited) */
   /* font-weight: bold; (Inherited) */
   font-family:courier;
 }
 
-a.menulink:hover, a.menulink:active {
-  color:#3366CC;
-  background-color:#CCFFFF;
+a.menulink.selected, a.menulink:hover, a.menulink:active {
+  /* COL-DOM */ color: #1933B8;
+  /* COL-SUB */ background-color: #6D9EE0;
   text-decoration:underline;
 }
 
@@ -89,7 +107,8 @@ a.menulink:hover, a.menulink:active {
   margin-bottom: 2px;
   margin-left: 10px;
   margin-right: 10px;
-  border: solid #3366CC 2px;
+  border: solid 2px;
+  /* COL-DOM */ border-color: #1933B8;
 }
 
 #content {
@@ -104,7 +123,7 @@ a.menulink:hover, a.menulink:active {
 .unit {
   display: inline;
   font-weight: bold;
-  color: gray;
+  /* COL-DOM */ color: #1933B8;
   font-size: smaller;
 }
 
@@ -114,17 +133,18 @@ a.menulink:hover, a.menulink:active {
 
 .calculation-result {
   border-bottom: double 3px;
+  /* COL-TXT */ border-color: #170741;
 }
 
 .alert {
-  color: red;
+  /* COL-WRN */ color: #E00606;
   font-weight: bold;
   white-space: nowrap;
 }
 
 .amount {
   display: inline;
-  color: gray;
+  /* COL-DOM */ color: #1933B8;
   font-size: smaller;
   white-space: nowrap;
 }
@@ -156,7 +176,7 @@ a.menulink:hover, a.menulink:active {
 }
 
 .list-even {
-  background-color: lightgray;
+  /* COL-SUB */ background-color: #6D9EE0;
 }
 
 .list-odd {
