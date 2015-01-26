@@ -134,7 +134,7 @@ class ConfigurationData {
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
-            $this->totalCapacity += $name["capacity"] * $name["dod"];
+            $this->totalCapacity += $name["capacity"] * $name["dod"] * $amount;
         }
     }
 
