@@ -11,6 +11,17 @@ if (!isset($_POST['load']) or !isset($_POST['sunhours'])) {
 if (!isset($_POST['custom'])) {
     $_POST['custom'] = array();
 }
+// POST cleanup: correct wrong dayhours values
+// IF dayhours > sunhours 
+//     THEN nighthours += dayhours - sunhours 
+//          dayhours    = sunhours
+foreach ($_POST['$load'] as $device) {
+    if ($device["dayhours"] > $_POST['sunhours']) {
+        $device["nighthours"] += $device["dayhours"] - $_POST['sunhours'];
+        $device["dayhours"] = $_POST['sunhours'];
+    };
+};
+
 
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
 
