@@ -164,7 +164,7 @@ class ConfigurationData {
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
-            array_push($priceBat, (float)($name['price'] / $name['lifespan'] * self::dayperyear ));
+            array_push($priceBat, (float)($name['price'] * $amount / $name['lifespan'] * self::dayperyear ));
         }
         $pricePan = array();
         foreach($this->panel as $id => $amount) {
@@ -172,7 +172,7 @@ class ConfigurationData {
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
-            array_push($pricePan, (float)($name['price'] / self::lifetimePan ));
+            array_push($pricePan, (float)($name['price'] * $amount / self::lifetimePan ));
         }
         $totalPricepYear = array_sum($pricePan) + array_sum($priceBat);
         $panelWatt = array();
@@ -181,7 +181,7 @@ class ConfigurationData {
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();
-            array_push($panelWatt, $name['power']);
+            array_push($panelWatt, $name['power'] * $amount);
         }
         $totalWatt = array_sum($panelWatt);
         $wattHourspYear = $totalWatt * $this->sunhours * self::dayperyear;
