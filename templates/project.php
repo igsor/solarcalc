@@ -165,9 +165,9 @@ function t_project_budget($budget)
                 ?>
                     <tr class='project-budget-item'>
                         <td><?php echo $data['product']; ?></td>
-                        <td class='number'><?php echo $data['amount']; ?></td>
-                        <td class='number'><?php echo $data['price']; ?></td>
-                        <td class='number'><?php echo $subtotal; ?></td>
+                        <td class='number'><?php echo number_format($data['amount'], "0", ".", "'"); ?></td>
+                        <td class='number'><?php echo number_format($data['price'], "0", ".", "'"); ?></td>
+                        <td class='number'><?php echo number_format($subtotal, "0", ".", "'"); ?></td>
                     </tr>
                 <?php
             }
@@ -176,7 +176,7 @@ function t_project_budget($budget)
           <td>Total</td>
           <td></td>
           <td></td>
-          <td class='number calculation-result'><?php echo $total; ?></td>
+          <td class='number calculation-result'><?php echo number_format($total, "0", ".", "'"); ?></td>
          </tr>
         </table>
     <?php

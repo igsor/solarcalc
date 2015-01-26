@@ -23,13 +23,6 @@ function _ConfigCharacteristics($panel, $battery, $controller, $inverter, $load,
 }
 
 function solaradapter($sunhours, $load, $custom, $database) {
-    // clean up data> if dayhours > sunhours -> nighthours += dayhours - sunhours, dayhours = sunhours
-    foreach ($load as $device) {
-        if ($device["dayhours"] > $sunhours) {
-            $device["nighthours"] += $device["dayhours"] - $sunhours;
-            $device["dayhours"] = $sunhours;
-        };
-    };
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //               CALCULATE VALUEGOAL FOR BATTERIES

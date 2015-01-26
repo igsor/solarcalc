@@ -15,10 +15,10 @@ if (!isset($_POST['custom'])) {
 // IF dayhours > sunhours 
 //     THEN nighthours += dayhours - sunhours 
 //          dayhours    = sunhours
-foreach ($_POST['$load'] as $device) {
+foreach ($_POST['load'] as $key => $device) {
     if ($device["dayhours"] > $_POST['sunhours']) {
-        $device["nighthours"] += $device["dayhours"] - $_POST['sunhours'];
-        $device["dayhours"] = $_POST['sunhours'];
+        $_POST['load'][$key]["nighthours"] += $device["dayhours"] - $_POST['sunhours'];
+        $_POST['load'][$key]["dayhours"] = $_POST['sunhours'];
     };
 };
 
