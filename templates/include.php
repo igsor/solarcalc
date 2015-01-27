@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
  * This is the templates include file.
