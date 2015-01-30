@@ -273,6 +273,14 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
+            <td class="form-table-key">Voltage</td>
+            <?php
+                $columns(function ($item) {
+                    return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required /></td>";
+                });
+            ?>
+        </tr>
+        <tr>
             <td class="form-table-key">Loss</td>
             <?php
                 $columns(function ($item) {
