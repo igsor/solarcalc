@@ -48,7 +48,7 @@ $headers = array(
     , 'description' => 'Description'
     , 'lifespan'    => 'Lifespan' . T_Units::H
     , 'capacity'    => 'Capacity' . T_Units::Ah
-    , 'price'       => 'Price'    . T_Units::CFA
+    , 'price'       => 'Price'    . T_Units::DOL
     , 'stock'       => 'Stock'
 );
 

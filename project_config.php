@@ -83,9 +83,9 @@ foreach ($solution as $idx => $currentsol) {
         <td colspan=4 class='project-config-values'> 
             <table cellpadding=0 cellspacing=0 style='display:table-row' id='shortTable_<?php echo $idx; ?>'>
                 <tr>
-                    <td class='table-key'>Total price<? echo T_Units::CFA; ?></td>
+                    <td class='table-key'>Total price<? echo T_Units::DOL; ?></td>
                     <td class="table-value"><?php echo number_format($currentsol['numbers']['totalPrice'], "0", ".", "'"); ?></td>
-                    <td class='table-key'>Price per kwh<? echo T_Units::CFA; ?> </td>
+                    <td class='table-key'>Price per kwh<? echo T_Units::DOL; ?> </td>
                     <td class='table-value'><?php echo number_format($currentsol['numbers']['pricekWh'],2,'.',"'"); ?></td>
                   </tr>
                   <tr>
@@ -112,15 +112,15 @@ foreach ($solution as $idx => $currentsol) {
                                 <td class="table-value"><?php echo $currentsol['numbers']['inStock']; ?></td>
                             </tr>
                             <tr>
-                                <td class="table-key">Total price<? echo T_Units::CFA; ?></td>
+                                <td class="table-key">Total price<? echo T_Units::DOL; ?></td>
                                 <td class="table-value"><?php echo number_format($currentsol['numbers']['totalPrice'], "0", ".", "'"); ?></td>
                             </tr>
                             <tr>
-                                <td class="table-key">Price per kwh<? echo T_Units::CFA; ?></td>
+                                <td class="table-key">Price per kwh<? echo T_Units::DOL; ?></td>
                                 <td class="table-value"><?php echo number_format($currentsol['numbers']['pricekWh'],2,'.',"'"); ?></td>
                             </tr>
                             <tr>
-                                <td class="table-key">Price detail<? echo T_Units::CFA; ?></td>
+                                <td class="table-key">Price detail<? echo T_Units::DOL; ?></td>
                                 <td class="table-value">
                                     <table cellspacing=0 cellpadding=0 class='project-budget-module'>
             

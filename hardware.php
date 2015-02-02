@@ -63,7 +63,7 @@ $query = "SELECT `id`, `name`, `description`, `price`, `stock` FROM `$mode` ORDE
 $headers = array(
     'name'        => 'Name'
   , 'description' => 'Description'
-  , 'price'       => 'Price' . T_Units::CFA
+  , 'price'       => 'Price' . T_Units::DOL
   , 'stock'       => 'Stock'
 );
 

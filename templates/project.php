@@ -154,8 +154,8 @@ function t_project_budget($budget)
          <tr class='project-budget-head'>
           <td>Product</td>
           <td>Amount</td>
-          <td>Price per Unit<?php echo T_Units::CFA; ?></td>
-          <td>Price<?php echo T_Units::CFA; ?></td>
+          <td>Price per Unit<?php echo T_Units::DOL; ?></td>
+          <td>Price<?php echo T_Units::DOL; ?></td>
          </tr>
         <?php
             $total = 0;

@@ -154,7 +154,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -297,7 +297,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -386,7 +386,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -587,7 +587,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
+            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";

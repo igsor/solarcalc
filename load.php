@@ -47,7 +47,7 @@ $headers = array(
     'name'        => 'Name'
   , 'description' => 'Description'
   , 'power'       => 'Power' . T_Units::W
-  , 'price'       => 'Price' . T_Units::CFA
+  , 'price'       => 'Price' . T_Units::DOL
   , 'stock'       => 'Stock'
 );
 

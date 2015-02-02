@@ -84,7 +84,7 @@ foreach($stock as $key => $value) {
         <td class="form-table-value"><input type="text" class="number" id="cvoltage-%i" name="custom[%i][voltage]" value="12.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
-        <td class="form-table-key">Price<?php echo T_Units::CFA; ?></td>
+        <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
         <td class="form-table-value"><input type="text" class="number" id="cprice-%i" name="custom[%i][price]" value="0.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
