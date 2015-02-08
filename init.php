@@ -10,23 +10,25 @@
  */
 
 /* Customize php settings */
+// Now, this is configured in the .htaccess file.
+// If it does not exist or is not enabled, uncomment the lines below
 
 // Debug settings
-ini_set('display_errors', 'On');
-ini_set('log_errors', 'Off'); 
-//ini_set('error_reporting', 'E_ALL | E_STRICT');
-ini_set('display_startup_errors', 'On');
-ini_set('track_errors', 'On');
-ini_set('html_errors', 'On');
-ini_set('safe_mode_gid', 'On'); // Only group must match
+//ini_set('display_errors', 'On');
+//ini_set('log_errors', 'Off'); 
+//ini_set('error_reporting', E_ALL | E_STRICT);
+//ini_set('display_startup_errors', 'On');
+//ini_set('track_errors', 'On');
+//ini_set('html_errors', 'On');
+//ini_set('safe_mode_gid', 'On'); // Only group must match
 
 // Security settings
-ini_set('magic_quotes_gpc', 'Off');
-ini_set('safe_mode', 'On');
+//ini_set('magic_quotes_gpc', 'Off');
+//ini_set('safe_mode', 'On');
 
 // Code style enforcement
-ini_set('short_open_tag', 'Off');
-ini_set('allow_call_time_pass_reference', 'Off');
+//ini_set('short_open_tag', 'Off');
+//ini_set('allow_call_time_pass_reference', 'Off');
 
 /* Includes */
 
