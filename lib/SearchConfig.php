@@ -28,8 +28,8 @@ class SearchConfig
 
     protected function solarCalc($element, $list, $bin) 
     {
+        
         $list->appendElements($element);
-    
         if (($list->elementinList($this->solutions)) || ($list->elementinList($this->failed))) {
             return;
         } elseif (!$list->validElements()) {
@@ -51,6 +51,17 @@ class SearchConfig
         $elem0        = array ("type" => 0, "value" => 0);
         $this->solarCalc($elem0, $list, $bin);
         $this->cleanUp();
+    }
+
+    private function debug($list) {
+        $totalPower = 0;
+        foreach ($list->elements as $item) {
+            $totalPower += $item["value"];
+        }
+        $reserve = $totalPower - $this->goalValue;
+        echo "The total power of the current valid configuration is: $totalPower<br/>";
+        echo "The claimed goal of this search is: $this->goalValue <br/>";
+        echo "The reserve should be: $reserve<br/><br/>";
     }
 
 };  

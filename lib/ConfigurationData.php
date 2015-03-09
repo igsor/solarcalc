@@ -205,9 +205,9 @@ class ConfigurationData {
                 $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
                 $name = $result->fetch_assoc();
                 $result->free();
-                array_push($deviceEnergy, $name['power'] * $device['nighthours'] / $name['voltage']);
+                array_push($deviceEnergy, $name['power'] * $device['nighthours'] / $name['voltage'] * $device['amount']);
             } else {
-                array_push($deviceEnergy, $this->custom[$key]['power'] * $device['nighthours'] / $this->custom[$key]['voltage']);
+                array_push($deviceEnergy, $this->custom[$key]['power'] * $device['nighthours'] / $this->custom[$key]['voltage'] * $device['amount']);
             }
         }
         $this->totalDeviceEnergy = array_sum($deviceEnergy);
@@ -243,6 +243,12 @@ class ConfigurationData {
         $nighttimeWatt = $this->totalDeviceEnergy * 12.5  / $this->sunhours;
         $needPanel = $daytimeWatt + $nighttimeWatt;
         $this->panelReserve = $this->panelPower - $needPanel;
+        
+        //echo "<br/>The battery capacity is: $this->totalCapacity";
+        //echo "<br/>The panel power is: $this->panelPower";
+        //echo "<br/>The needed panel power is: $needPanel";
+        //echo "<br/>The panel reserve therefore is $this->panelReserve<br/>";
+
        }
     }
 

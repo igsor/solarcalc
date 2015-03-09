@@ -31,6 +31,8 @@ class listUniqueBattery extends SpecialList {
 class list12VPanel extends SpecialList {
     public function success($goalValue) {
         if ($this->totalValue() >= $goalValue) {
+            // check if any subset of this solution is also valid.
+            // If yes, take only subset, not $this->elements
             return true;
         } else {
             return false;
