@@ -206,7 +206,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             <td class="form-table-key">Sold</td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='checkbox' name='sold' form='{$item['formid']}' />";
+                    return "<input type='checkbox' name='sold' form='{$item['formid']}'" . ($item['sold']?' checked':'') ."/>\n";
                 }, 'form-table-value number');
             ?>
         </tr>
