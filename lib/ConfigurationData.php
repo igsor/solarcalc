@@ -156,7 +156,6 @@ class ConfigurationData {
         }
     }
     
-    
     private function setPriceperkWh() {
         $priceBat = array();
         foreach($this->battery as $id => $amount) {
@@ -190,7 +189,6 @@ class ConfigurationData {
         } else {
             $this->priceKwh = 0;
         }
-
     }
 
     private function setBatteryReserve() {
@@ -239,17 +237,16 @@ class ConfigurationData {
             } elseif ($device['dayhours'] > 0) {
                 $daytimeWatt += $device['amount'] * $this->custom[$key]['power'];
             }
-        
-        $nighttimeWatt = $this->totalDeviceEnergy * 12.5  / $this->sunhours;
-        $needPanel = $daytimeWatt + $nighttimeWatt;
-        $this->panelReserve = $this->panelPower - $needPanel;
-        
-        //echo "<br/>The battery capacity is: $this->totalCapacity";
-        //echo "<br/>The panel power is: $this->panelPower";
-        //echo "<br/>The needed panel power is: $needPanel";
-        //echo "<br/>The panel reserve therefore is $this->panelReserve<br/>";
 
-       }
+            $nighttimeWatt = $this->totalDeviceEnergy * 12.5  / $this->sunhours;
+            $needPanel = $daytimeWatt + $nighttimeWatt;
+            $this->panelReserve = $this->panelPower - $needPanel;
+
+            //echo "<br/>The battery capacity is: $this->totalCapacity";
+            //echo "<br/>The panel power is: $this->panelPower";
+            //echo "<br/>The needed panel power is: $needPanel";
+            //echo "<br/>The panel reserve therefore is $this->panelReserve<br/>";
+        }
     }
 
     private function setInStock() {
