@@ -29,6 +29,7 @@ class T_Units
     // Time units
     const Y     = ' <div class="unit" title="Year">[Y]</div>';
     const H     = ' <div class="unit" title="Hour">[H]</div>';
+    const D     = ' <div class="unit" title="Day">[D]</div>';
  
     // Currencies
     const CFA   = ' <div class="unit" title="Central African Franc">[CFA]</div>';

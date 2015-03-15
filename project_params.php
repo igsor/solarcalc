@@ -53,6 +53,7 @@ foreach($stock as $key => $value) {
     <td><input type="number" class="number" id="amount-%i" name="load[%i][amount]"     value="1" pattern="\d+" min="1" onchange="checkLoadStock(this)" required /></td>
     <td><input type="number" class="number" id="dayhr-%i" name="load[%i][dayhours]"   value=""  pattern="\d+" min="0" required /></td>
     <td><input type="number" class="number" id="nighthr-%i" name="load[%i][nighthours]" value=""  pattern="\d+" min="0" required /></td>
+    <td><input type="number" class="number" id="autonomy-%i" name="load[%i][autonomy]" value="0"  pattern="\d+" min="0" required /></td>
     <td><input type="checkbox" checked id="sell-%i" name="load[%i][sell]" onchange="checkLoadStock(this)" /></td>
     <td></td>
   </tr>
@@ -118,6 +119,7 @@ foreach($stock as $key => $value) {
     <td>Amount</td>
     <td>Day time<?php echo T_Units::H; ?></td>
     <td>Night time<?php echo T_Units::H; ?></td>
+    <td>Autonomy<?php echo T_Units::D; ?></td>
     <td>Sold</td>
     <td width=100%></td> <!-- dummy column for scaling -->
   </tr>

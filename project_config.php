@@ -11,16 +11,20 @@ if (!isset($_POST['load']) or !isset($_POST['sunhours'])) {
 if (!isset($_POST['custom'])) {
     $_POST['custom'] = array();
 }
-// POST cleanup: correct wrong dayhours values
-// IF dayhours > sunhours 
-//     THEN nighthours += dayhours - sunhours 
-//          dayhours    = sunhours
+
 foreach ($_POST['load'] as $key => $device) {
+
+    // Correct dayhours. Account sunhours overflow of day hours to night hours .
     if ($device["dayhours"] > $_POST['sunhours']) {
         $_POST['load'][$key]["nighthours"] += $device["dayhours"] - $_POST['sunhours'];
         $_POST['load'][$key]["dayhours"] = $_POST['sunhours'];
-    };
-};
+    }
+
+    // Handle autonomy. Add total hours usage to night hours.
+    if ($device['autonomy'] > 0) {
+        $_POST['load'][$key]['nighthours'] += $device['autonomy'] * ($device['dayhours'] + $device['nighthours']);
+    }
+}
 
 
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
