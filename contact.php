@@ -9,6 +9,7 @@ t_start();
 <pre>
 Association of Linux friends
 Mokindi New Road
+Near Mokindi Community Field
 Limbe
 </pre>
 
