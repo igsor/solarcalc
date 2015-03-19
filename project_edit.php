@@ -1,5 +1,7 @@
 <?php
 
+/*** Project status state machine: See docs/project_states.t ***/
+
 require_once('init.php');
 
 // Database connection.
