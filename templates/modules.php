@@ -91,7 +91,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
     };
 
     foreach($data as $item) {
-        echo "<form id='{$item['formid']}'></form>";
+        echo "<form class='module-form' id='{$item['formid']}'></form>";
     }
 
     ?>
@@ -237,7 +237,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
     };
 
     foreach($data as $item) {
-        echo "<form id='{$item['formid']}'></form>";
+        echo "<form class='module-form' id='{$item['formid']}'></form>";
     }
 
     ?>
@@ -350,7 +350,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
     };
 
     foreach($data as $item) {
-        echo "<form id='{$item['formid']}'></form>";
+        echo "<form class='module-form' id='{$item['formid']}'></form>";
     }
 
     ?>
@@ -463,7 +463,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
     };
 
     foreach($data as $item) {
-        echo "<form id='{$item['formid']}'></form>";
+        echo "<form class='module-form' id='{$item['formid']}'></form>";
     }
 
     ?>

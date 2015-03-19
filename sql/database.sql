@@ -110,6 +110,7 @@ CREATE TABLE `project_load` (
  `daytime` DOUBLE default 0,
  `nighttime` DOUBLE default 0,
  `sold` BOOL default FALSE,
+ `status` ENUM ('planned', 'executing', 'completed', 'cancelled') default 'planned',
  PRIMARY KEY (`id`),
  FOREIGN KEY (`project`) REFERENCES `project`(`id`) ON DELETE CASCADE
  -- FOREIGN KEY (`load`) REFERENCES `load`(`id`) ON DELETE SET NULL

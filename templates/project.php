@@ -135,12 +135,25 @@ function t_project_edit($submitButtonName, $submitButtonValue, $data=null) {
             <td class="form-table-key">Delivery date</td>
             <td class="form-table-value"><input type="date" name="delivery_date" value="<?php echo $data['delivery_date']; ?>" /></td>
           </tr>
+          <?php if (key_exists('status', $data)) { ?>
+            <tr>
+              <td class="form-table-key">Status</td>
+              <td class="form-table-value">
+                <select name="status" id="project-status">
+                  <option value="planned"  <?php echo ($data['status'] == 'planned'  ?' selected':''); ?>>Planned</option>
+                  <option value="executing"<?php echo ($data['status'] == 'executing'?' selected':''); ?>>Executing</option>
+                  <option value="completed"<?php echo ($data['status'] == 'completed'?' selected':''); ?>>Completed</option>
+                  <option value="cancelled"<?php echo ($data['status'] == 'cancelled'?' selected':''); ?>>Cancelled</option>
+                </select>
+              </td>
+            </tr>
+          <?php } ?>
           <tr>
             <td class="form-table-key">Comments</td>
             <td class="form-table-value"><textarea cols=60 rows=5 name="comments"><?php echo $data['comments']; ?></textarea></td>
           </tr>
           <tr>
-            <td class="form-table-action" colspan=2><button type="submit" name="<?php echo $submitButtonName; ?>" value="on"><?php echo $submitButtonValue; ?></button></td>
+            <td class="form-table-action" colspan=2><button type="submit" id="<?php echo $submitButtonName; ?>" name="<?php echo $submitButtonName; ?>" value="on"><?php echo $submitButtonValue; ?></button></td>
           </tr>
         </table>
     <?php

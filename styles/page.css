@@ -61,6 +61,11 @@ BUTTON {
   /* COL-DOM */ color: #1933B8;
 }
 
+BUTTON[disabled], INPUT[disabled], TEXTAREA[disabled], SELECT[disabled] {
+  /* COL-WRN */ border-color: #E00606;
+  /* COL-WRN */ color: #E00606;
+}
+
 /********************* PAGE SETUP *************************************/
 
 #header {

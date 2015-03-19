@@ -27,12 +27,13 @@ $addCallback = function()
 };
 
 // Table query.
-$query = "SELECT `id`, `name`, `description`, `client_name`, `location` FROM `project`";
+$query = "SELECT `id`, `name`, `description`, `client_name`, `location`, `status` FROM `project`";
 $headers = array(
     'name'        => 'Name'
   , 'description' => 'Description'
   , 'client_name' => 'Client'
   , 'location'    => 'Location'
+  , 'status'      => 'Status'
 );
 
 // Execute query and show table.
