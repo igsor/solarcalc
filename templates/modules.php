@@ -273,7 +273,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Voltage</td>
+            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required /></td>";
@@ -281,7 +281,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Loss</td>
+            <td class="form-table-key">Loss<?php echo T_Units::Percent; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='loss' class='number' value='{$item['loss']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required /></td>";
@@ -523,7 +523,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Discharge</td>
+            <td class="form-table-key">Discharge<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='discharge' class='number' value='{$item['discharge']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
