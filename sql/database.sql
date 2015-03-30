@@ -92,6 +92,8 @@ CREATE TABLE `project` (
  `comments` TEXT,
  `delivery_date` VARCHAR(100),
  `sunhours` INT NOT NULL default 5,
+ `work_allowance` INT NOT NULL default 0,
+ `material_allowance` INT NOT NULL default 0,
 PRIMARY KEY (`id`)
 );
 

@@ -43,4 +43,20 @@ function confirmDelete() {
     }
 }
 
+function updateBudget(form_input, target) {
+    var subtotal = document.getElementById(target);
+    var total = document.getElementById('budget_total');
+
+    var old_total    = parseInt(total.innerHTML);
+    var old_subtotal = parseInt(subtotal.innerHTML);
+    var new_subtotal = parseInt(form_input.value);
+    if (new_subtotal && new_subtotal > 0) {
+
+        // Update budget.
+        total.innerHTML  = old_total - old_subtotal + new_subtotal;
+
+        // Budget item.
+        subtotal.innerHTML = subtotal.previousElementSibling.innerHTML = new_subtotal;
+    }
+}
 

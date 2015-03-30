@@ -90,6 +90,8 @@ if (isset($_POST['doCreateProject']))
             , `comments`
             , `delivery_date`
             , `sunhours`
+            , `work_allowance`
+            , `material_allowance`
             )
         VALUES (
               '" . $db->escape_string($_POST['name']) . "'
@@ -102,6 +104,8 @@ if (isset($_POST['doCreateProject']))
             , '" . $db->escape_string($_POST['comments']) . "'
             , '" . $db->escape_string($_POST['delivery_date']) . "'
             , '" . $db->escape_string($_POST['sunhours']) . "'
+            , '" . $db->escape_string($_POST['work_allowance']) . "'
+            , '" . $db->escape_string($_POST['material_allowance']) . "'
             )
     ") or fatal_error(mysqli_error($db)); // FIXME: Harden against missing input.
 
@@ -585,7 +589,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 <!-------------------------- BUDGET -------------------------->
 
 <h3>Budget</h3>
-<?php t_project_budget($budget); ?>
+<?php t_project_budget($budget, 0, 0); ?>
 
 <!-------------------------- PROJECT METADATA -------------------------->
 

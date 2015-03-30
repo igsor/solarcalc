@@ -114,6 +114,8 @@ if (isset($_POST['doDelete'])) {
                 , `location`            = '" . $db->escape_string($_POST['location']) . "'
                 , `comments`            = '" . $db->escape_string($_POST['comments']) . "'
                 , `delivery_date`       = '" . $db->escape_string($_POST['delivery_date']) . "'
+                , `work_allowance`      = '" . $db->escape_string($_POST['work_allowance']) . "'
+                , `material_allowance`  = '" . $db->escape_string($_POST['material_allowance']) . "'
             WHERE
                 `id`                    = '{$id}'
         ") or fatal_error(mysqli_error($db)); // FIXME: Harden against missing input.
@@ -197,7 +199,13 @@ t_project_editableModule('Characteristics', function() {
 });
 
 t_project_editableModule('Budget', function() use ($db, $id) {
-    t_project_budget(project_budget($db, $id));
+    // Get data from project.
+    $result = $db->query(" SELECT `work_allowance`, `material_allowance` FROM `project` WHERE `id` = '{$id}' ") or fatal_error(mysqli_error($db));
+
+    $data = $result->fetch_assoc();
+    $result->free();
+
+    t_project_budget(project_budget($db, $id), $data['work_allowance'], $data['material_allowance']);
 });
 
 t_project_editableModule('Panel', function() use ($db, $id) {

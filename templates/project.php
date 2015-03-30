@@ -99,7 +99,7 @@ function t_project_modulePrice($variable, $string, $database) {
 
 function t_project_edit($submitButtonName, $submitButtonValue, $data=null) {
     if ($data === null) {
-        $data = array_with_defaults(['name', 'description', 'location', 'client_name', 'client_phone', 'responsible_name', 'responsible_phone', 'delivery_date', 'comments']);
+        $data = array_with_defaults(['name', 'description', 'location', 'client_name', 'client_phone', 'responsible_name', 'responsible_phone', 'delivery_date', 'comments', 'work_allowance', 'material_allowance']);
     }
     ?>
         <table cellspacing=0 cellpadding=0 class="form-table">
@@ -114,6 +114,14 @@ function t_project_edit($submitButtonName, $submitButtonValue, $data=null) {
           <tr>
             <td class="form-table-key">Location</td>
             <td class="form-table-value"><input type="text" name="location" value="<?php echo $data['location']; ?>" required /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Material allowance</td>
+            <td class="form-table-value"><input type="number" name="material_allowance" value="<?php echo $data['material_allowance']; ?>" required min="0" pattern="\d+" onBlur="updateBudget(this, 'budget_material')" /></td>
+          </tr>
+          <tr>
+            <td class="form-table-key">Work allowance</td>
+            <td class="form-table-value"><input type="number" name="work_allowance" value="<?php echo $data['work_allowance']; ?>" required min="0" pattern="\d+" onBlur="updateBudget(this, 'budget_work')" /></td>
           </tr>
           <tr>
             <td class="form-table-key">Client name</td>
@@ -160,8 +168,9 @@ function t_project_edit($submitButtonName, $submitButtonValue, $data=null) {
 }
 
 // Print a budget from data in $budget - an array of an associative array with keys product, amount, price.
-function t_project_budget($budget)
+function t_project_budget($budget, $work=0, $material=0)
 {
+    $total = $work + $material;
     ?>
         <table cellspacing=0 cellpadding=0 class="project-module-summary">
          <tr class='project-budget-head'>
@@ -170,26 +179,37 @@ function t_project_budget($budget)
           <td>Price per Unit<?php echo T_Units::DOL; ?></td>
           <td>Price<?php echo T_Units::DOL; ?></td>
          </tr>
-        <?php
-            $total = 0;
-            foreach($budget as $data) {
-                $subtotal = $data['price'] * $data['amount'];
-                $total += $subtotal;
-                ?>
-                    <tr class='project-budget-item'>
-                        <td><?php echo $data['product']; ?></td>
-                        <td class='number'><?php echo number_format($data['amount'], "0", ".", "'"); ?></td>
-                        <td class='number'><?php echo number_format($data['price'], "0", ".", "'"); ?></td>
-                        <td class='number'><?php echo number_format($subtotal, "0", ".", "'"); ?></td>
-                    </tr>
-                <?php
-            }
-        ?>
+         <?php
+             foreach($budget as $data) {
+                 $subtotal = $data['price'] * $data['amount'];
+                 $total += $subtotal;
+                 ?>
+                     <tr class='project-budget-item'>
+                         <td><?php echo $data['product']; ?></td>
+                         <td class='number'><?php echo number_format($data['amount'], "0", ".", "'"); ?></td>
+                         <td class='number'><?php echo number_format($data['price'], "0", ".", "'"); ?></td>
+                         <td class='number'><?php echo number_format($subtotal, "0", ".", "'"); ?></td>
+                     </tr>
+                 <?php
+             }
+         ?>
+         <tr class='project-budget-item'>
+            <td>Material allowance</td>
+            <td class='number'><?php echo number_format(1, "0", ".", "'"); ?></td>
+            <td class='number'><?php echo number_format($material, "0", ".", "'"); ?></td>
+            <td id='budget_material' class='number'><?php echo number_format($material, "0", ".", "'"); ?></td>
+         </tr>
+         <tr class='project-budget-item'>
+            <td>Work allowance</td>
+            <td class='number'><?php echo number_format(1, "0", ".", "'"); ?></td>
+            <td class='number'><?php echo number_format($work, "0", ".", "'"); ?></td>
+            <td id='budget_work' class='number'><?php echo number_format($work, "0", ".", "'"); ?></td>
+         </tr>
          <tr class='project-budget-total'>
           <td>Total</td>
           <td></td>
           <td></td>
-          <td class='number calculation-result'><?php echo number_format($total, "0", ".", "'"); ?></td>
+          <td id='budget_total' class='number calculation-result'><?php echo number_format($total, "0", ".", "'"); ?></td>
          </tr>
         </table>
     <?php
