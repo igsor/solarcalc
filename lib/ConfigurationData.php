@@ -130,7 +130,7 @@ class ConfigurationData {
     private function setBatteryCapacity() {
         $this->totalCapacity = 0;
         foreach($this->battery as $id => $amount) {
-            $query = "SELECT `capacity`, `dod` FROM `battery` WHERE `id` =  $id";
+            $query = "SELECT `capacity`, `dod` / 100 as 'dod' FROM `battery` WHERE `id` =  $id";
             $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
             $name = $result->fetch_assoc();
             $result->free();

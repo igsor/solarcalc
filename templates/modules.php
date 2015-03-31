@@ -284,7 +284,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             <td class="form-table-key">Loss<?php echo T_Units::Percent; ?></td>
             <?php
                 $columns(function ($item) {
-                    return "<input type='text' name='loss' class='number' value='{$item['loss']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required /></td>";
+                    return "<input type='text' name='loss' class='number' value='{$item['loss']}' form='{$item['formid']}' pattern='\d+' min='0' max='100' required /></td>";
                 });
             ?>
         </tr>
@@ -510,7 +510,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
             <td class="form-table-key">Depth of depletion<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='dod' class='number' value='{$item['dod']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='dod' class='number' value='{$item['dod']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
@@ -518,7 +518,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
             <td class="form-table-key">Loss<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='loss' class='number' value='{$item['loss']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='loss' class='number' value='{$item['loss']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
@@ -526,7 +526,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
             <td class="form-table-key">Discharge<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='discharge' class='number' value='{$item['discharge']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='discharge' class='number' value='{$item['discharge']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
             });
         ?>
         </tr>
@@ -574,7 +574,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
             <td class="form-table-key">Max. humidity<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
-                return "<input type='text' name='max_humidity' class='number' value='{$item['max_humidity']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
+                return "<input type='text' name='max_humidity' class='number' value='{$item['max_humidity']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
             });
         ?>
         </tr>

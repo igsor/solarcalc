@@ -487,7 +487,7 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
             // Read database.
             $id = $data['product'];
-            $result = $db->query("SELECT `name`, `voltage`, `capacity`, `dod` * `capacity` AS `ucapacity`, `price` FROM `battery` WHERE id = '" . $db->escape_string($id) . "'") or fatal_error(mysqli_error($db));
+            $result = $db->query("SELECT `name`, `voltage`, `capacity`, `dod` / 100 * `capacity` AS `ucapacity`, `price` FROM `battery` WHERE id = '" . $db->escape_string($id) . "'") or fatal_error(mysqli_error($db));
             if ($result->num_rows != 1) { // ID must exist
                 continue;
             }

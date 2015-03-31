@@ -50,7 +50,7 @@ function solaradapter($sunhours, $load, $custom, $database) {
     $list        = new listUniqueBattery();
 
     $bin         = array ();
-    $query       = "SELECT  `id` AS `type`, `dod`, `loss`, `capacity` FROM `battery`";
+    $query       = "SELECT  `id` AS `type`, `dod` / 100 as 'dod', `loss` / 100 as 'loss', `capacity` FROM `battery`";
     $result      = $database->query($query) or die(mysqli_error($database));
     
     while ($data = $result->fetch_assoc()) {
