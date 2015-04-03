@@ -5,6 +5,11 @@ class ConfigurationData extends MemberCache {
     const dayperyear  = 365;
     const lifetimePan = 10; 
 
+    // Database variables.
+    protected $db;
+    private $tblPrefix;
+
+    // Configuration.
     public $battery;
     public $panel;
     public $load;
@@ -12,21 +17,22 @@ class ConfigurationData extends MemberCache {
     public $inverter;
     public $custom;
     public $sunhours;
-    public $db;
 
     public function __construct(
         $database,
-        $battery    = array(), 
-        $panel      = array(),
-        $load       = array(),
-        $controller = array(),
-        $inverter   = array(),
-        $custom     = array(),
-        $sunhours   = 0
+        $battery    = [], 
+        $panel      = [],
+        $load       = [],
+        $controller = [],
+        $inverter   = [],
+        $custom     = [],
+        $sunhours   = 0,
+        $tbl_prefix = ''
     )
     {
         parent::__construct();
         $this->db           = $database;
+        $this->tblPrefix    = $tbl_prefix;
         $this->battery      = $battery;
         $this->panel        = $panel;
         $this->load         = $load;
@@ -78,7 +84,7 @@ class ConfigurationData extends MemberCache {
     protected function getBoostbuck() {
         foreach ($this->load as $key => $device) {
             if ($device['product'] != 'custom') {
-                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `load` WHERE `id` =  {$device['product']}");
+                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
             } else {
                 $voltage = $this->custom[$key]['voltage'];
             }
@@ -96,7 +102,7 @@ class ConfigurationData extends MemberCache {
         $totalOtherVoltage = 0;
         foreach ($this->load as $key => $device) {
             if ($device['product'] != 'custom') {
-                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `load` WHERE `id` =  {$device['product']}");
+                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
             } else {
                 $voltage = $this->custom[$key]['voltage'];
             }
@@ -116,17 +122,17 @@ class ConfigurationData extends MemberCache {
     protected function getTotalPrice() {
         $totalPrice = 0;
         foreach ($this->panel as $id => $amount) {
-            $totalPrice += $amount * $this->dbSingleValue("SELECT `price` FROM `panel` WHERE `id` =  $id");
+            $totalPrice += $amount * $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}panel` WHERE `id` =  $id");
         }
         foreach ($this->battery as $id => $amount) {
-            $totalPrice += $amount * $this->dbSingleValue("SELECT `price` FROM `battery` WHERE `id` =  $id");
+            $totalPrice += $amount * $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}battery` WHERE `id` =  $id");
         }
         // FIXME: Use $id instead of $amount['product']; Check data structures first!
         foreach($this->controller as $id => $amount) {
-            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `controller` WHERE `id` =  {$amount['product']}");
+            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}controller` WHERE `id` =  {$amount['product']}");
         } 
         foreach($this->inverter as $id => $amount) {
-            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `inverter` WHERE `id` =  {$amount['product']}");
+            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}inverter` WHERE `id` =  {$amount['product']}");
         }
 
         return $totalPrice;
@@ -135,8 +141,8 @@ class ConfigurationData extends MemberCache {
     protected function getBatteryCapacity() {
         $batteryCapacity = 0;
         foreach($this->battery as $id => $amount) {
-            $capacity = $this->dbSingleValue("SELECT `capacity` FROM `battery` WHERE `id` =  $id");
-            $dod = $this->dbSingleValue("SELECT `dod` / 100 FROM `battery` WHERE `id` =  $id");
+            $capacity = $this->dbSingleValue("SELECT `capacity` FROM `{$this->tblPrefix}battery` WHERE `id` =  $id");
+            $dod = $this->dbSingleValue("SELECT `dod` / 100 FROM `{$this->tblPrefix}battery` WHERE `id` =  $id");
             $batteryCapacity += $capacity * $dod * $amount;
         }
 
@@ -149,7 +155,7 @@ class ConfigurationData extends MemberCache {
             return self::lifetimePan;
         }
 
-        $query = sprintf('SELECT min(`lifespan`) FROM `battery` WHERE `id` IN (%s)', implode(',', array_keys($this->battery)));
+        $query = sprintf("SELECT min(`lifespan`) FROM `{$this->tblPrefix}battery` WHERE `id` IN (%s)", implode(',', array_keys($this->battery)));
         $numCycles = $this->dbSingleValue($query);
         return $numCycles / self::dayperyear;
     }
@@ -158,13 +164,13 @@ class ConfigurationData extends MemberCache {
         // Total price per year
         $priceModule = [];
         foreach($this->battery as $id => $amount) {
-            $price    = $this->dbSingleValue("SELECT `price` FROM `battery` WHERE `id` =  $id");
-            $lifespan = $this->dbSingleValue("SELECT `lifespan` FROM `battery` WHERE `id` =  $id");
+            $price    = $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}battery` WHERE `id` =  $id");
+            $lifespan = $this->dbSingleValue("SELECT `lifespan` FROM `{$this->tblPrefix}battery` WHERE `id` =  $id");
             $pricePerYear = self::dayperyear * $price * $amount / $lifespan;
             $priceModule[] = (float)$pricePerYear;
         }
         foreach($this->panel as $id => $amount) {
-            $price = $this->dbSingleValue("SELECT `price` FROM `panel` WHERE `id` =  $id");
+            $price = $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}panel` WHERE `id` =  $id");
             $pricePerYear = $price * $amount / self::lifetimePan;
             $priceModule[] = (float)$pricePerYear;
         }
@@ -183,8 +189,8 @@ class ConfigurationData extends MemberCache {
         $deviceEnergy = [];
         foreach($this->load as $key => $device) {
             if ($device['product'] != 'custom') {
-                $power   = $this->dbSingleValue("SELECT `power` FROM `load` WHERE `id` =  {$device['product']}");
-                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `load` WHERE `id` =  {$device['product']}");
+                $power   = $this->dbSingleValue("SELECT `power` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
+                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
                 $deviceEnergy[] = $device['amount'] * $power * $device['nighthours'] / $voltage;
             } else {
                 $deviceEnergy[] =  $device['amount'] * $this->custom[$key]['power'] * $device['nighthours'] / $this->custom[$key]['voltage'];
@@ -205,7 +211,7 @@ class ConfigurationData extends MemberCache {
     protected function getPanelPower() {
         $panelPower = 0;
         foreach($this->panel as $id => $amount) {
-            $power = $this->dbSingleValue("SELECT `power` FROM `panel` WHERE `id` = $id");
+            $power = $this->dbSingleValue("SELECT `power` FROM `{$this->tblPrefix}panel` WHERE `id` = $id");
             $panelPower += $amount * $power;
         }
         return $panelPower;
@@ -220,7 +226,7 @@ class ConfigurationData extends MemberCache {
         $daytimeWatt = 0;
         foreach($this->load as $key => $device) {
             if ($device['dayhours'] > 0 && $device['product'] != 'custom') { 
-                $power = $this->dbSingleValue("SELECT `power` FROM `load` WHERE `id` =  {$device['product']}");
+                $power = $this->dbSingleValue("SELECT `power` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
                 $daytimeWatt += $device['amount'] * $power;
             } elseif ($device['dayhours'] > 0) {
                 $daytimeWatt += $device['amount'] * $this->custom[$key]['power'];
@@ -240,11 +246,11 @@ class ConfigurationData extends MemberCache {
     protected function getInStock() {
         $inStock = true;
         foreach ($this->panel as $id => $amount) {
-            $numStock = $this->dbSingleValue("SELECT `stock` FROM `panel` WHERE `id` =  $id");
+            $numStock = $this->dbSingleValue("SELECT `stock` FROM `{$this->tblPrefix}panel` WHERE `id` =  $id");
             $inStock  = $inStock && ($amount <= $numStock);
         }
         foreach ($this->battery as $id => $amount) {
-            $numStock = $this->dbSingleValue("SELECT `stock` FROM `battery` WHERE `id` =  $id");
+            $numStock = $this->dbSingleValue("SELECT `stock` FROM `{$this->tblPrefix}battery` WHERE `id` =  $id");
             $inStock  = $inStock && ($amount <= $numStock);
         }
 
