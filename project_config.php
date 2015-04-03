@@ -29,6 +29,9 @@ foreach ($_POST['load'] as $key => $device) {
 
 $db = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME) or fatal_error(mysqli_connect_error());
 
+// Produce the cannonical load.
+$cload = cannonical_load($_POST['load'], $_POST['custom'], $db);
+
 t_start();
 ?>
 
@@ -39,10 +42,9 @@ t_start();
 <h2>Search results</h2>
 <?php
 
-// $commonList = mergeLoads($_POST['load'], $_POST['custom']);
-// compute some stuff
+// Search valid configurations.
+$solution = solaradapter($cload, $_POST['sunhours'], $db);
 
-$solution = solaradapter($_POST['sunhours'], $_POST['load'], $_POST['custom'], $db);
 ?>
 
 <table cellspacing=0 cellpadding=0 class="project-config">
@@ -88,21 +90,21 @@ foreach ($solution as $idx => $currentsol) {
             <table cellpadding=0 cellspacing=0 style='display:table-row' id='shortTable_<?php echo $idx; ?>'>
                 <tr>
                     <td class='table-key'>Total price<?php echo T_Units::DOL; ?></td>
-                    <td class="table-value"><?php echo number_format($currentsol['numbers']['totalPrice'], "0", ".", "'"); ?></td>
+                    <td class="table-value"><?php echo number_format($currentsol['numbers']->totalPrice, "0", ".", "'"); ?></td>
                     <td class='table-key'>Price per kwh<?php echo T_Units::DOL; ?> </td>
-                    <td class='table-value'><?php echo number_format($currentsol['numbers']['pricekWh'],2,'.',"'"); ?></td>
+                    <td class='table-value'><?php echo number_format($currentsol['numbers']->pricePerkWh,2,'.',"'"); ?></td>
                   </tr>
                   <tr>
                     <td class='table-key'>Battery capacity<?php echo T_Units::Ah; ?></td>
-                    <td class='table-value'><?php echo $currentsol['numbers']['batteryCapacity']; ?></td> 
+                    <td class='table-value'><?php echo $currentsol['numbers']->batteryCapacity; ?></td> 
                     <td class='table-key'>Panel power<?php echo T_Units::W; ?></td>
-                    <td class='table-value'><?php echo $currentsol['numbers']['panelPower']; ?></td> 
+                    <td class='table-value'><?php echo $currentsol['numbers']->panelPower; ?></td> 
                   </tr>
                   <tr>
                     <td class='table-key'>Expected lifetime<?php echo T_Units::Y; ?></td>
-                    <td class='table-value'><?php echo number_format($currentsol['numbers']['lifetime'],1,'.',"'"); ?></td> 
+                    <td class='table-value'><?php echo number_format($currentsol['numbers']->expectedLifetime,1,'.',"'"); ?></td> 
                     <td class='table-key'>In stock</td>
-                    <td class='table-value'><?php echo $currentsol['numbers']['inStock']; ?></td>
+                    <td class='table-value'><?php echo $currentsol['numbers']->inStock; ?></td>
                   </tr>
             </table>
 
@@ -113,15 +115,15 @@ foreach ($solution as $idx => $currentsol) {
                         <table cellpadding=0 cellspacing=0 style='display:table-row' id='longTable_<?php echo $idx; ?>'>
                             <tr>
                                 <td class="table-key">In stock</td>
-                                <td class="table-value"><?php echo $currentsol['numbers']['inStock']; ?></td>
+                                <td class="table-value"><?php echo $currentsol['numbers']->inStock; ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Total price<?php echo T_Units::DOL; ?></td>
-                                <td class="table-value"><?php echo number_format($currentsol['numbers']['totalPrice'], "0", ".", "'"); ?></td>
+                                <td class="table-value"><?php echo number_format($currentsol['numbers']->totalPrice, "0", ".", "'"); ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Price per kwh<?php echo T_Units::DOL; ?></td>
-                                <td class="table-value"><?php echo number_format($currentsol['numbers']['pricekWh'],2,'.',"'"); ?></td>
+                                <td class="table-value"><?php echo number_format($currentsol['numbers']->pricePerkWh,2,'.',"'"); ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Price detail<?php echo T_Units::DOL; ?></td>
@@ -144,27 +146,27 @@ foreach ($solution as $idx => $currentsol) {
                         <table cellpadding=0 cellspacing=0 style='display:table-row' id='longTable_<?php echo $idx; ?>'>
                             <tr>
                                 <td class="table-key">Input voltage<?php echo T_Units::V; ?></td>
-                                <td class="table-value"><?php echo $currentsol['numbers']['inputVoltage']; ?></td>
+                                <td class="table-value"><?php echo $currentsol['numbers']->inputVoltage; ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Expected lifetime<?php echo T_Units::Y; ?></td>
-                                <td class="table-value"><?php echo number_format($currentsol['numbers']['lifetime'],1,'.',"'"); ?></td>
+                                <td class="table-value"><?php echo number_format($currentsol['numbers']->expectedLifetime,1,'.',"'"); ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Total battery capacity<?php echo T_Units::Ah; ?></td>
-                                <td class="table-value"><?php echo $currentsol['numbers']['batteryCapacity']; ?></td>
+                                <td class="table-value"><?php echo $currentsol['numbers']->batteryCapacity; ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Unused battery capacity<?php echo T_Units::Ah; ?></td>
-                                <td class="table-value"><?php echo number_format($currentsol['numbers']['batteryReserve'],1,'.',"'"); ?></td>
+                                <td class="table-value"><?php echo number_format($currentsol['numbers']->batteryReserve,1,'.',"'"); ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Total panel power<?php echo T_Units::W; ?></td>
-                                <td class="table-value"><?php echo $currentsol['numbers']['panelPower']; ?></td>
+                                <td class="table-value"><?php echo $currentsol['numbers']->panelPower; ?></td>
                             </tr>
                             <tr>
                                 <td class="table-key">Unused panel power<?php echo T_Units::W; ?></td>
-                                <td class="table-value"><?php echo number_format($currentsol['numbers']['panelReserve'],1,'.',"'"); ?></td>
+                                <td class="table-value"><?php echo number_format($currentsol['numbers']->panelReserve,1,'.',"'"); ?></td>
                             </tr>
                         </table>
                     </td>

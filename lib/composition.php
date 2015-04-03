@@ -1,44 +1,58 @@
 <?php
 
-function _ConfigCharacteristics($panel, $battery, $controller, $inverter, $load, $custom, $database, $sunhours) {
-    $newComposition = new ConfigurationData($database, $battery, $panel, $load, $controller, $inverter, $custom, (float)($sunhours));
-    $numbers= array (
-         "inStock"         => $newComposition->inStock,
-         "lifetime"        => $newComposition->expectedLifetime,
-         "pricekWh"        => $newComposition->pricePerkWh,
-         "batteryCapacity" => $newComposition->batteryCapacity,
-         "totalPrice"      => $newComposition->totalPrice,
-         "inputVoltage"    => $newComposition->changeBaseVoltage,
-         "batteryReserve"  => $newComposition->batteryReserve,
-         "panelReserve"    => $newComposition->panelReserve,
-         "panelPower"      => $newComposition->panelPower,
-    );
-    if ($numbers['inputVoltage'] == 0) {
-        $numbers['inputVoltage'] = 12.5;
-    } else {
-        $numbers['inputVoltage'] = 'Not standard Value';
+/**
+ * Creates a unified array from *load* and *custom*.
+ * All load data are read from the database and combined
+ * with what's in *custom*.
+ *
+ * The resulting array has the following keys:
+ *  - amount
+ *  - dayhours
+ *  - nighthours
+ *  - sold
+ *  - product (id or 'custom')
+
+ *  - name
+ *  - power
+ *  - type
+ *  - voltage
+ *  - price
+ *  - stock
+ * 
+ */
+function cannonical_load($load, $custom, $db) {
+    $cannonical = [];
+    foreach($load as $key => $device) {
+        if ($device['product'] == 'custom') {
+            $data = $custom[$key];
+        } else {
+            $id = $device['product'] = $db->escape_string($device['product']);
+            $result = $db->query("SELECT `name`, `power`, `type`, `voltage`, `price`, `stock` FROM `load` WHERE `id` = {$id}") or fatal_error(mysqli_error($db));
+            $data = $result->fetch_assoc();
+        }
+
+        // FIXME: Input checking?
+        $cannonical[] = array_merge($data, $device);
     }
-    return $numbers;
+
+    return $cannonical;
 }
 
-function solaradapter($sunhours, $load, $custom, $database) {
+/**
+ * Search for valid configurations satisfying the *load*, assuming
+ * *sunhours* hours of light per day.
+ */
+function solaradapter($cload, $sunhours, $database) {
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //               CALCULATE VALUEGOAL FOR BATTERIES
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     // sum over [device power] X [nighttime usage] / [device voltage] X [amount]
     $totalAh = 0;
-    foreach ($load as $key => $device) {
-        if ($device["product"] != "custom") {
-            $query     = "SELECT  `power`, `voltage` FROM `load` WHERE `id` = " . $device["product"]; 
-            $result    = $database->query($query) or die(mysqli_error($database));
-            $data = $result->fetch_assoc();
-            $result->free();
-            $totalAh += $device["amount"] * $device["nighthours"] * $data["power"] / $data["voltage"];
-         } else {
-            $totalAh += $device["amount"] * $device["nighthours"] * $custom[$key]["power"] / $custom[$key]["voltage"];
-         };
-    };
+    foreach ($cload as $device) {
+         $totalAh += $device['amount'] * $device['nighthours'] * $device['power'] / $device['voltage'];
+    }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //                  POSSIBLE BATTERY CONFIGURATIONS
@@ -47,128 +61,134 @@ function solaradapter($sunhours, $load, $custom, $database) {
     $outputLists = new SearchConfig();
     $outputLists->goalValue =  $totalAh;
     $list        = new listUniqueBattery();
-
-    $bin         = array ();
+    $bin         = [];
     $query       = "SELECT  `id` AS `type`, `dod` / 100 as 'dod', `loss` / 100 as 'loss', `capacity` FROM `battery`";
     $result      = $database->query($query) or die(mysqli_error($database));
     
     while ($data = $result->fetch_assoc()) {
         $value = round($data["dod"] * $data["capacity"] / (1 + $data["loss"]),1);
-        array_push($bin, array ('type' => $data['type'], 'value' => $value));
-    };
+        $bin[] = [ 'type' => $data['type'], 'value' => $value ];
+    }
     $result->free();
 
+    // Compute battery configurations.
     $outputLists->calculation($list, $bin);
 
-
-    $battery = array();
+    // Extract solutions.
+    $battery = [];
     foreach ($outputLists->solutions as $solution) {
-        $keys = array ();
+        $keys = [];
         foreach ($solution as $key => $value) {
-            array_push($keys, $value['type']);
+            $keys[] = $value['type'];
         }
+
         $proposedSolution = array_count_values($keys);
-        array_push($battery, $proposedSolution);
-    };
+        $battery[] = $proposedSolution;
+    }
     
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //               CALCULATE VALUEGOAL FOR PANELS 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
     // sum over all devices power with dayhours > 0 and $totalAh x [voltage]
     $totalW = 0;
-    foreach ($load as $key => $device) {
-        if ($device["product"] != "custom" && $device["dayhours"] > 0) {
-            $query     = "SELECT  `power`, `voltage` FROM `load` WHERE `id` = " . $device["product"]; 
-            $result    = $database->query($query) or die(mysqli_error($database));
-            $data = $result->fetch_assoc();
-            $result->free();
-            $totalW  += $data["power"] * $device["amount"];
-        } elseif ($device["product"] == "custom" && $device["dayhours"] > 0 ) {
-            $totalW  += $custom[$key]["power"] * $device["amount"]; 
+    foreach ($cload as $device) {
+        if ($device["dayhours"] > 0) {
+            $totalW  += $device["power"] * $device["amount"]; 
         }    
-    };
-    $totalW += $totalAh * 12.5 * 1.2 / $sunhours; // ampere hours to watt if voltage = 12.5volt
+    }
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    //                  CHECK IF INVERTER IS NEEDED
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    $optInverter = array ();
-    $setInv = 0;
-    foreach ($load as $key => $element) {
-        if ($element["product"] != "custom") {
-            $query     = "SELECT  `type` FROM `load` WHERE `id` = " . $element['product']; 
-            $result    = $database->query($query) or die(mysqli_error($database));
-            $data      = $result->fetch_assoc();
-            $result->free();
-            if ($data["type"] == "AC" && $setInv == 0) {
-                $optInverter = array( array("product" => 1, "amount" => 1));
-                $setInv = 1;
-            };
-        } elseif ($custom[$key]["type"] == "AC" && $setInv == 0) {
-             $optInverter = array( array("product" => 1, "amount" => 1));
-             $setInv = 1;
-        };
-    };
+    $totalW += $totalAh * 12.5 * 1.2 / $sunhours; // ampere hours to watt if voltage = 12.5volt // FIXME: Hardcoded voltage
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //                  POSSIBLE PANEL CONFIGURATIONS
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     $outputLists  = new SearchConfig();
     $outputLists->goalValue = $totalW;
     $list         = new list12VPanel();
-
-    $bin          = array ();
-    $query     = "SELECT  `id` AS `type`, `power` AS `value` FROM `panel`";
-    $result    = $database->query($query) or die(mysqli_error($database));
+    $bin          = [];
+    $query        = "SELECT  `id` AS `type`, `power` AS `value` FROM `panel`";
+    $result       = $database->query($query) or die(mysqli_error($database));
     
     while ($data = $result->fetch_assoc()) {
-        array_push($bin, array_map('intval', $data));
-    };
+        $bin[] = array_map('intval', $data);
+    }
     $result->free();
 
+    // Search valid panel configuration.
     $outputLists->calculation($list, $bin);
 
-
-    $panel = array();
+    // Extract solutions.
+    $panel = [];
     foreach ($outputLists->solutions as $solution) {
-        $keys = array ();
+        $keys = [];
         foreach ($solution as $key => $value) {
-            array_push($keys, $value['type']);
+            $keys[] = $value['type'];
         }
         $proposedSolution = array_count_values($keys);
-        array_push($panel, $proposedSolution);
-    };
+
+        $panel[] = $proposedSolution;
+    }
        
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    //                  CHECK IF INVERTER IS NEEDED
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    $refInverter = [];
+    $optInverter = [];
+    if (any($cload, function($device) { return $device['type'] == 'AC'; })) {
+        $refInverter = [ ["product" => 1, "amount" => 1] ]; // FIXME: Hardcoded ID
+        $optInverter = [ 1 => 1 ];
+    }
+    // FIXME: Inverter parameters not considered (max. current)
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    //                  ADD CONTROLLER
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    $refController = [["product" => 1, "amount" => 1]]; // FIXME: Hardcoded ID / Amount
+    $optController = [ 1 => 1 ];
+    // FIXME: Controller parameters not considered (max. current).
+    // FIXME: Add controller dep. on battery/panel configuration
+
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //      GET ALL POSSIBLE COMBINATIONS OF PANEL AND BATTERY
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    $solution = array ();
+    $solution = [];
     foreach ($panel as $optPanel) {
         foreach ($battery as $optBattery) {
-            $refPanel = array();
+            $refPanel = [];
             foreach ($optPanel as $keyP => $valueP) {
-                array_push($refPanel, array ('product' => $keyP, 'amount' => $valueP));
-            };
-            $refBat = array();
+                $refPanel[] = array ('product' => $keyP, 'amount' => $valueP);
+            }
+
+            $refBat = [];
             foreach ($optBattery as $keyP => $valueP) {
-                array_push($refBat, array ('product' => $keyP, 'amount' => $valueP));
-            };
-            $optController = [["product" => 1, "amount" => 1]];
-            $optNumbers    = _ConfigCharacteristics($optPanel, $optBattery, $optController, $optInverter, $load, $custom, $database, $sunhours);
-            $allDevices    = array (
+                $refBat[] = array ('product' => $keyP, 'amount' => $valueP);
+            }
+
+            $optNumbers    = new ConfigurationData(
+                                $database,              // Database object
+                                $optBattery,            // [ id => amount ]
+                                $optPanel,              // [ id => amount ]
+                                $optController,         // [ id => amount ]
+                                $optInverter,           // [ id => amount ]
+                                $cload,                 // See *cannonical_load*
+                                (float)($sunhours)      // Scalar
+                            );
+            $allDevices    = [
                 "panel"     => $refPanel,
                 "battery"   => $refBat,
-                "controller"=> $optController,
-                "inverter"  => $optInverter,
+                "controller"=> $refController,
+                "inverter"  => $refInverter,
                 "numbers"   => $optNumbers,
-            );
-            array_push($solution, $allDevices);
-        };
-    };
+            ];
 
+            $solution[] = $allDevices;
+        }
+    }
   
     return $solution;
 }

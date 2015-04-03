@@ -12,7 +12,7 @@ class ConfigurationData extends MemberCache {
     // Configuration.
     public $battery;
     public $panel;
-    public $load;
+    public $cload;
     public $controller;
     public $inverter;
     public $custom;
@@ -20,12 +20,11 @@ class ConfigurationData extends MemberCache {
 
     public function __construct(
         $database,
-        $battery    = [], 
-        $panel      = [],
-        $load       = [],
-        $controller = [],
-        $inverter   = [],
-        $custom     = [],
+        $battery    = [],           // [ id => amount ]
+        $panel      = [],           // [ id => amount ]
+        $controller = [],           // [ id => amount ]
+        $inverter   = [],           // [ id => amount ]
+        $cload      = [],           // Cannonical load
         $sunhours   = 0,
         $tbl_prefix = ''
     )
@@ -35,10 +34,9 @@ class ConfigurationData extends MemberCache {
         $this->tblPrefix    = $tbl_prefix;
         $this->battery      = $battery;
         $this->panel        = $panel;
-        $this->load         = $load;
+        $this->cload        = $cload;
         $this->controller   = $controller;
         $this->inverter     = $inverter;
-        $this->custom       = $custom;
         $this->sunhours     = $sunhours;
     }
 
@@ -82,13 +80,8 @@ class ConfigurationData extends MemberCache {
 
     // FIXME: Could be combined with getChangeBaseVoltage.
     protected function getBoostbuck() {
-        foreach ($this->load as $key => $device) {
-            if ($device['product'] != 'custom') {
-                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
-            } else {
-                $voltage = $this->custom[$key]['voltage'];
-            }
-
+        foreach ($this->cload as $device) {
+            $voltage = $device['voltage'];
             if ($voltage < 11.5 || $voltage > 12.5) {
                 return 1;
             }   
@@ -100,23 +93,26 @@ class ConfigurationData extends MemberCache {
     // FIXME: Could be combined with getBoostbuck.
     protected function getChangeBaseVoltage() {
         $totalOtherVoltage = 0;
-        foreach ($this->load as $key => $device) {
-            if ($device['product'] != 'custom') {
-                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
-            } else {
-                $voltage = $this->custom[$key]['voltage'];
-            }
-
+        foreach ($this->cload as $device) {
+            $voltage = $device['voltage'];
             if ($voltage < 11.5 || $voltage > 12.5) {
                 $totalOtherVoltage += 1;
             }   
         }
 
-        if ($totalOtherVoltage > 0.75 * count($this->load)) {
+        if ($totalOtherVoltage > 0.75 * count($this->cload)) {
             return 1;
         }
 
         return 0;
+    }
+
+    protected function getInputVoltage() {
+        if ($this->changeBaseVoltage) {
+            return 'Non standard value';
+        } else {
+            return 12.5;
+        }
     }
 
     protected function getTotalPrice() {
@@ -129,10 +125,10 @@ class ConfigurationData extends MemberCache {
         }
         // FIXME: Use $id instead of $amount['product']; Check data structures first!
         foreach($this->controller as $id => $amount) {
-            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}controller` WHERE `id` =  {$amount['product']}");
+            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}controller` WHERE `id` = $id");
         } 
         foreach($this->inverter as $id => $amount) {
-            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}inverter` WHERE `id` =  {$amount['product']}");
+            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `{$this->tblPrefix}inverter` WHERE `id` = $id");
         }
 
         return $totalPrice;
@@ -187,14 +183,8 @@ class ConfigurationData extends MemberCache {
 
     protected function getTotalDeviceEnergy() {
         $deviceEnergy = [];
-        foreach($this->load as $key => $device) {
-            if ($device['product'] != 'custom') {
-                $power   = $this->dbSingleValue("SELECT `power` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
-                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
-                $deviceEnergy[] = $device['amount'] * $power * $device['nighthours'] / $voltage;
-            } else {
-                $deviceEnergy[] =  $device['amount'] * $this->custom[$key]['power'] * $device['nighthours'] / $this->custom[$key]['voltage'];
-            }
+        foreach($this->cload as $device) {
+            $deviceEnergy[] =  $device['amount'] * $device['power'] * $device['nighthours'] / $device['voltage'];
         }
 
         return array_sum($deviceEnergy);
@@ -224,12 +214,9 @@ class ConfigurationData extends MemberCache {
         // X all nightime Watt
         
         $daytimeWatt = 0;
-        foreach($this->load as $key => $device) {
-            if ($device['dayhours'] > 0 && $device['product'] != 'custom') { 
-                $power = $this->dbSingleValue("SELECT `power` FROM `{$this->tblPrefix}load` WHERE `id` =  {$device['product']}");
-                $daytimeWatt += $device['amount'] * $power;
-            } elseif ($device['dayhours'] > 0) {
-                $daytimeWatt += $device['amount'] * $this->custom[$key]['power'];
+        foreach($this->cload as $device) {
+            if ($device['dayhours'] > 0) {
+                $daytimeWatt += $device['amount'] * $device['power'];
             }
         }
 
