@@ -35,6 +35,9 @@
 // Global config.
 require_once('config.php');
 
+// Include data.
+require_once('data/include.php');
+
 // Include library code.
 require_once('lib/include.php');
 

@@ -60,3 +60,17 @@ function updateBudget(form_input, target) {
     }
 }
 
+function displayHelp(text) {
+    
+    var helptext = document.getElementById('help-div');
+    
+    if (text == '') {
+        stat = 'hidden';
+    } else {
+        stat = 'visible';
+    }
+        
+    helptext.style.visibility = stat;
+    helptext.innerHTML = text;
+   
+}

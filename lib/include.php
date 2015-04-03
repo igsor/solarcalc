@@ -22,4 +22,5 @@ include_once('SpecialList.php');
 include_once('SpecialListClasses.php');
 include_once('SearchConfig.php');
 include_once('ConfigurationData.php');
+
 // EOF //

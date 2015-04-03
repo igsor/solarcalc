@@ -19,6 +19,8 @@ function t_start($title='')
     _t_navigation();
 
     echo "<div id='content'>\n";
+
+    _t_helpDisplay();
 }
 
 function t_end()
@@ -49,6 +51,11 @@ function _t_navigation()
 function _t_foot()
 {
 	include('footer.php');
+}
+
+function _t_helpDisplay()
+{
+    echo "<div id='help-div'>This is the helptext</div>";
 }
 
 // EOF //

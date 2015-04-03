@@ -70,6 +70,7 @@ BUTTON[disabled], INPUT[disabled], TEXTAREA[disabled], SELECT[disabled] {
 
 #header {
   text-align: center;
+  position: relative;
 }
 
 #footer {
@@ -91,6 +92,18 @@ BUTTON[disabled], INPUT[disabled], TEXTAREA[disabled], SELECT[disabled] {
   /* COL-TXT */ color: #170741;
   font-family: Courier;
   width: 100%;
+}
+
+#help-div {
+  visibility: hidden;
+  position: absolute;
+  top: -10px;
+  right: 0px;
+  width: 30%;
+  border: solid 4px;
+  /* COL-DOM */ color: #1933B8;
+  /* COL-DOM */ border-color: #1933B8;
+  /* COL-BG */ background-color:  #6D9EE0;
 }
 
 .startpage-coloumn{
@@ -141,6 +154,7 @@ a.menulink.selected, a.menulink:hover, a.menulink:active {
 }
 
 #content {
+  position: relative;
   margin-top: 20px;
   margin-bottom: 20px;
   margin-left: 50px;

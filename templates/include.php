@@ -22,4 +22,7 @@ include_once('units.php');
 // Error messages.
 include_once('errors.php');
 
+// Display help texts.
+include_once('helptext.php');
+
 // EOF //
