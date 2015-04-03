@@ -36,7 +36,7 @@ t_start();
 ?>
 
 <h2>Load summary</h2>
-<?php t_project_loadSummary($_POST['load'], $_POST['custom'], $db); ?>
+<?php t_project_loadSummary($cload); ?>
 
 
 <h2>Search results</h2>

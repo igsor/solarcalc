@@ -13,7 +13,7 @@ function t_project_editableModule($name, $table_fu)
     <?php
 }
 
-function t_project_loadSummary($load, $custom, $database) {
+function t_project_loadSummary($cload) {
     $price = array();
 
     echo '
@@ -26,46 +26,23 @@ function t_project_loadSummary($load, $custom, $database) {
             <td>Power ' . T_Units::W . '</td>
         </tr>';
     
-    foreach ($load as $key => $element) {
+    foreach ($cload as $element) {
         echo '<tr class="project-module-item">';
-        if ($element["product"] != "custom") {
-            $query     = "SELECT  `name`, `power`, `price` FROM `load` WHERE `id` = ". $database->escape_string($element['product']);
-            $result    = $database->query($query) or fatal_error(mysqli_error($database));
-            $data      = $result->fetch_assoc();
-            $result->free();
-           
-            echo "<td>{$data['name']}</td>";
-            echo "<td class='number'>{$element['amount']}</td>";
-            echo "<td class='number'>{$element['dayhours']}</td>";
-            echo "<td class='number'>{$element['nighthours']}</td>";
-            echo "<td class='number'>{$data['power']}</td>";
+        echo "<td>{$element['name']}</td>";
+        echo "<td class='number'>{$element['amount']}</td>";
+        echo "<td class='number'>{$element['dayhours']}</td>";
+        echo "<td class='number'>{$element['nighthours']}</td>";
+        echo "<td class='number'>{$element['power']}</td>";
 
-            if (isset($element['sell'])) {
-                array_push($price, array (
-                    "product" => $data['name'],
-                    "amount"  => $element["amount"],
-                    "price"   => $data['price'],
-                    ) );
-            }
-    
-        } else {
-    
-            echo "<td>{$custom[$key]['name']}</td>";
-            echo "<td class='number'>{$element['amount']}</td>";
-            echo "<td class='number'>{$element['dayhours']}</td>";
-            echo "<td class='number'>{$element['nighthours']}</td>";
-            echo "<td class='number'>{$custom[$key]['power']}</td>";
-
-            if (isset($element['sell'])) {
-                array_push($price, array (
-                    "product" => $custom[$key]["name"],
-                    "amount"  => $element["amount"],
-                    "price"   => $custom[$key]["price"],
-                    ) );
-            }
-
-            
+        if (isset($element['sell'])) {
+            array_push($price, array (
+                        "product" => $element["name"],
+                        "amount"  => $element["amount"],
+                        "price"   => $element["price"],
+                        ) );
         }
+
+
         echo '</tr>';
     }
 
