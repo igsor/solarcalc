@@ -1,276 +1,254 @@
 <?php
 
-// FIXME: Use an external caching function instead of doing it in CompositionData
-// FIXME: Getters for members, such that they can be accessed individually.
-class ConfigurationData {
-    public $battery;//
-    public $panel;//
-    public $load;//
-    public $controller;
-    public $inverter;
-    public $custom;
-    public $boostbuck;//
-    public $changeBaseVoltage;//
-    public $totalPrice;//
-    public $totalCapacity;//
-    public $expectedLifetime;//
-    public $pricekWh;//
-    public $batteryReserve;
-    public $panelReserve;
-    public $inStock;//
-    public $sunhours;
-    public $panelPower;
-    public $database;
-
-    private $totalDeviceEnergy;
+class ConfigurationData extends MemberCache {
 
     const dayperyear  = 365;
     const lifetimePan = 10; 
 
+    public $battery;
+    public $panel;
+    public $load;
+    public $controller;
+    public $inverter;
+    public $custom;
+    public $sunhours;
+    public $db;
+
     public function __construct(
-        $newDatabase,
-        $newBattery = array(), 
-        $newPanel = array(),
-        $newLoad = array(),
-        $newController = array(),
-        $newInverter = array(),
-        $newCustom = array(),
-        $newSunhours  = 0
+        $database,
+        $battery    = array(), 
+        $panel      = array(),
+        $load       = array(),
+        $controller = array(),
+        $inverter   = array(),
+        $custom     = array(),
+        $sunhours   = 0
     )
     {
-        $this->database             = $newDatabase;
-        $this->battery              = $newBattery;
-        $this->panel                = $newPanel;
-        $this->load                 = $newLoad;
-        $this->controller           = $newController;
-        $this->inverter             = $newInverter;
-        $this->custom               = $newCustom;
-        $this->sunhours             = $newSunhours;
-        $this->boostbuck            = 0;
-        $this->changeBaseVoltage    = 0;
-        $this->totalPrice           = 0;
-        $this->totalCapacity        = 0;
-        $this->expectedLifetime     = 0;
-        $this->pricekWh             = 0;
-        $this->batteryReserve       = 0;
-        $this->panelReserve         = 0;
-        $this->inStock              = "Yes";
-        $this->totalDeviceEnergy    = 0;
-        $this->panelPower           = 0;
+        parent::__construct();
+        $this->db           = $database;
+        $this->battery      = $battery;
+        $this->panel        = $panel;
+        $this->load         = $load;
+        $this->controller   = $controller;
+        $this->inverter     = $inverter;
+        $this->custom       = $custom;
+        $this->sunhours     = $sunhours;
     }
 
-    public function computation() {
-        $this->setInputVoltage();
-        $this->setTotalPrice();
-        $this->setBatteryCapacity();
-        $this->setExpectedLifetime();
-        $this->setInStock();
-        $this->setPriceperkWh();
-        $this->setBatteryReserve();
-        $this->setPanelReserve();
+    /****************************************************
+     *                      HELPERS                     * 
+     ****************************************************/
+
+    // Get all columns from a query with a single result.
+    protected function dbSingleRow($query) {
+        $result = $this->db->query($query) or fatal_error(mysqli_error($this->db));
+        $item = $result->fetch_row();
+        $result->free();
+        return $item;
     }
 
-    private function setInputVoltage() {
-        $totalDevices      = count($this->load); 
-        $totalotherVoltage = 0;
-         foreach ($this->load as $key => $device) {
+    // Get a single column from a query with multiple rows.
+    protected function dbSingleCol($query, $values=NULL) {
+        if ($values != NULL) {
+            $query = sprintf($query, implode(',', $values));
+        }
+        $result = $this->db->query($query) or fatal_error(mysqli_error($this->db));
+        $row = [];
+        while($item = $result->fetch_row()) {
+            $row[] = $item[0];
+        }
+        $result->free();
+        return $row;
+    }
+
+    // Get a single column from a query with a single result.
+    protected function dbSingleValue($query) {
+        $result = $this->db->query($query) or fatal_error(mysqli_error($this->db));
+        $item = $result->fetch_row();
+        $result->free();
+        return $item[0];
+    }
+
+    /****************************************************
+     *                      GETTERS                     * 
+     ****************************************************/
+
+    // FIXME: Could be combined with getChangeBaseVoltage.
+    protected function getBoostbuck() {
+        foreach ($this->load as $key => $device) {
             if ($device['product'] != 'custom') {
-                $query = "SELECT `voltage` FROM `load` WHERE `id` =  {$device['product']}";
-                $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-                $name = $result->fetch_assoc();
-                $result->free();
-                if ($name["voltage"] < 11.5 || $name["voltage"] > 12.5) {
-                    $this->boostbuck    = 1;
-                    $totalotherVoltage += 1;
-               }   
+                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `load` WHERE `id` =  {$device['product']}");
             } else {
-                if ($this->custom[$key]['voltage'] < 11.5 || $this->custom[$key]['voltage'] > 12.5) {
-                    $this->boostbuck    = 1;
-                    $totalotherVoltage += 1;
-                }
+                $voltage = $this->custom[$key]['voltage'];
             }
+
+            if ($voltage < 11.5 || $voltage > 12.5) {
+                return 1;
+            }   
         }
-        if ($totalotherVoltage > 0.75* $totalDevices) {
-            $this->changeBaseVoltage = 1;    
-        }
+
+        return 0;
     }
 
-    private function setTotalPrice() {
-        $this->totalPrice = 0;
+    // FIXME: Could be combined with getBoostbuck.
+    protected function getChangeBaseVoltage() {
+        $totalOtherVoltage = 0;
+        foreach ($this->load as $key => $device) {
+            if ($device['product'] != 'custom') {
+                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `load` WHERE `id` =  {$device['product']}");
+            } else {
+                $voltage = $this->custom[$key]['voltage'];
+            }
+
+            if ($voltage < 11.5 || $voltage > 12.5) {
+                $totalOtherVoltage += 1;
+            }   
+        }
+
+        if ($totalOtherVoltage > 0.75 * count($this->load)) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    protected function getTotalPrice() {
+        $totalPrice = 0;
         foreach ($this->panel as $id => $amount) {
-            $query = "SELECT `price` FROM `panel` WHERE `id` =  $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            $this->totalPrice += $amount * $name["price"];        
+            $totalPrice += $amount * $this->dbSingleValue("SELECT `price` FROM `panel` WHERE `id` =  $id");
         }
         foreach ($this->battery as $id => $amount) {
-            $query = "SELECT `price` FROM `battery` WHERE `id` =  $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            $this->totalPrice += $amount * $name["price"];
+            $totalPrice += $amount * $this->dbSingleValue("SELECT `price` FROM `battery` WHERE `id` =  $id");
         }
+        // FIXME: Use $id instead of $amount['product']; Check data structures first!
         foreach($this->controller as $id => $amount) {
-            $query = "SELECT `price` FROM `controller` WHERE `id` =  {$amount['product']}";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            $this->totalPrice += $name["price"];
-        }
+            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `controller` WHERE `id` =  {$amount['product']}");
+        } 
         foreach($this->inverter as $id => $amount) {
-            $query = "SELECT `price` FROM `inverter` WHERE `id` =  {$amount['product']}";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            $this->totalPrice += $name["price"];
+            $totalPrice += $this->dbSingleValue("SELECT `price` FROM `inverter` WHERE `id` =  {$amount['product']}");
         }
+
+        return $totalPrice;
      }
 
-    private function setBatteryCapacity() {
-        $this->totalCapacity = 0;
+    protected function getBatteryCapacity() {
+        $batteryCapacity = 0;
         foreach($this->battery as $id => $amount) {
-            $query = "SELECT `capacity`, `dod` / 100 as 'dod' FROM `battery` WHERE `id` =  $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            $this->totalCapacity += $name["capacity"] * $name["dod"] * $amount;
+            $capacity = $this->dbSingleValue("SELECT `capacity` FROM `battery` WHERE `id` =  $id");
+            $dod = $this->dbSingleValue("SELECT `dod` / 100 FROM `battery` WHERE `id` =  $id");
+            $batteryCapacity += $capacity * $dod * $amount;
         }
+
+        return $batteryCapacity;
     }
 
-    private function setExpectedLifetime() {
-        $this->expectedLifetime = 0;
-        $allCycles = array();
-        foreach($this->battery as $id => $amount) {
-            $query = "SELECT `lifespan` FROM `battery` WHERE `id` =  $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            $allCycles[] = $name['lifespan'];
+
+    protected function getExpectedLifetime() {
+        if (empty($this->battery)) {
+            return self::lifetimePan;
         }
-        sort($allCycles);
-        if (empty($allCycles)) {
-            $this->expectedLifetime = self::lifetimePan;
-        } else {
-            $this->expectedLifetime = $allCycles[0] / self::dayperyear;
-        }
+
+        $query = sprintf('SELECT min(`lifespan`) FROM `battery` WHERE `id` IN (%s)', implode(',', array_keys($this->battery)));
+        $numCycles = $this->dbSingleValue($query);
+        return $numCycles / self::dayperyear;
     }
     
-    private function setPriceperkWh() {
-        $priceBat = array();
+    protected function getPricePerkWh() {
+        // Total price per year
+        $priceModule = [];
         foreach($this->battery as $id => $amount) {
-            $query = "SELECT `lifespan`, `price` FROM `battery` WHERE `id` =  $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            array_push($priceBat, (float)($name['price'] * $amount / $name['lifespan'] * self::dayperyear ));
+            $price    = $this->dbSingleValue("SELECT `price` FROM `battery` WHERE `id` =  $id");
+            $lifespan = $this->dbSingleValue("SELECT `lifespan` FROM `battery` WHERE `id` =  $id");
+            $pricePerYear = self::dayperyear * $price * $amount / $lifespan;
+            $priceModule[] = (float)$pricePerYear;
         }
-        $pricePan = array();
         foreach($this->panel as $id => $amount) {
-            $query = "SELECT `price` FROM `panel` WHERE `id` =  $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            array_push($pricePan, (float)($name['price'] * $amount / self::lifetimePan ));
+            $price = $this->dbSingleValue("SELECT `price` FROM `panel` WHERE `id` =  $id");
+            $pricePerYear = $price * $amount / self::lifetimePan;
+            $priceModule[] = (float)$pricePerYear;
         }
-        $totalPricepYear = array_sum($pricePan) + array_sum($priceBat);
-        $panelWatt = array();
-        foreach($this->panel as $id => $amount) {
-            $query = "SELECT `power` FROM `panel` WHERE `id` = $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            array_push($panelWatt, $name['power'] * $amount);
+        $totalPricePerYear = array_sum($priceModule);
+
+        // Price per energy
+        $wattHoursPerYear = $this->panelPower * $this->sunhours * self::dayperyear;
+        if ($wattHoursPerYear == 0) { // Guard against zero div.
+            return 0;
         }
-        $totalWatt = array_sum($panelWatt);
-        $wattHourspYear = $totalWatt * $this->sunhours * self::dayperyear;
-        if ($wattHourspYear != 0) {
-            $this->pricekWh = (float)($totalPricepYear / $wattHourspYear * 1000);
-        } else {
-            $this->priceKwh = 0;
-        }
+
+        return (float)(1000 * $totalPricePerYear / $wattHoursPerYear);
     }
 
-    private function setBatteryReserve() {
-        // $this->totalCapacity = get total Battery capacity
-        // $deviceEnergy = $devicePower * $deviceNighttime
-        // $totalDeviceEnergy = sum($deviceEnergy)
-        // $batteryCapacity = $this->totalCapacity - $totalDeviceEnergy
-        $deviceEnergy = array();
+    protected function getTotalDeviceEnergy() {
+        $deviceEnergy = [];
         foreach($this->load as $key => $device) {
             if ($device['product'] != 'custom') {
-                $query = "SELECT `power`, `voltage` FROM `load` WHERE `id` =  {$device['product']}";
-                $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-                $name = $result->fetch_assoc();
-                $result->free();
-                array_push($deviceEnergy, $name['power'] * $device['nighthours'] / $name['voltage'] * $device['amount']);
+                $power   = $this->dbSingleValue("SELECT `power` FROM `load` WHERE `id` =  {$device['product']}");
+                $voltage = $this->dbSingleValue("SELECT `voltage` FROM `load` WHERE `id` =  {$device['product']}");
+                $deviceEnergy[] = $device['amount'] * $power * $device['nighthours'] / $voltage;
             } else {
-                array_push($deviceEnergy, $this->custom[$key]['power'] * $device['nighthours'] / $this->custom[$key]['voltage'] * $device['amount']);
+                $deviceEnergy[] =  $device['amount'] * $this->custom[$key]['power'] * $device['nighthours'] / $this->custom[$key]['voltage'];
             }
         }
-        $this->totalDeviceEnergy = array_sum($deviceEnergy);
-        $this->batteryReserve = $this->totalCapacity - $this->totalDeviceEnergy;
+
+        return array_sum($deviceEnergy);
     }
 
-    private function setPanelReserve() {
+    protected function getBatteryReserve() {
+        // $this->batteryCapacity = get total Battery capacity
+        // $deviceEnergy = $devicePower * $deviceNighttime
+        // $totalDeviceEnergy = sum($deviceEnergy)
+        // $batteryReserve = $this->batteryCapacity - $totalDeviceEnergy
+        return $this->batteryCapacity - $this->totalDeviceEnergy;
+    }
+
+    protected function getPanelPower() {
+        $panelPower = 0;
+        foreach($this->panel as $id => $amount) {
+            $power = $this->dbSingleValue("SELECT `power` FROM `panel` WHERE `id` = $id");
+            $panelPower += $amount * $power;
+        }
+        return $panelPower;
+    }
+
+    protected function getPanelReserve() {
         // X panelPower = sum over all panel Watt
         // needPanel = sum over all daytime Watt plus nightime Ah*Wp/Ts
         // X all daytime Watt
         // X all nightime Watt
-        $this->panelPower = 0;
-        foreach($this->panel as $id => $amount) {
-            $query = "SELECT `power` FROM `panel` WHERE `id` = $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $data = $result->fetch_assoc();
-            $result->free();
-            $this->panelPower += $amount * $data['power'];
-        }
         
         $daytimeWatt = 0;
         foreach($this->load as $key => $device) {
             if ($device['dayhours'] > 0 && $device['product'] != 'custom') { 
-                $query = "SELECT `power` FROM `load` WHERE `id` =  {$device['product']}";
-                $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-                $data = $result->fetch_assoc();
-                $result->free();
-                $daytimeWatt += $device['amount'] * $data['power'];
+                $power = $this->dbSingleValue("SELECT `power` FROM `load` WHERE `id` =  {$device['product']}");
+                $daytimeWatt += $device['amount'] * $power;
             } elseif ($device['dayhours'] > 0) {
                 $daytimeWatt += $device['amount'] * $this->custom[$key]['power'];
             }
-
-            $nighttimeWatt = $this->totalDeviceEnergy * 12.5  / $this->sunhours;
-            $needPanel = $daytimeWatt + $nighttimeWatt;
-            $this->panelReserve = $this->panelPower - $needPanel;
-
-            //echo "<br/>The battery capacity is: $this->totalCapacity";
-            //echo "<br/>The panel power is: $this->panelPower";
-            //echo "<br/>The needed panel power is: $needPanel";
-            //echo "<br/>The panel reserve therefore is $this->panelReserve<br/>";
         }
+
+        $nighttimeWatt = $this->totalDeviceEnergy * 12.5  / $this->sunhours;
+        $needPanel = $daytimeWatt + $nighttimeWatt;
+        return $this->panelPower - $needPanel;
+
+        //echo "<br/>The battery capacity is: $this->batteryCapacity";
+        //echo "<br/>The panel power is: $panelPower";
+        //echo "<br/>The needed panel power is: $needPanel";
+        //echo "<br/>The panel reserve therefore is $this->panelReserve<br/>";
     }
 
-    private function setInStock() {
-        $this->inStock = "Yes";
+    protected function getInStock() {
+        $inStock = true;
         foreach ($this->panel as $id => $amount) {
-            $query = "SELECT `stock` FROM `panel` WHERE `id` =  $id";
-            $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-            $name = $result->fetch_assoc();
-            $result->free();
-            if ($amount > $name['stock']) {
-                $this->inStock = "No";
-            }
+            $numStock = $this->dbSingleValue("SELECT `stock` FROM `panel` WHERE `id` =  $id");
+            $inStock  = $inStock && ($amount <= $numStock);
         }
-        if ($this->inStock == "Yes") {
-            foreach ($this->battery as $id => $amount) {
-                $query = "SELECT `stock` FROM `battery` WHERE `id` =  $id";
-                $result = $this->database->query($query) or fatal_error(mysqli_error($this->database));
-                $name = $result->fetch_assoc();
-                $result->free();
-                if ($amount > $name['stock']) {
-                    $this->inStock = "No";
-                }
-            }
+        foreach ($this->battery as $id => $amount) {
+            $numStock = $this->dbSingleValue("SELECT `stock` FROM `battery` WHERE `id` =  $id");
+            $inStock  = $inStock && ($amount <= $numStock);
         }
+
+        return ($inStock ? "Yes" : "No");
     }
 };
 

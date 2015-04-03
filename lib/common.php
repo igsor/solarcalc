@@ -76,3 +76,47 @@ function fix_checkbox_post($names) {
         }
     }
 }
+
+/**
+ * Class for caching member variables.
+ * 
+ * The member's getter is executed once, after that the cached value is returned instead.
+ * The class is expected to have a method *getVar* for every cached member *var*.
+ * 
+ */
+class MemberCache {
+
+    private $cache; // Associative array [member -> cached value]
+
+    public function __construct() {
+        $this->cache = [];
+    }
+
+    /**
+     * Caches members. Any member *name* can be retrieved.
+     * If *name* is not cached, its getter is executed.
+     * The getter for member *foo* must be called *getFoo*.
+     */
+    public function __get($name) {
+        if (!key_exists($name, $this->cache)) {
+            $this->cache[$name] = call_user_func([$this, "get" . ucfirst($name)]);
+        }
+        return $this->cache[$name];
+    }
+
+    /**
+     * Simulates setters. Any member *name* can be defined. It will be stored, together
+     * with its *value* in the *cache*.
+     */
+    public function __set($name, $value) {
+        $this->cache[$name] = $value;
+    }
+
+    /**
+     * Remove a member from the cache.
+     */
+    public function __unset($name) {
+        unset($this->cache[$name]);
+    }
+};
+

@@ -2,12 +2,11 @@
 
 function _ConfigCharacteristics($panel, $battery, $controller, $inverter, $load, $custom, $database, $sunhours) {
     $newComposition = new ConfigurationData($database, $battery, $panel, $load, $controller, $inverter, $custom, (float)($sunhours));
-    $newComposition->computation();
     $numbers= array (
          "inStock"         => $newComposition->inStock,
          "lifetime"        => $newComposition->expectedLifetime,
-         "pricekWh"        => $newComposition->pricekWh,
-         "batteryCapacity" => $newComposition->totalCapacity,
+         "pricekWh"        => $newComposition->pricePerkWh,
+         "batteryCapacity" => $newComposition->batteryCapacity,
          "totalPrice"      => $newComposition->totalPrice,
          "inputVoltage"    => $newComposition->changeBaseVoltage,
          "batteryReserve"  => $newComposition->batteryReserve,
