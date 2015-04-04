@@ -129,14 +129,12 @@ foreach ($solution as $idx => $currentsol) {
                                 <td class="table-key">Price detail<?php echo T_Units::DOL; ?></td>
                                 <td class="table-value">
                                     <table cellspacing=0 cellpadding=0 class='project-budget-module'>
-            
                                         <?php
-                                        t_project_modulePrice($currentsol, 'panel', $db);
-                                        t_project_modulePrice($currentsol, 'battery', $db);
-                                        t_project_modulePrice($currentsol, 'controller', $db);
-                                        t_project_modulePrice($currentsol, 'inverter', $db);
+                                        t_project_modulePrice($currentsol['numbers']->panel, 'panel', $db);
+                                        t_project_modulePrice($currentsol['numbers']->battery, 'battery', $db);
+                                        t_project_modulePrice($currentsol['numbers']->controller, 'controller', $db);
+                                        t_project_modulePrice($currentsol['numbers']->inverter, 'inverter', $db);
                                         ?>
-            
                                     </table>
                                 </td>
                             </tr>

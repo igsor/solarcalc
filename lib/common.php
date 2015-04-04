@@ -120,3 +120,11 @@ class MemberCache {
     }
 };
 
+function cannonical_number($number, $digits=0) {
+    if (!is_numeric($number)) {
+        return $number;
+    }
+    return number_format($number, $digits, '.', "'");
+}
+
+// EOF //

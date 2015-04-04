@@ -63,14 +63,14 @@ function t_project_moduleSummary($variable, $string, $database) {
     echo join('<br/>', $Overview);
 }
 
-function t_project_modulePrice($variable, $string, $database) {
-    foreach ($variable[$string] as $value) {
-        $query = "SELECT `name`,`price` FROM `$string` WHERE `id` = " . $database->escape_string($value['product']);
-        $result = $database->query($query) or fatal_error(mysqli_error($database));
-        $name = $result->fetch_assoc();
+function t_project_modulePrice($module, $table, $db) {
+    foreach ($module as $id => $amount) {
+        $query = "SELECT `name`, `price` FROM `{$table}` WHERE `id` = " . $db->escape_string($id);
+        $result = $db->query($query) or fatal_error(mysqli_error($db));
+        $piece = $result->fetch_assoc();
         $result->free();
         
-        echo "<tr class='project-budget-module-item'><td><div class='amount'>{$value['amount']}x</div>{$name['name']}:</td><td style='text-align:right'>" . number_format($name['price'] * $value["amount"], "0", ".", "'") . "</td></tr>";
+        echo "<tr class='project-budget-module-item'><td><div class='amount'>{$amount}x</div>{$piece['name']}:</td><td style='text-align:right'>" . cannonical_number($piece['price'] * $amount) . "</td></tr>";
     };
 }
 
