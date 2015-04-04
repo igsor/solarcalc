@@ -192,4 +192,212 @@ function t_project_budget($budget, $work=0, $material=0)
     <?php
 }
 
+function t_project_characteristics($configData, $db)
+{
+    ?>
+    <table cellpadding=0 cellspacing=0>
+
+        <!--======================================== BUSINESS DATA ========================================-->
+
+        <tr>
+            <td class="table-key project-data-title" colspan=2>Business data</td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('total_price'); ?>>Total price<?php echo T_Units::DOL; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->totalPrice); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('price_per_kWh'); ?>>Price per kwh<?php echo T_Units::DOL; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->pricePerkWh, 2); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('price_detail'); ?>>Price detail<?php echo T_Units::DOL; ?></td>
+            <td class="table-value">
+                <table cellspacing=0 cellpadding=0 class='project-budget-module'>
+                    <?php
+                        t_project_modulePrice($configData->panel, 'project_panel', $db);
+                        t_project_modulePrice($configData->battery, 'project_battery', $db);
+                        t_project_modulePrice($configData->controller, 'project_controller', $db);
+                        t_project_modulePrice($configData->inverter, 'project_inverter', $db);
+                    ?>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('number_of_items'); ?>>Number of items</td>
+            <td class="table-value"><?php echo $configData->numItems; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('number_of_items_sold'); ?>>Number of items sold</td>
+            <td class="table-value"><?php echo $configData->numItemsSold; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('expected_lifetime'); ?>>Expected lifetime<?php echo T_Units::Y; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->expectedLifetime, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('expected_lifetime_per_module'); ?>>Expected lifetime per Module<?php echo T_Units::Y; ?></td>
+            <td class="table-value">NA</td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('module_cost_per_year'); ?>>Module cost per year<?php echo T_Units::DOL; ?></td>
+            <td class="table-value">NA</td>
+        </tr>
+
+        <!--======================================== POWER DATA ========================================-->
+
+        <tr>
+            <td class="table-key project-data-title" colspan=2>Power data</td>
+        </tr>
+
+        <!------------------------------------------ POWER MEASURES ------------------------------------------>
+
+        <tr>
+            <td class="table-key" <?php echo t_helptext('total_panel_power'); ?>>Total panel power<?php echo T_Units::W; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->panelPower, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('unused_panel_power'); ?>>Unused panel power<?php echo T_Units::W; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->panelReserve, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('consumed_power_day'); ?>>Peak consumed power (day)<?php echo T_Units::W; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->consumedDayPower, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('consumed_power_night'); ?>>Peak consumed power (night)<?php echo T_Units::W; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->consumedNightPower, 1); ?></td>
+        </tr>
+
+        <!------------------------------------------ ENERGY MEASURES ------------------------------------------>
+
+        <tr>
+            <td class="table-key" <?php echo t_helptext('total_panel_energy'); ?>>Total panel energy<?php echo T_Units::Wh; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->panelEnergy, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('consumed_energy_day'); ?>>Consumed energy (direct)<?php echo T_Units::Wh; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->consumedDayEnergy, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('consumed_energy_battery'); ?>>Consumed energy (via battery)<?php echo T_Units::Wh; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryConsumedEnergy, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('battery_input_energy'); ?>>Battery input energy<?php echo T_Units::Wh; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryInputEnergy, 1); ?></td>
+        </tr>
+
+        <!------------------------------------------ BATTERY MEASURES ------------------------------------------>
+
+        <tr>
+            <td class="table-key" <?php echo t_helptext('total_battery_capacity'); ?>>Total battery capacity<?php echo T_Units::Ah; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryCapacity, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('consumed_battery_capacity'); ?>>Consumed battery capacity<?php echo T_Units::Ah; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryCapacityConsumed, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('unused_battery_capacity'); ?>>Unused battery capacity<?php echo T_Units::Ah; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryReserve, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('battery_energy_reserve'); ?>>Battery charge energy reserve<?php echo T_Units::Wh; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryEnergyReserve, 1); ?></td>
+        </tr>
+
+         <!------------------------------------------ BATTERY MEASURES ------------------------------------------>
+
+        <tr>
+            <td class="table-key" <?php echo t_helptext('charge_current'); ?>>Charging current<?php echo T_Units::A; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryChargeCurrent, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('current_day'); ?>>Peak current (day)<?php echo T_Units::A; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->currentDay, 1); ?></td>
+        </tr>
+
+        <tr>
+            <td class="table-key" <?php echo t_helptext('current_night'); ?>>Peak current (night)<?php echo T_Units::A; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->currentNight, 1); ?></td>
+        </tr>
+
+         <!------------------------------------------ TIME MEASURES ------------------------------------------>
+
+        <tr>
+            <td class="table-key" <?php echo t_helptext('time_until_fully_charged'); ?>>Time until fully charged (Min/Max/Avg)<?php echo T_Units::H; ?></td>
+            <td class="table-value">
+                <?php echo cannonical_number($configData->batteryChargeTimeMin, 1); ?> / 
+                <?php echo cannonical_number($configData->batteryChargeTimeMax, 1); ?> / 
+                <?php echo cannonical_number($configData->batteryChargeTimeAvg, 1); ?>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('battery_discharge_time'); ?>>Battery discharge time<?php echo T_Units::H; ?></td>
+            <td class="table-value"><?php echo cannonical_number($configData->batteryDischargeTime, 1); ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('charge_discharge_diagram'); ?>>Charge / Discharge diagram</td>
+            <td class="table-value">NA</td>
+        </tr>
+
+        <!--======================================== CIRCUIT DATA ========================================-->
+
+        <tr>
+            <td class="table-key project-data-title" colspan=2>Circuit data</td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('input_voltage'); ?>>Input voltage<?php echo T_Units::V; ?></td>
+            <td class="table-value"><?php echo $configData->inputVoltage; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('panels_series'); ?>>Panels serie</td>
+            <td class="table-value"><?php echo $configData->panelsSerie; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('panels_parallel'); ?>>Panels parallel</td>
+            <td class="table-value"><?php echo $configData->panelsParallel; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('batteries_series'); ?>>Batteries serie</td>
+            <td class="table-value"><?php echo $configData->batteriesSerie; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('batteries_parallel'); ?>>Batteries parallel</td>
+            <td class="table-value"><?php echo $configData->batteriesParallel; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('boostbuck_required'); ?>>Boostbuck required</td>
+            <td class="table-value"><?php echo $configData->boostbuck; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('DC_network'); ?>>DC network</td>
+            <td class="table-value"><?php echo $configData->hasDC; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('DC_devices'); ?>>DC devices</td>
+            <td class="table-value"><?php echo $configData->numDC; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('DC_load'); ?>>DC load<?php echo T_Units::W; ?></td>
+            <td class="table-value"><?php echo $configData->loadDC; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('AC_network'); ?>>AC network</td>
+            <td class="table-value"><?php echo $configData->hasAC; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('AC_devices'); ?>>AC devices</td>
+            <td class="table-value"><?php echo $configData->numAC; ?></td>
+        </tr>
+        <tr>
+            <td class="table-key" <?php echo t_helptext('AC_load'); ?>>AC load<?php echo T_Units::W; ?></td>
+            <td class="table-value"><?php echo $configData->loadAC; ?></td>
+        </tr>
+    </table>
+    <?php
+}
+
 // EOF //

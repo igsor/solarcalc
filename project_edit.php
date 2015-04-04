@@ -195,7 +195,43 @@ function getData($db, $query)
 };
 
 
-t_project_editableModule('Characteristics', function() {
+t_project_editableModule('Characteristics', function() use ($db, $id) {
+
+    // Get the configuration data.
+    $config_modules = ['panel', 'battery', 'controller', 'inverter'];
+    foreach($config_modules as $module) {
+        $result = $db->query(
+            "SELECT `id`, `amount` FROM `project_{$module}` WHERE `project` = '{$id}}'"
+        ) or fatal_error(mysqli_error($db));
+        $data[$module] = [];
+        while($item = $result->fetch_assoc()) {
+            $data[$module][$item['id']] = $item['amount'];
+        }
+        $result->free();
+    }
+
+    // Get the cannonical load.
+    $cload = getData($db,"SELECT *, `daytime` as 'dayhours', `nighttime` as 'nighthours' FROM `project_load` WHERE `project` = '{$id}'");
+
+    // Get sun hours.
+    $result = $db->query("SELECT `sunhours` FROM `project` WHERE `id` = '{$id}'") or fatal_error(mysqli_error($db));
+    $sunhours = $result->fetch_row()[0];
+    $result->free();
+
+    // Get the derived data.
+    $derived_data = new ConfigurationData(
+        $db,
+        $data['battery'],
+        $data['panel'],
+        $data['controller'],
+        $data['inverter'],
+        $cload,
+        $sunhours,
+        'project_'
+    );
+
+    // Print the characteristics table.
+    t_project_characteristics($derived_data, $db);
 });
 
 t_project_editableModule('Budget', function() use ($db, $id) {
