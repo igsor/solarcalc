@@ -21,6 +21,7 @@ t_start();
 echo '<script src="scripts/project_params.js"></script>';
 
 // Create the form.
+
 ?>
 
 <!---------------------- INSUFFICIENCY WARNING -------------------------->
@@ -64,11 +65,11 @@ foreach($stock as $key => $value) {
 
 <table cellspacing=0 cellpadding=0 class="project-load-custom" style="display: none" id="tpl_custom">
     <tr>
-        <td class="form-table-key">Name</td>
+        <td class="form-table-key" <?php echo t_helptext('name'); ?>>Name</td>
         <td class="form-table-value"><input type="text" id="cname-%i" name="custom[%i][name]" value="" required /></td>
     </tr>
     <tr>
-        <td class="form-table-key">Type</td>
+        <td class="form-table-key" <?php echo t_helptext('type'); ?>>Type</td>
         <td class="form-table-value">
             <select name="custom[%i][type]" id="ctype-%i">
                 <option>AC</option>
@@ -77,23 +78,23 @@ foreach($stock as $key => $value) {
     </td>
     </tr>
     <tr>
-        <td class="form-table-key">Power<?php echo T_Units::W; ?></td>
+        <td class="form-table-key" <?php echo t_helptext('power'); ?>>Power<?php echo T_Units::W; ?></td>
         <td class="form-table-value"><input type="text" class="number" id="cpower-%i" name="custom[%i][power]" value="0.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
-        <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
+        <td class="form-table-key" <?php echo t_helptext('voltage'); ?>>Voltage<?php echo T_Units::V; ?></td>
         <td class="form-table-value"><input type="text" class="number" id="cvoltage-%i" name="custom[%i][voltage]" value="12.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
-        <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
+        <td class="form-table-key" <?php echo t_helptext('price'); ?>>Price<?php echo T_Units::DOL; ?></td>
         <td class="form-table-value"><input type="text" class="number" id="cprice-%i" name="custom[%i][price]" value="0.0" pattern="\d+(.\d+)?" required /></td>
     </tr>
     <tr>
-        <td class="form-table-key">Stock</td>
+        <td class="form-table-key" <?php echo t_helptext('stock'); ?>>Stock</td>
         <td class="form-table-value"><input type="number" class="number" id="cstock-%i" name="custom[%i][stock]" value="1" pattern="\d+" required onchange="checkLoadStock(this)" /></td>
     </tr>
     <tr>
-        <td class="form-table-key">Save</td>
+        <td class="form-table-key" <?php echo t_helptext('save'); ?>>Save</td>
         <td class="form-table-value number"><input type="checkbox" id="csave-%i" name="custom[%i][save]" checked /></td>
     </tr>
 </table>
@@ -106,7 +107,7 @@ foreach($stock as $key => $value) {
 
 <table>
   <tr>
-    <td class="form-table-key">Sunlight<?php echo T_Units::H; ?></td>
+    <td class="form-table-key" <?php echo t_helptext('sunhours'); ?> >Sunlight<?php echo T_Units::H; ?></td>
     <td class="form-table-value"><input type="number" class="number" name="sunhours" value="5" min="0" pattern="\d+" required /></td>
   </tr>
 </table>
@@ -116,11 +117,11 @@ foreach($stock as $key => $value) {
 <table cellspacing=0 cellpadding=0 class="project-load" id="products">
   <tr class="project-load-head">
     <td>Product</td>
-    <td>Amount</td>
-    <td>Day time<?php echo T_Units::H; ?></td>
-    <td>Night time<?php echo T_Units::H; ?></td>
-    <td>Autonomy<?php echo T_Units::D; ?></td>
-    <td>Sold</td>
+    <td <?php echo t_helptext('amount'); ?>>Amount</td>
+    <td <?php echo t_helptext('daytime'); ?>>Day time<?php echo T_Units::H; ?></td>
+    <td <?php echo t_helptext('nighttime'); ?>>Night time<?php echo T_Units::H; ?></td>
+    <td <?php echo t_helptext('autonomy'); ?>>Autonomy<?php echo T_Units::D; ?></td>
+    <td <?php echo t_helptext('sold'); ?>>Sold</td>
     <td width=100%></td> <!-- dummy column for scaling -->
   </tr>
 

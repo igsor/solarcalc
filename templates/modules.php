@@ -5,7 +5,7 @@ function t_module_list($result, $headers, $editId='', $editCallback=null, $addCa
     // Table header.
     echo "<table cellspacing='0' cellpadding='0' class='module-list'><tr class='module-list-head'>\n";
     foreach($headers as $colname => $title) {
-        echo "<td>{$title}</th>\n";
+        echo "<td " . t_helptext($colname) . ">{$title}</th>\n";
     }
     echo "</tr>";
     echo "<tr><td colspan='" . count($headers) . "' class='module-list-headspace'></td></tr>";
@@ -100,7 +100,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="form-table-key">id</td>
+                    <td class="form-table-key" <?php echo t_helptext('id'); ?>>id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
@@ -111,7 +111,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         }
         ?>
         <tr>
-            <td class="form-table-key">Name</td>
+            <td class="form-table-key" <?php echo t_helptext('name'); ?>>Name</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
@@ -119,7 +119,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Description</td>
+            <td class="form-table-key" <?php echo t_helptext('description'); ?>>Description</td>
             <?php
                 $columns(function ($item) {
                     return "<textarea name='description' form='{$item['formid']}'>{$item['description']}</textarea>";
@@ -127,7 +127,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Power<?php echo T_Units::W; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('power'); ?>>Power<?php echo T_Units::W; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='power' class='number' value='{$item['power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -135,7 +135,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Type</td>
+            <td class="form-table-key" <?php echo t_helptext('type'); ?>>Type</td>
             <?php
                 $columns(function ($item) {
                     return   "<select name='type' form='{$item['formid']}' required>"
@@ -146,7 +146,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('voltage'); ?>>Voltage<?php echo T_Units::V; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -154,7 +154,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('price'); ?>>Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -163,7 +163,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="form-table-key">Stock</td>
+            <td class="form-table-key" <?php echo t_helptext('stock'); ?>>Stock</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
@@ -173,7 +173,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="form-table-key">Amount</td>
+            <td class="form-table-key" <?php echo t_helptext('amount'); ?>>Amount</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
@@ -183,7 +183,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['nighttime']); })) { ?>
         <tr>
-            <td class="form-table-key">Night time</td>
+            <td class="form-table-key" <?php echo t_helptext('nighttime'); ?>>Night time</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='nighttime' class='number' value='{$item['nighttime']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
@@ -193,7 +193,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['daytime']); })) { ?>
         <tr>
-            <td class="form-table-key">Day time</td>
+            <td class="form-table-key" <?php echo t_helptext('daytime'); ?>>Day time</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='daytime' class='number' value='{$item['daytime']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
@@ -203,7 +203,7 @@ function t_module_editableLoad($data, $submitButtonName, $id)
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['sold']); })) { ?>
         <tr>
-            <td class="form-table-key">Sold</td>
+            <td class="form-table-key" <?php echo t_helptext('sold'); ?>>Sold</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='checkbox' name='sold' form='{$item['formid']}'" . ($item['sold']?' checked':'') ."/>\n";
@@ -246,7 +246,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="form-table-key">id</td>
+                    <td class="form-table-key" <?php echo t_helptext('id'); ?>>id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
@@ -257,7 +257,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
         }
         ?>
         <tr>
-            <td class="form-table-key">Name</td>
+            <td class="form-table-key" <?php echo t_helptext('name'); ?>>Name</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
@@ -265,7 +265,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Description</td>
+            <td class="form-table-key" <?php echo t_helptext('description'); ?>>Description</td>
             <?php
                 $columns(function ($item) {
                     return "<textarea name='description' form='{$item['formid']}' >{$item['description']}</textarea>";
@@ -273,7 +273,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('voltage'); ?>>Voltage<?php echo T_Units::V; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required /></td>";
@@ -281,7 +281,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Loss<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('loss'); ?>>Loss<?php echo T_Units::Percent; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='loss' class='number' value='{$item['loss']}' form='{$item['formid']}' pattern='\d+' min='0' max='100' required /></td>";
@@ -289,7 +289,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Max. current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('max_current'); ?>>Max. current<?php echo T_Units::A; ?></td>
             <?php
                 $columns(function ($item) {
                         return "<input type='text' name='max_current' class='number' value='{$item['max_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -297,7 +297,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('price'); ?>>Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -306,7 +306,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="form-table-key">Stock</td>
+            <td class="form-table-key" <?php echo t_helptext('stock'); ?>>Stock</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
@@ -316,7 +316,7 @@ function t_module_editableHardware($data, $submitButtonName, $id)
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="form-table-key">Amount</td>
+            <td class="form-table-key" <?php echo t_helptext('amount'); ?>>Amount</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
@@ -359,7 +359,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="form-table-key">id</td>
+                    <td class="form-table-key" <?php echo t_helptext('id'); ?>>id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
@@ -370,7 +370,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
         }
         ?>
         <tr>
-            <td class="form-table-key">Name</td>
+            <td class="form-table-key" <?php echo t_helptext('name'); ?>>Name</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
@@ -378,7 +378,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Description</td>
+            <td class="form-table-key" <?php echo t_helptext('description'); ?>>Description</td>
             <?php
                 $columns(function ($item) {
                     return "<textarea name='description' form='{$item['formid']}'>{$item['description']}</textarea>";
@@ -386,7 +386,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('price'); ?>>Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -394,7 +394,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('voltage'); ?>>Voltage<?php echo T_Units::V; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -402,7 +402,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Power<?php echo T_Units::W; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('power'); ?>>Power<?php echo T_Units::W; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='power' class='number' value='{$item['power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -410,7 +410,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Peak Power<?php echo T_Units::W; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('peak_power'); ?>>Peak Power<?php echo T_Units::W; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='peak_power' class='number' value='{$item['peak_power']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -419,7 +419,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="form-table-key">Stock</td>
+            <td class="form-table-key" <?php echo t_helptext('stock'); ?>>Stock</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
@@ -429,7 +429,7 @@ function t_module_editablePanel($data, $submitButtonName, $id)
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="form-table-key">Amount</td>
+            <td class="form-table-key" <?php echo t_helptext('amount'); ?>>Amount</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";
@@ -472,7 +472,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         if (any($data, function ($item) { return isset($item['id']) && $item['id'] != ''; })) {
             ?>
                 <tr>
-                    <td class="form-table-key">id</td>
+                    <td class="form-table-key" <?php echo t_helptext('id'); ?>>id</td>
                     <?php
                     $columns(function ($item) {
                         return "{$item['id']}<input type='hidden' name='id' value='{$item['id']}' form='{$item['formid']}'/>";
@@ -483,7 +483,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         }
         ?>
         <tr>
-            <td class="form-table-key">Name</td>
+            <td class="form-table-key" <?php echo t_helptext('name'); ?>>Name</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='name' value='{$item['name']}' form='{$item['formid']}' required />";
@@ -491,7 +491,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Description</td>
+            <td class="form-table-key" <?php echo t_helptext('description'); ?>>Description</td>
             <?php
                 $columns(function ($item) {
                     return "<textarea name='description' form='{$item['formid']}'>{$item['description']}</textarea>";
@@ -499,7 +499,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
             ?>
         </tr>
         <tr>
-            <td class="form-table-key">Voltage<?php echo T_Units::V; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('voltage'); ?>>Voltage<?php echo T_Units::V; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='voltage' class='number' value='{$item['voltage']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -507,7 +507,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Depth of depletion<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('dod'); ?>>Depth of depletion<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='dod' class='number' value='{$item['dod']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
@@ -515,7 +515,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Loss<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('loss'); ?>>Loss<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='loss' class='number' value='{$item['loss']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
@@ -523,7 +523,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Discharge<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('discharge'); ?>>Discharge<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='discharge' class='number' value='{$item['discharge']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
@@ -531,7 +531,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Lifespan<?php echo T_Units::Cycles; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('lifespan'); ?>>Lifespan<?php echo T_Units::Cycles; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='number' name='lifespan' class='number' value='{$item['lifespan']}' pattern='\d+' form='{$item['formid']}' required />";
@@ -539,7 +539,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Capacity<?php echo T_Units::Ah; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('capacity'); ?>>Capacity<?php echo T_Units::Ah; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='number' name='capacity' class='number' value='{$item['capacity']}' pattern='\d+' form='{$item['formid']}' required />";
@@ -547,7 +547,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Max. constant current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('max_const_current'); ?>>Max. constant current<?php echo T_Units::A; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='max_const_current' class='number' value='{$item['max_const_current']}' form='{$item['formid']}' pattern='\d+(.\d+)?' required />";
@@ -555,7 +555,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Max. peak current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('max_peak_current'); ?>>Max. peak current<?php echo T_Units::A; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='max_peak_current' class='number' value='{$item['max_peak_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -563,7 +563,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Avg. constant current<?php echo T_Units::A; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('avg_const_current'); ?>>Avg. constant current<?php echo T_Units::A; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='avg_const_current' class='number' value='{$item['avg_const_current']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -571,7 +571,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Max. humidity<?php echo T_Units::Percent; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('max_humidity'); ?>>Max. humidity<?php echo T_Units::Percent; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='max_humidity' class='number' value='{$item['max_humidity']}' pattern='\d+' min='0' max='100' form='{$item['formid']}' required />";
@@ -579,7 +579,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Max. temperature<?php echo T_Units::DEG; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('max_temperature'); ?>>Max. temperature<?php echo T_Units::DEG; ?></td>
         <?php
             $columns(function ($item) {
                 return "<input type='text' name='max_temperature' class='number' value='{$item['max_temperature']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -587,7 +587,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         ?>
         </tr>
         <tr>
-            <td class="form-table-key">Price<?php echo T_Units::DOL; ?></td>
+            <td class="form-table-key" <?php echo t_helptext('price'); ?>>Price<?php echo T_Units::DOL; ?></td>
             <?php
                 $columns(function ($item) {
                     return "<input type='text' name='price' class='number' value='{$item['price']}' pattern='\d+(.\d+)?' form='{$item['formid']}' required />";
@@ -596,7 +596,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         </tr>
         <?php if (any($data, function ($item) { return isset($item['stock']); })) { ?>
         <tr>
-            <td class="form-table-key">Stock</td>
+            <td class="form-table-key" <?php echo t_helptext('stock'); ?>>Stock</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='stock' class='number' value='{$item['stock']}' pattern='[+-]?\d+' form='{$item['formid']}' required/>";
@@ -606,7 +606,7 @@ function t_module_editableBattery($data, $submitButtonName, $id)
         <?php } ?>
         <?php if (any($data, function ($item) { return isset($item['amount']); })) { ?>
         <tr>
-            <td class="form-table-key">Amount</td>
+            <td class="form-table-key" <?php echo t_helptext('amount'); ?>>Amount</td>
             <?php
                 $columns(function ($item) {
                     return "<input type='number' name='amount' class='number' value='{$item['amount']}' pattern='\d+' min=0 form='{$item['formid']}' required/>";

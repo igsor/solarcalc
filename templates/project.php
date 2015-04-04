@@ -19,11 +19,11 @@ function t_project_loadSummary($cload) {
     echo '
     <table cellspacing=0 cellpadding=0 class="project-module-summary">
         <tr class="project-module-head">
-            <td>Product</td>
-            <td>Amount</td>
-            <td>Day time ' . T_Units::H . '</td>
-            <td>Night time ' . T_Units::H . '</td>
-            <td>Power ' . T_Units::W . '</td>
+            <td ' . t_helptext('stock') . '>Product</td>
+            <td ' . t_helptext('amount') . '>Amount</td>
+            <td ' . t_helptext('daytime') . '>Day time ' . T_Units::H . '</td>
+            <td ' . t_helptext('nighttime') . '>Night time ' . T_Units::H . '</td>
+            <td ' . t_helptext('power') . '>Power ' . T_Units::W . '</td>
         </tr>';
     
     foreach ($cload as $element) {
@@ -81,48 +81,48 @@ function t_project_edit($submitButtonName, $submitButtonValue, $data=null) {
     ?>
         <table cellspacing=0 cellpadding=0 class="form-table">
           <tr>
-            <td class="form-table-key">Name</td>
+            <td class="form-table-key" <?php echo t_helptext('name'); ?>>Name</td>
             <td class="form-table-value"><input type="text" name="name" value="<?php echo $data['name']; ?>" required /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Description</td>
+            <td class="form-table-key" <?php echo t_helptext('description'); ?>>Description</td>
             <td class="form-table-value"><textarea cols=60 rows=5 name="description"><?php echo $data['description']; ?></textarea></td>
           </tr>
           <tr>
-            <td class="form-table-key">Location</td>
+            <td class="form-table-key" <?php echo t_helptext('location'); ?>>Location</td>
             <td class="form-table-value"><input type="text" name="location" value="<?php echo $data['location']; ?>" required /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Material allowance</td>
+            <td class="form-table-key" <?php echo t_helptext('material_allowance'); ?>>Material allowance</td>
             <td class="form-table-value"><input type="number" name="material_allowance" value="<?php echo $data['material_allowance']; ?>" required min="0" pattern="\d+" onBlur="updateBudget(this, 'budget_material')" /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Work allowance</td>
+            <td class="form-table-key" <?php echo t_helptext('work_allowance'); ?>>Work allowance</td>
             <td class="form-table-value"><input type="number" name="work_allowance" value="<?php echo $data['work_allowance']; ?>" required min="0" pattern="\d+" onBlur="updateBudget(this, 'budget_work')" /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Client name</td>
+            <td class="form-table-key" <?php echo t_helptext('client_name'); ?>>Client name</td>
             <td class="form-table-value"><input type="text" name="client_name" value="<?php echo $data['client_name']; ?>" required /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Client phone</td>
+            <td class="form-table-key" <?php echo t_helptext('client_phone'); ?>>Client phone</td>
             <td class="form-table-value"><input type="phone" name="client_phone" value="<?php echo $data['client_phone']; ?>" /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Responsible person</td>
+            <td class="form-table-key" <?php echo t_helptext('responsible_person'); ?>>Responsible person</td>
             <td class="form-table-value"><input type="text" name="responsible_name" value="<?php echo $data['responsible_name']; ?>" required /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Responsible phone</td>
+            <td class="form-table-key" <?php echo t_helptext('responsible_phone'); ?>>Responsible phone</td>
             <td class="form-table-value"><input type="phone" name="responsible_phone" value="<?php echo $data['responsible_phone']; ?>" /></td>
           </tr>
           <tr>
-            <td class="form-table-key">Delivery date</td>
+            <td class="form-table-key" <?php echo t_helptext('delivery_date'); ?>>Delivery date</td>
             <td class="form-table-value"><input type="date" name="delivery_date" value="<?php echo $data['delivery_date']; ?>" /></td>
           </tr>
           <?php if (key_exists('status', $data)) { ?>
             <tr>
-              <td class="form-table-key">Status</td>
+              <td class="form-table-key" <?php echo t_helptext('status'); ?>>Status</td>
               <td class="form-table-value">
                 <select name="status" id="project-status">
                   <option value="planned"  <?php echo ($data['status'] == 'planned'  ?' selected':''); ?>>Planned</option>
@@ -134,7 +134,7 @@ function t_project_edit($submitButtonName, $submitButtonValue, $data=null) {
             </tr>
           <?php } ?>
           <tr>
-            <td class="form-table-key">Comments</td>
+            <td class="form-table-key" <?php echo t_helptext('comments'); ?>>Comments</td>
             <td class="form-table-value"><textarea cols=60 rows=5 name="comments"><?php echo $data['comments']; ?></textarea></td>
           </tr>
           <tr>
