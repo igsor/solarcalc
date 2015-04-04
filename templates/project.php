@@ -163,30 +163,30 @@ function t_project_budget($budget, $work=0, $material=0)
                  ?>
                      <tr class='project-budget-item'>
                          <td><?php echo $data['product']; ?></td>
-                         <td class='number'><?php echo number_format($data['amount'], "0", ".", "'"); ?></td>
-                         <td class='number'><?php echo number_format($data['price'], "0", ".", "'"); ?></td>
-                         <td class='number'><?php echo number_format($subtotal, "0", ".", "'"); ?></td>
+                         <td class='number'><?php echo cannonical_number($data['amount']); ?></td>
+                         <td class='number'><?php echo cannonical_number($data['price']); ?></td>
+                         <td class='number'><?php echo cannonical_number($subtotal); ?></td>
                      </tr>
                  <?php
              }
          ?>
          <tr class='project-budget-item'>
             <td>Material allowance</td>
-            <td class='number'><?php echo number_format(1, "0", ".", "'"); ?></td>
-            <td class='number'><?php echo number_format($material, "0", ".", "'"); ?></td>
-            <td id='budget_material' class='number'><?php echo number_format($material, "0", ".", "'"); ?></td>
+            <td class='number'><?php echo cannonical_number(1); ?></td>
+            <td class='number'><?php echo cannonical_number($material); ?></td>
+            <td id='budget_material' class='number'><?php echo cannonical_number($material); ?></td>
          </tr>
          <tr class='project-budget-item'>
             <td>Work allowance</td>
-            <td class='number'><?php echo number_format(1, "0", ".", "'"); ?></td>
-            <td class='number'><?php echo number_format($work, "0", ".", "'"); ?></td>
-            <td id='budget_work' class='number'><?php echo number_format($work, "0", ".", "'"); ?></td>
+            <td class='number'><?php echo cannonical_number(1); ?></td>
+            <td class='number'><?php echo cannonical_number($work); ?></td>
+            <td id='budget_work' class='number'><?php echo cannonical_number($work); ?></td>
          </tr>
          <tr class='project-budget-total'>
           <td>Total</td>
           <td></td>
           <td></td>
-          <td id='budget_total' class='number calculation-result'><?php echo number_format($total, "0", ".", "'"); ?></td>
+          <td id='budget_total' class='number calculation-result'><?php echo cannonical_number($total); ?></td>
          </tr>
         </table>
     <?php
