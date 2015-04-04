@@ -151,10 +151,10 @@ function t_project_budget($budget, $work=0, $material=0)
     ?>
         <table cellspacing=0 cellpadding=0 class="project-module-summary">
          <tr class='project-budget-head'>
-          <td>Product</td>
-          <td>Amount</td>
-          <td>Price per Unit<?php echo T_Units::DOL; ?></td>
-          <td>Price<?php echo T_Units::DOL; ?></td>
+          <td<?php echo t_helptext('product'); ?>>Product</td>
+          <td<?php echo t_helptext('amount'); ?>>Amount</td>
+          <td<?php echo t_helptext('price_per_unit'); ?>>Price per Unit<?php echo T_Units::DOL; ?></td>
+          <td<?php echo t_helptext('price'); ?>>Price<?php echo T_Units::DOL; ?></td>
          </tr>
          <?php
              foreach($budget as $data) {

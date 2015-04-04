@@ -430,10 +430,10 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <table cellspacing=0 cellpadding=0 class="project-module-summary">
  <tr class="project-module-head">
-  <td>Product</td>
-  <td>Amount</td>
-  <td>Voltage<?php echo T_Units::V; ?></td>
-  <td>Power<?php echo T_Units::W; ?></td>
+  <td<?php echo t_helptext('product'); ?>>Product</td>
+  <td<?php echo t_helptext('amount'); ?>>Amount</td>
+  <td<?php echo t_helptext('voltage'); ?>>Voltage<?php echo T_Units::V; ?></td>
+  <td<?php echo t_helptext('power'); ?>>Power<?php echo T_Units::W; ?></td>
  </tr>
  <?php
     if (isset($INPUT['panel'])) {
@@ -475,11 +475,11 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <table cellspacing=0 cellpadding=0 class="project-module-summary">
  <tr class="project-module-head">
-  <td>Product</td>
-  <td>Amount</td>
-  <td>Voltage<?php echo T_Units::V; ?></td>
-  <td>Capacity<?php echo T_Units::Ah; ?></td>
-  <td>Usable capacity<?php echo T_Units::Ah; ?></td>
+  <td<?php echo t_helptext('product'); ?>>Product</td>
+  <td<?php echo t_helptext('amount'); ?>>Amount</td>
+  <td<?php echo t_helptext('voltage'); ?>>Voltage<?php echo T_Units::V; ?></td>
+  <td<?php echo t_helptext('capacity'); ?>>Capacity<?php echo T_Units::Ah; ?></td>
+  <td<?php echo t_helptext('battery_capacity'); ?>>Usable capacity<?php echo T_Units::Ah; ?></td>
  </tr>
  <?php
     if (isset($INPUT['battery'])) {
@@ -522,8 +522,8 @@ if (isset($INPUT['load']) and isset($INPUT['custom'])) {
 
 <table cellspacing=0 cellpadding=0 class="project-module-summary">
  <tr class="project-module-head">
-  <td>Product</td>
-  <td>Amount</td>
+  <td<?php echo t_helptext('product'); ?>>Product</td>
+  <td<?php echo t_helptext('amount'); ?>>Amount</td>
  </tr>
  <?php
     if (isset($INPUT['inverter'])) {
