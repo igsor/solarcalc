@@ -9,8 +9,7 @@ function t_helptext( $key ) {
         $helptext = $HELP_TEXT[$key];
     }
     
-    echo "onmouseover='displayHelp(\"$helptext\")' ";
-    echo "onmouseout='displayHelp(\"\")'";
+    return "onmouseover='displayHelp(\"$helptext\")' onmouseout='displayHelp(\"\")'";
 }
 
 // EOF //

@@ -94,11 +94,11 @@ BUTTON[disabled], INPUT[disabled], TEXTAREA[disabled], SELECT[disabled] {
   width: 100%;
 }
 
-#help-div {
+#helptext {
   visibility: hidden;
-  position: absolute;
-  top: -10px;
-  right: 0px;
+  position: fixed;
+  top: 110px;
+  right: 10px;
   width: 30%;
   border: solid 4px;
   /* COL-DOM */ color: #1933B8;
@@ -207,6 +207,7 @@ a.menulink.selected, a.menulink:hover, a.menulink:active {
   font-weight: bold;
   text-align: left;
   padding-right: 10px;
+  vertical-align: top;
 }
 
 .table-value, .form-table-value {

@@ -55,7 +55,7 @@ function _t_foot()
 
 function _t_helpDisplay()
 {
-    echo "<div id='help-div'>This is the helptext</div>";
+    echo "<div id='helptext'>This is the helptext</div>";
 }
 
 // EOF //

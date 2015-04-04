@@ -62,7 +62,7 @@ function updateBudget(form_input, target) {
 
 function displayHelp(text) {
     
-    var helptext = document.getElementById('help-div');
+    var helptext = document.getElementById('helptext');
     
     if (text == '') {
         stat = 'hidden';
