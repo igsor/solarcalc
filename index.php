@@ -91,6 +91,13 @@ t_start();
             If you hit <em>Cancel</em>, all changes that are not saved will be undone.
             If you wish to delete a load, click on the <em>DEL</em> button on the right side and confirm your decision in the appearing window.
             </p>
+            <h3 <?php echo t_helptext('helptext'); ?>>Help system</h3>
+            <p>
+            Throughout this page, a small help system is implemented, that is meant to give explanations, definitions and formulas. Most of the titles and list names are attached to this system.
+            Simply hover your mouse over the title, you need a definition for, and a small window with an explanation will appear in the top right corner of your screen.
+            If the element you wish to inquire about happens to be in this very corner, than be sure to move your mouse over the text and dont move it any more as the appearing help text might vanish imediately, else.
+            As an example, move your mouse over the title of this paragraph and see how the help system works.
+            </p>
 
         </td>
         <td class="startpage-coloumn">

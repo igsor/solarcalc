@@ -405,7 +405,7 @@ class ConfigurationData extends MemberCache {
     Total panel power               W   sum_panels( amount * power )                                        panelPower
     Total produced energy           J   Total panel power * sunhours                                        panelEnergy
     Max. panel current output       A   Total panel power / panel voltage                                   panelCurrent
-    Panel power excess              W   Total panel power - Peak consumed power (night)                     panelReserve
+    Panel power excess              W   Total panel power - Peak consumed power (day)                       panelReserve
                                                           - Battery consumed energy / sunhours
     Total battery capacity          Ah  sum_battery( dod * capacity * amount_parallel )                     batteryCapacity
     Consumed battery capacity       Ah  sum_load( nighthours * power * amount / load voltage )              batteryCapacityConsumed
@@ -618,7 +618,7 @@ class ConfigurationData extends MemberCache {
     }
 
     // Panel power excess
-    // Total panel power - Peak consumed power (night) - Battery consumed energy / sunhours
+    // Total panel power - Peak consumed power (day) - Battery consumed energy / sunhours
     protected function getPanelReserve() {
         return $this->panelPower - ($this->consumedDayPower + $this->batteryConsumedEnergy / $this->sunhours);
     }
