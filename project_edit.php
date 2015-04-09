@@ -322,20 +322,19 @@ if ($status == $STATUS_EXECUTING || $status == $STATUS_COMPLETED) {
 
 // Disable illegal state transitions
 echo '<script>';
-echo "var status = document.getElementById('project-status').options;";
 switch($status) {
     case $STATUS_PLANNED:
-        echo 'status[2].disabled = true;'; // completed
+        echo "document.getElementById('project-status').options[2].disabled = true;"; // completed
         break;
     case $STATUS_EXECUTING:
         break;
     case $STATUS_COMPLETED:
-        echo 'status[0].disabled = true;'; // planning
-        echo 'status[3].disabled = true;'; // cancelled
+        echo "document.getElementById('project-status').options[0].disabled = true;"; // planning
+        echo "document.getElementById('project-status').options[3].disabled = true;"; // cancelled
         break;
     case $STATUS_CANCELLED:
-        echo 'status[1].disabled = true;'; // executing
-        echo 'status[2].disabled = true;'; // completed
+        echo "document.getElementById('project-status').options[1].disabled = true;"; // executing
+        echo "document.getElementById('project-status').options[2].disabled = true;"; // completed
         break;
 }
 echo '</script>';
