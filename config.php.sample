@@ -1,0 +1,24 @@
+<?php
+/*
+ * This is the global config file.
+ * 
+ * Global config variables are prefixed with $_. After that, use underscores to
+ * seperate words. All letters must be uppercase. Example: $_DB_HOST.
+ * 
+ */
+
+
+// Database connection.
+$DB_HOST = 'localhost';
+$DB_USER = 'USER';
+$DB_PASS = 'PASSWORD';
+$DB_NAME = 'DATABASE';
+
+
+// Project status strings.
+$STATUS_PLANNED   = 'planned';
+$STATUS_CANCELLED = 'cancelled';
+$STATUS_COMPLETED = 'completed';
+$STATUS_EXECUTING = 'executing';
+
+// EOF //
